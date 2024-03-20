@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\Implementations;
 
 use App\Exceptions\FavouritesExceptions\FavouriteAlbumsException;
 use App\Exceptions\FavouritesExceptions\FavouriteArtistsException;

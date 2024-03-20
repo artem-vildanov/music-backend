@@ -2,11 +2,11 @@
 
 namespace App\Providers;
 
-use App\Facades\AuthFacade;
-use App\Repository\AlbumRepository;
-use App\Repository\ArtistRepository;
-use App\Repository\FavouritesRepository;
+use App\Repository\Proxies\AlbumRepositoryProxy;
+use App\Repository\Proxies\ArtistRepositoryProxy;
+use App\Repository\SongRepository;
 use App\Repository\GenreRepository;
+use App\Repository\PlaylistRepository;
 use App\Repository\Interfaces\IAlbumRepository;
 use App\Repository\Interfaces\IArtistRepository;
 use App\Repository\Interfaces\IFavouritesRepository;
@@ -15,10 +15,9 @@ use App\Repository\Interfaces\IPlaylistRepository;
 use App\Repository\Interfaces\IPlaylistSongsRepository;
 use App\Repository\Interfaces\ISongRepository;
 use App\Repository\Interfaces\IUserRepository;
-use App\Repository\PlaylistRepository;
-use App\Repository\PlaylistSongsRepository;
-use App\Repository\SongRepository;
-use App\Repository\UserRepository;
+use App\Repository\Implementations\PlaylistSongsRepository;
+use App\Repository\Implementations\FavouritesRepository;
+use App\Repository\Implementations\UserRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -28,12 +27,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        if ($this->app->isLocal()) {
-            $this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
-        }
+        $this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
 
-        $this->app->bind(IAlbumRepository::class, AlbumRepository::class);
-        $this->app->bind(IArtistRepository::class, ArtistRepository::class);
+        $this->app->bind(IAlbumRepository::class, AlbumRepositoryProxy::class);
+        $this->app->bind(IArtistRepository::class, ArtistRepositoryProxy::class);
         $this->app->bind(IUserRepository::class, UserRepository::class);
         $this->app->bind(ISongRepository::class, SongRepository::class);
         $this->app->bind(IGenreRepository::class, GenreRepository::class);

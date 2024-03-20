@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\Implementations;
 
 use App\Exceptions\PlaylistSongsException;
 use Illuminate\Support\Facades\DB;
+use App\Repository\Interfaces\IPlaylistSongsRepository;
 
-class PlaylistSongsRepository implements Interfaces\IPlaylistSongsRepository
+class PlaylistSongsRepository implements IPlaylistSongsRepository
 {
     public function checkSongInPlaylist(int $songId, int $playlistId): bool
     {

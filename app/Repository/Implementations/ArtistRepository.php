@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Repository;
+namespace App\Repository\Implementations;
 
 use App\Exceptions\DataAccessExceptions\ArtistException;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
@@ -17,30 +17,17 @@ class ArtistRepository implements IArtistRepository
 
     public function getById(int $artistId): Artist
     {
-        $artist = $this->artistCacheService->getArtistFromCache($artistId);
-        if ($artist) {
-            return $artist;
-        }
-
         $artist = Artist::query()->find($artistId);
         if (!$artist) {
             throw ArtistException::notFound($artistId);
         }
 
-        $this->artistCacheService->saveArtistToCache($artist);
-
         return $artist;
     }
 
-
     public function getMultipleByIds(array $artistIds): array
     {
-        $artists = Artist::query()->whereIn('id', $artistIds)->get()->all();
-        foreach ($artists as $artist) {
-            $this->artistCacheService->saveArtistToCache($artist);
-        }
-
-        return $artists;
+        return Artist::query()->whereIn('id', $artistIds)->get()->all();
     }
 
     public function getByUserId(int $userId): Artist
@@ -68,8 +55,6 @@ class ArtistRepository implements IArtistRepository
             throw ArtistException::failedToCreate();
         }
 
-        $this->artistCacheService->saveArtistToCache($artist);
-
         return $artist->id;
     }
 
@@ -85,8 +70,6 @@ class ArtistRepository implements IArtistRepository
         if (!$artist->save()) {
             throw ArtistException::failedToUpdate($artistId);
         }
-
-        $this->artistCacheService->deleteArtistFromCache($artistId);
     }
 
     public function delete(int $artistId): void
@@ -100,8 +83,6 @@ class ArtistRepository implements IArtistRepository
         if (!$artist->delete()) {
             throw ArtistException::failedToDelete($artistId);
         }
-
-        $this->artistCacheService->deleteArtistFromCache($artistId);
     }
 }
 

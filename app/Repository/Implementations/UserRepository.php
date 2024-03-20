@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Repository;
+namespace App\Repository\Implementations;
 
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\DataAccessExceptions\UserException;
