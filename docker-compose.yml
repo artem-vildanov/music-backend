@@ -1,0 +1,96 @@
+version: '3.9'
+
+volumes:
+  db-mysql:
+  minio:
+  api-server-storage:
+  redis:
+
+networks:
+  c4_network:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.15.0.0/24"
+
+services:
+  gateway:
+    image: nginx:1.23-alpine
+    restart: always
+    container_name: gateway
+    networks:
+      c4_network:
+        ipv4_address: 172.15.0.2
+    ports:
+      - "80:80"
+    extra_hosts:
+      - "api.music.internal:172.15.0.3"
+    volumes:
+      - ./:/var/www/api-server
+      - ./nginx/conf.d:/etc/nginx/templates/
+
+  api-server:
+    build:
+      context: ./
+      dockerfile: api-server.Dockerfile
+    restart: always
+    container_name: api-server
+    working_dir: /var/www/api-server
+    networks:
+      c4_network:
+        ipv4_address: 172.15.0.3
+    ports:
+      - ":9000"
+    extra_hosts:
+      - "db.music.local:172.15.0.4"
+      - "redis.music.local:172.15.0.5"
+      - "host.docker.internal:host-gateway"
+    volumes:
+        - ./:/var/www/api-server
+        - api-server-storage:/var/www/api-server/storage
+
+  database:
+    image: mysql:8.0
+    restart: always
+    container_name: database
+    networks:
+      c4_network:
+        ipv4_address: 172.15.0.4
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=music
+      - MYSQL_USER=music_user
+      - MYSQL_PASSWORD=secret
+    volumes:
+      - db-mysql:/var/lib/mysql
+
+  minio:
+    image: minio/minio
+    restart: always
+    container_name: minio
+    networks:
+        c4_network:
+            ipv4_address: 172.15.0.6
+    ports:
+        - "9005:9005"
+        - "9006:9006"
+    volumes:
+        - minio:/data
+    environment:
+        MINIO_ROOT_USER: music_user
+        MINIO_ROOT_PASSWORD: secret123
+    command: server --address :9005 --console-address :9006 /data
+
+  redis:
+    image: redis:7.2
+    restart: always
+    container_name: redis
+    networks:
+      c4_network:
+        ipv4_address: 172.15.0.5
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/data
