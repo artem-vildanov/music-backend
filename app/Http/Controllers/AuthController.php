@@ -7,8 +7,8 @@ use App\Exceptions\JwtException;
 use App\Facades\AuthFacade;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\SignupRequest;
-use App\Repository\UserRepository;
 use App\Services\JwtServices\TokenService;
+use App\Repository\Interfaces\IUserRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
     public function __construct(
-        private readonly UserRepository      $userRepository,
+        private readonly IUserRepository      $userRepository,
         private readonly TokenService        $tokenService
     ) {
     }

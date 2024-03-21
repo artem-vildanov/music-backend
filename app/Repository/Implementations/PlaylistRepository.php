@@ -1,35 +1,23 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\Implementations;
 
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\DataAccessExceptions\PlaylistException;
 use App\Models\Playlist;
-use App\Services\CacheServices\PlaylistCacheService;
+use App\Repository\Interfaces\IPlaylistRepository;
 
-class PlaylistRepository implements Interfaces\IPlaylistRepository
+class PlaylistRepository implements IPlaylistRepository
 {
-    public function __construct(
-        private readonly PlaylistCacheService $playlistCacheService
-    ) {}
-
     /**
      * @throws DataAccessException
      */
     public function getById(int $playlistId): Playlist
     {
-        $playlist = $this->playlistCacheService->getPlaylistFromCache($playlistId);
-
-        if ($playlist) {
-            return $playlist;
-        }
-
         $playlist = Playlist::query()->find($playlistId);
         if (!$playlist) {
             throw PlaylistException::notFound($playlistId);
         }
-
-        $this->playlistCacheService->savePlaylistToCache($playlist);
 
         return $playlist;
     }
@@ -73,8 +61,6 @@ class PlaylistRepository implements Interfaces\IPlaylistRepository
             throw PlaylistException::failedToCreate();
         }
 
-        $this->playlistCacheService->savePlaylistToCache($playlist);
-
         return $playlist->id;
     }
 
@@ -95,7 +81,6 @@ class PlaylistRepository implements Interfaces\IPlaylistRepository
             throw PlaylistException::failedToUpdate($playlistId);
         }
 
-        $this->playlistCacheService->deletePlaylistFromCache($playlistId);
     }
 
     /**
@@ -112,7 +97,5 @@ class PlaylistRepository implements Interfaces\IPlaylistRepository
         if (!$playlist->delete()) {
             throw PlaylistException::failedToDelete($playlistId);
         }
-
-        $this->playlistCacheService->deletePlaylistFromCache($playlistId);
     }
 }
