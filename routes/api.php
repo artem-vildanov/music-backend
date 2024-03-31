@@ -47,6 +47,8 @@ Route::group(['prefix' => 'artists', 'middleware' => Authenticate::class], funct
 
     Route::group(['prefix' => '{artistId}'], function() {
         Route::get('', [ArtistController::class, 'show']);
+
+        // TODO вынести руты для лайка дизлайка в отдельную группу рутов
         Route::put('add-to-favourites', [FavouriteArtistsController::class, 'addToFavouriteArtists'])->middleware(CheckArtistIsFavourite::class);
         Route::put('delete-from-favourites', [FavouriteArtistsController::class, 'deleteFromFavouriteArtists']);
 
@@ -64,6 +66,7 @@ Route::group(['prefix' => 'albums', 'middleware' => Authenticate::class], functi
     Route::group(['prefix' => '{albumId}', 'middleware' => [CheckAlbumStatus::class]], function () {
         Route::get('', [AlbumController::class, 'show']);
 
+        // TODO вынести руты для лайка дизлайка в отдельную группу рутов
         Route::put('add-to-favourites', [FavouriteAlbumsController::class, 'addToFavouriteAlbums'])->middleware(CheckAlbumIsFavourite::class);
         Route::put('delete-from-favourites', [FavouriteAlbumsController::class, 'deleteFromFavouriteAlbums']);
 
@@ -73,10 +76,12 @@ Route::group(['prefix' => 'albums', 'middleware' => Authenticate::class], functi
         })->withoutMiddleware(CheckAlbumStatus::class);
 
         Route::group(['prefix' => 'songs'], function () {
-            Route::post('create-song', [SongController::class, 'create'])->middleware([ArtistOwnership::class]);
+            Route::post('create-song', [SongController::class, 'create'])->middleware([AlbumOwnership::class]);
             Route::get('album-songs', [AlbumController::class, 'showSongsInAlbum']);
             Route::group(['prefix' => '{songId}', 'middleware' => CheckSongExists::class], function () {
                 Route::get('', [SongController::class, 'show'])->withoutMiddleware(CheckSongExists::class);
+
+                // TODO вынести руты для лайка дизлайка в отдельную группу рутов
                 Route::put('add-to-favourites', [FavouriteSongsController::class, 'addToFavouriteSongs'])->middleware(CheckSongIsFavourite::class);
                 Route::put('delete-from-favourites', [FavouriteSongsController::class, 'deleteFromFavouriteSongs']);
 
@@ -94,34 +99,44 @@ Route::group(['prefix' => 'albums', 'middleware' => Authenticate::class], functi
     });
 });
 
+
+
 Route::group(['prefix' => 'genre', 'middleware' => Authenticate::class], function() {
     Route::get('/all', [GenreController::class, 'showAll']);
 
     Route::group(['prefix' => '{genreId}', 'middleware' => CheckGenreExists::class], function() {
         Route::get('', [GenreController::class, 'show']);
+
+        // TODO вынести руты для лайка дизлайка в отдельную группу рутов
         Route::put('add-to-favourites', [FavouriteGenresController::class, 'addToFavouriteGenres'])->middleware(CheckGenreIsFavourite::class);
         Route::put('delete-from-favourites', [FavouriteGenresController::class, 'deleteFromFavouriteGenres']);
+
         Route::get('albums-by-genre', [GenreController::class, 'albumsWithGenre']);
     });
 });
 
+// TODO 
+
+// 
 Route::group(['prefix' => 'user', 'middleware' => Authenticate::class], function () {
 
     Route::get('/favourite-albums', [FavouriteAlbumsController::class, 'showFavouriteAlbums']);
     Route::get('/favourite-songs', [FavouriteSongsController::class, 'showFavouriteSongs']);
     Route::get('/favourite-artists', [FavouriteArtistsController::class, 'showFavouriteArtists']);
     Route::get('/favourite-genres', [FavouriteGenresController::class, 'showFavouriteGenres']);
-    Route::group(['prefix' => 'playlists'], function () {
-        Route::get('user-playlists', [PlaylistController::class, 'showUserPlaylists']);
-        Route::post('create-playlist', [PlaylistController::class, 'create']);
-        Route::group(['prefix' => '{playlistId}', 'middleware' => PlaylistOwnership::class], function () {
-            Route::get('', [PlaylistController::class, 'show']);
-            Route::get('playlist-songs', [PlaylistController::class, 'showSongsInPlaylist']);
-            Route::post('update-playlist', [PlaylistController::class, 'update']);
-            Route::delete('delete-playlist', [PlaylistController::class, 'delete']);
-        });
-    });
 
+
+});
+// TODO вынести группу рутов плейлистов на нижний уровень 
+Route::group(['prefix' => 'playlists'], function () {
+    Route::get('user-playlists', [PlaylistController::class, 'showUserPlaylists']);
+    Route::post('create-playlist', [PlaylistController::class, 'create']);
+    Route::group(['prefix' => '{playlistId}', 'middleware' => PlaylistOwnership::class], function () {
+        Route::get('', [PlaylistController::class, 'show']);
+        Route::get('playlist-songs', [PlaylistController::class, 'showSongsInPlaylist']);
+        Route::post('update-playlist', [PlaylistController::class, 'update']);
+        Route::delete('delete-playlist', [PlaylistController::class, 'delete']);
+    });
 });
 
 Route::group(['prefix' => 'auth'], function () {

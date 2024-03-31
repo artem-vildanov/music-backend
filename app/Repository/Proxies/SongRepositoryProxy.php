@@ -39,13 +39,14 @@ class SongRepositoryProxy implements ISongRepository
         return $this->songRepository->getAllByAlbum($albumId);
     }
 
-    public function create(string $name, string $photoPath, string $musicPath, int $albumId): int
+    public function create(string $name, string $photoPath, string $musicPath, int $albumId, int $artistId): int
     {
         return $this->songRepository->create(
             $name,
             $photoPath,
             $musicPath,
-            $albumId
+            $albumId,
+            $artistId
         );
     }
 

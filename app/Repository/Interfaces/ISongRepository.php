@@ -33,7 +33,7 @@ interface ISongRepository {
      * @throws DataAccessException
      * @return int
      */
-    public function create(string $name, string $photoPath, string $musicPath, int $albumId): int;
+    public function create(string $name, string $photoPath, string $musicPath, int $albumId, int $artistId): int;
 
     /**
      * @param int $songId

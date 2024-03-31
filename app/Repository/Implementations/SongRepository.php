@@ -33,14 +33,20 @@ class SongRepository implements ISongRepository
         return Song::query()->where('album_id', $albumId)->get()->all();
     }
 
-    public function create(string $name, string $photoPath, string $musicPath, int $albumId): int
-    {
+    public function create(
+        string $name,
+        string $photoPath,
+        string $musicPath, 
+        int $albumId,
+        int $artistId
+    ): int {
         $song = new Song;
         $song->name = $name;
         $song->likes = 0;
         $song->photo_path = $photoPath;
         $song->music_path = $musicPath;
         $song->album_id = $albumId;
+        $song->artist_id = $artistId;
 
         $song->save();
 
