@@ -42,9 +42,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+
 Route::group(['prefix' => 'artists', 'middleware' => Authenticate::class], function () {
     Route::post('/create-artist', [ArtistController::class, 'create'])->middleware(ForBaseUserPermitted::class);
-
+    // TODO для тестирования фронта, убрать потом !!
+    Route::get('all', [ArtistController::class, 'showAll']);
     Route::group(['prefix' => '{artistId}'], function() {
         Route::get('', [ArtistController::class, 'show']);
 

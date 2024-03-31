@@ -16,6 +16,8 @@ use App\Services\JwtServices\TokenService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+use App\Models\Artist;
+
 class ArtistController extends Controller
 {
     public function __construct(
@@ -36,6 +38,15 @@ class ArtistController extends Controller
         $artistDto = $this->artistMapper->mapSingleArtist($artist);
 
         return response()->json($artistDto);
+    }
+
+    // TODO для тестирования фронта, убрать потом 
+    public function showAll(): JsonResponse
+    {
+        $artists = Artist::all()->all();
+        $artistsDtoGroup = $this->artistMapper->mapMultipleArtists($artists);
+
+        return response()->json($artistsDtoGroup);
     }
 
     /**
