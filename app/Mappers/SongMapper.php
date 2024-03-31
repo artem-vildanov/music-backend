@@ -66,7 +66,7 @@ class SongMapper
         $songDto->photoPath = $song->photo_path;
         $songDto->musicPath = $song->music_path;
         $songDto->albumId = $song->album_id;
-        $songDto->albumName = $this->albumRepository->getById($song->id)->name;
+        $songDto->albumName = $this->albumRepository->getById($song->album_id)->name;
         $songDto->artistId = $song->artist_id;
         $songDto->artistName = $this->artistRepository->getById($songDto->artistId)->name;
         $songDto->isFavourite = $this->checkSongIsFavourite($songDto->id);

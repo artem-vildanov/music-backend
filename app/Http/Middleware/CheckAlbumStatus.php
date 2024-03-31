@@ -8,8 +8,10 @@ use App\Repository\Interfaces\IAlbumRepository;
 use App\Services\CacheServices\AlbumCacheService;
 use App\Services\DomainServices\AlbumService;
 use Closure;
+use Exception;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Log;
 
 class CheckAlbumStatus
 {
@@ -27,9 +29,8 @@ class CheckAlbumStatus
     public function handle(Request $request, Closure $next): Response
     {
         $albumId = $request->route('albumId');
-
-        $album = $this->albumRepository->getById($albumId);
-
+        $album = $this->albumRepository->getById($albumId); 
+        
         $authUser = AuthFacade::getAuthInfo();
 
         if (

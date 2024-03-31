@@ -20,7 +20,6 @@ class CheckAlbumExists
     public function handle(Request $request, Closure $next): Response
     {
         $requestAlbumId = (int)$request->route('albumId');
-
         $album = $this->albumRepository->getById($requestAlbumId);
 
         return $next($request);
