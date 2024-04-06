@@ -87,9 +87,9 @@ class TokenService
     {
         try {
             $tokenPayload = $this->encodeDecodeService->decode($token);
-            $this->tokenStorageService->findToken($token);
-            $this->checkIfExpired($tokenPayload);
             $this->checkIfRefreshable($tokenPayload);
+            $this->checkIfExpired($tokenPayload);
+            $this->tokenStorageService->findToken($token);
         } catch (RedisException $e) {
             throw JwtException::invalidToken();
         }

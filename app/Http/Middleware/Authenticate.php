@@ -4,22 +4,26 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Symfony\Component\HttpFoundation\Response as ResponseAlias;
+use App\Services\JwtServices\TokenService;
+use App\Models\TokenPayloadModel;
 
 class Authenticate
 {
-    /**
-     * Get the path the user should be redirected to when they are not authenticated.
-     */
+    public function __construct(
+        private readonly TokenService $tokenService,
+    ) {}
+    
     function handle(Request $request, Closure $next)
     {
-        $authInfo = $request->get('authInfo');
-
-        if ($authInfo === null) {
-            return new Response(status: ResponseAlias::HTTP_UNAUTHORIZED);
-        }
+        $authInfo = $this->getAuthInfo($request);
+        $request->attributes->add(['authInfo' => $authInfo]);
 
         return $next($request);
+    }
+
+    private function getAuthInfo(Request $request): ?TokenPayloadModel
+    {
+        $token = $this->tokenService->getTokenFromRequest($request);
+        return $this->tokenService->getTokenPayload($token);
     }
 }

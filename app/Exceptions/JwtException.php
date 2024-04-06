@@ -3,8 +3,9 @@
 namespace App\Exceptions;
 
 use App\Models\TokenPayloadModel;
+use Exception;
 
-class JwtException extends \Exception
+class JwtException extends Exception
 {
     protected ?TokenPayloadModel $tokenPayload;
     public function __construct(string $message = "", TokenPayloadModel $tokenPayload = null, int $code = 0, ?Throwable $previous = null)
