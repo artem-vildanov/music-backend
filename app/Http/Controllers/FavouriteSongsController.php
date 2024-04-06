@@ -33,7 +33,7 @@ class FavouriteSongsController extends Controller
     /**
      * @throws FavouritesException
      */
-    public function addToFavouriteSongs(int $albumId, int $songId): JsonResponse
+    public function addToFavouriteSongs(int $songId): JsonResponse
     {
         $userId = AuthFacade::getUserId();
 
@@ -46,7 +46,7 @@ class FavouriteSongsController extends Controller
     /**
      * @throws FavouritesException
      */
-    public function deleteFromFavouriteSongs(int $albumId, int $songId): JsonResponse
+    public function deleteFromFavouriteSongs(int $songId): JsonResponse
     {
         $userId = AuthFacade::getUserId();
 

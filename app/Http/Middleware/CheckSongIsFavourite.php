@@ -19,7 +19,7 @@ class CheckSongIsFavourite
         $songId = $request->route('songId');
         $userId = AuthFacade::getUserId();
 
-        if (!$this->favouritesRepository->checkSongIsFavourite($userId, $songId)) {
+        if ($this->favouritesRepository->checkSongIsFavourite($userId, $songId)) {
             return response()->json([
                 'message' => 'failed to add song to favourites'
             ]);
