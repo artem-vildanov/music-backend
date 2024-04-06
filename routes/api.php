@@ -118,10 +118,7 @@ Route::group(['prefix' => 'genre', 'middleware' => Authenticate::class], functio
     });
 });
 
-// TODO 
-
-// 
-Route::group(['prefix' => 'user', 'middleware' => Authenticate::class], function () {
+Route::group(['prefix' => 'favourite', 'middleware' => Authenticate::class], function () {
 
     Route::get('/favourite-albums', [FavouriteAlbumsController::class, 'showFavouriteAlbums']);
     Route::get('/favourite-songs', [FavouriteSongsController::class, 'showFavouriteSongs']);
