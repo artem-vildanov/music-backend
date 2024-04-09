@@ -22,7 +22,6 @@ class PlaylistOwnership
     {
         $playlistId = $request->route('playlistId');
 
-        // TODO search in cache then search in db && add to cache
         $playlist = $this->playlistRepository->getById($playlistId);
 
         $authUserId = AuthFacade::getUserId();

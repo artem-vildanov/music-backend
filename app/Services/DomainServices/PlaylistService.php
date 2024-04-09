@@ -24,7 +24,13 @@ class PlaylistService
         string $name,
         ?UploadedFile $playlistPhoto,
     ): int {
-        $photoPath = $this->photoStorageService->savePlaylistPhoto($playlistPhoto);
+
+        if ($playlistPhoto) {
+            $photoPath = $this->photoStorageService->savePlaylistPhoto($playlistPhoto);
+        } else {
+            $photoPath = 'no_image_provided';
+        }
+        
         $authUserId = AuthFacade::getUserId();
         return $this->playlistRepository->create(
             $name,

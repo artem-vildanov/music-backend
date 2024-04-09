@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Exceptions\FavouritesExceptions\FavouriteAlbumsException;
 use App\Facades\AuthFacade;
 use App\Repository\Interfaces\IFavouritesRepository;
 use Closure;
@@ -19,10 +20,8 @@ class CheckAlbumIsFavourite
         $albumId = $request->route('albumId');
         $userId = AuthFacade::getUserId();
 
-        if (!$this->favouritesRepository->checkAlbumIsFavourite($userId, $albumId)) {
-            return response()->json([
-                'message' => 'failed to add album to favourites'
-            ]);
+        if ($this->favouritesRepository->checkAlbumIsFavourite($userId, $albumId)) {
+            throw FavouriteAlbumsException::failedAddToFavourites($albumId);
         }
 
         return $next($request);

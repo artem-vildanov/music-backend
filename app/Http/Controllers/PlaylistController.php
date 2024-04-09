@@ -60,7 +60,7 @@ class PlaylistController extends Controller
     /**
      * @throws PlaylistSongsException
      */
-    public function addSongToPlaylist(int $artistId, int $albumId, int $songId, int $playlistId): JsonResponse
+    public function addSongToPlaylist(int $songId, int $playlistId): JsonResponse
     {
         $this->playlistSongsRepository->addSongToPlaylist($songId, $playlistId);
         return response()->json();
@@ -69,7 +69,7 @@ class PlaylistController extends Controller
     /**
      * @throws PlaylistSongsException
      */
-    public function deleteSongsFromPlaylist(int $artistId, int $albumId, int $songId, int $playlistId): JsonResponse
+    public function deleteSongsFromPlaylist(int $songId, int $playlistId): JsonResponse
     {
         $this->playlistSongsRepository->deleteSongFromPlaylist($songId, $playlistId);
         return response()->json();
@@ -83,11 +83,9 @@ class PlaylistController extends Controller
     {
         $data = $request->body();
 
-        $playlistId = $this->playlistService->savePlaylist($data->name, $data->photo);
+        $this->playlistService->savePlaylist($data->name, $data->photo);
 
-        return response()->json([
-            "created playlist with id = {$playlistId}"
-        ]);
+        return response()->json();
     }
 
     /**

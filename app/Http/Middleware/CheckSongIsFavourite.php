@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Exceptions\FavouritesExceptions\FavouriteSongsException;
 use App\Facades\AuthFacade;
 use App\Repository\Interfaces\IFavouritesRepository;
 use Closure;
@@ -20,9 +21,7 @@ class CheckSongIsFavourite
         $userId = AuthFacade::getUserId();
 
         if ($this->favouritesRepository->checkSongIsFavourite($userId, $songId)) {
-            return response()->json([
-                'message' => 'failed to add song to favourites'
-            ]);
+            throw FavouriteSongsException::failedAddToFavourites($songId);
         }
 
         return $next($request);
