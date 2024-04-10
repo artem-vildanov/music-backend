@@ -60,7 +60,7 @@ class PlaylistController extends Controller
     /**
      * @throws PlaylistSongsException
      */
-    public function addSongToPlaylist(int $songId, int $playlistId): JsonResponse
+    public function addSongToPlaylist(int $playlistId, int $songId): JsonResponse
     {
         $this->playlistSongsRepository->addSongToPlaylist($songId, $playlistId);
         return response()->json();
@@ -69,7 +69,7 @@ class PlaylistController extends Controller
     /**
      * @throws PlaylistSongsException
      */
-    public function deleteSongsFromPlaylist(int $songId, int $playlistId): JsonResponse
+    public function deleteSongsFromPlaylist(int $playlistId, int $songId): JsonResponse
     {
         $this->playlistSongsRepository->deleteSongFromPlaylist($songId, $playlistId);
         return response()->json();
