@@ -153,5 +153,5 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('signup', [AuthController::class, 'signup']);
     Route::post('logout', [AuthController::class, 'logout'])->middleware(Authenticate::class);
     Route::post('refresh', [AuthController::class, 'refresh']);
-    Route::post('me', [AuthController::class, 'me'])->middleware(Authenticate::class);
+    Route::get('me', [AuthController::class, 'me'])->middleware(Authenticate::class);
 });
