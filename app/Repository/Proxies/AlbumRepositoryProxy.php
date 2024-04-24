@@ -42,17 +42,24 @@ class AlbumRepositoryProxy implements IAlbumRepository
         // TODO: Implement getAllByGenre() method.
     }
 
+    public function getAllReadyToPublish(): array
+    {
+        return $this->albumRepository->getAllReadyToPublish();
+    }
+
     public function create(
         string $name,
         string $photoPath,
         int $artistId,
-        int $genreId
+        int $genreId,
+        string $publishTime
     ): int {
         return $this->albumRepository->create(
             $name,
             $photoPath,
             $artistId,
-            $genreId
+            $genreId,
+            $publishTime
         );
     }
 
@@ -60,13 +67,15 @@ class AlbumRepositoryProxy implements IAlbumRepository
         int $albumId,
         string $name,
         string $status,
-        int $genreId
+        int $genreId,
+        ?string $publishTime
     ): void {
         $this->albumRepository->update(
             $albumId,
             $name,
             $status,
-            $genreId
+            $genreId,
+            $publishTime
         );
 
         $this->albumCacheService->deleteAlbumFromCache($albumId);

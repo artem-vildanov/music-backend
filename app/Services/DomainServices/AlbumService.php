@@ -5,6 +5,7 @@ namespace App\Services\DomainServices;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\MinioException;
 use App\Facades\AuthFacade;
+use App\Jobs\PublishAlbums;
 use App\Models\Album;
 use App\Repository\Interfaces\IAlbumRepository;
 use App\Repository\Interfaces\IArtistRepository;
@@ -13,7 +14,10 @@ use App\Repository\Interfaces\ISongRepository;
 use App\Services\CacheServices\AlbumCacheService;
 use App\Services\CacheServices\CacheStorageService;
 use App\Services\FilesStorageServices\PhotoStorageService;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 
 class AlbumService
 {
@@ -34,7 +38,8 @@ class AlbumService
     public function saveAlbum(
         string $name,
         UploadedFile $albumPhoto,
-        int $genreId
+        int $genreId,
+        string $publishTime
     ): int {
         $this->genreRepository->getById($genreId);
 
@@ -43,7 +48,17 @@ class AlbumService
         $authUserId = AuthFacade::getUserId();
         $artist = $this->artistRepository->getByUserId($authUserId);
 
-        return $this->albumRepository->create($name, $photoPath, $artist->id, $genreId);
+        $albumId = $this->albumRepository->create(
+            $name,
+            $photoPath,
+            $artist->id, 
+            $genreId,
+            $publishTime
+        );
+
+        // $this->addAlbumToPublishQueue($albumId, $publishTime);
+        
+        return $albumId;
     }
 
     /**
@@ -55,7 +70,8 @@ class AlbumService
         ?string $name,
         ?UploadedFile $photoFile,
         ?string $status,
-        ?int $genreId
+        ?int $genreId,
+        ?string $publishTime
     ): void {
 
         $album = $this->albumRepository->getById($albumId);
@@ -78,11 +94,16 @@ class AlbumService
             $updatedAlbum->status = $status;
         }
 
+        if ($publishTime) {
+            $updatedAlbum->publish_at = $publishTime;
+        }
+
         $this->albumRepository->update(
             $albumId,
             $updatedAlbum->name,
             $updatedAlbum->photo_path,
-            $updatedAlbum->genre_id
+            $updatedAlbum->genre_id,
+            $updatedAlbum->publish_at
         );
     }
 
@@ -103,5 +124,19 @@ class AlbumService
 
         $this->albumRepository->delete($albumId);
 
+    }
+
+    public function publishAllReadyAlbums(): void 
+    {
+        $albums = $this->albumRepository->getAllReadyToPublish();
+        foreach ($albums as $album) {
+            $this->albumRepository->update(
+                $album->id,
+                $album->name,
+                'public',
+                $album->genre_id,
+                null
+            );
+        }
     }
 }

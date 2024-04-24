@@ -4,6 +4,7 @@ namespace App\Http\Requests\Album;
 
 use App\Http\RequestModels\Album\CreateAlbumModel;
 use App\Http\Requests\BaseFormRequest;
+use Illuminate\Support\Facades\Log;
 
 class CreateAlbumRequest extends BaseFormRequest
 {
@@ -12,7 +13,8 @@ class CreateAlbumRequest extends BaseFormRequest
         return [
             'name' => 'required|string',
             'photo' => 'required|mimes:png',
-            'genreId' => 'required|int'
+            'genreId' => 'required|int',
+            'publishTime' => 'required|string'
         ];
     }
 
@@ -22,6 +24,7 @@ class CreateAlbumRequest extends BaseFormRequest
         $model->name = $this->string('name');
         $model->photo = $this->file('photo');
         $model->genreId = $this->integer('genreId');
+        $model->publishTime = $this->string('publishTime');
 
         return $model;
     }

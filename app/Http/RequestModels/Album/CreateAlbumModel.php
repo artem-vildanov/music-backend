@@ -9,4 +9,5 @@ class CreateAlbumModel
     public string $name;
     public UploadedFile $photo;
     public int $genreId;
+    public string $publishTime;
 }

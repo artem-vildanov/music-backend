@@ -4,6 +4,8 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Console\Scheduling\CallbackEvent;
+use App\Jobs\ArtisanCommandJob;
 
 class Kernel extends ConsoleKernel
 {
@@ -12,7 +14,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        $this->job($schedule, 'app:publish-albums', 'default')->everyMinute();
+    }
+
+    private function job(Schedule $schedule, string $commandName, string $queue): CallbackEvent
+    {
+        return $schedule->job(new ArtisanCommandJob($commandName), $queue);
     }
 
     /**

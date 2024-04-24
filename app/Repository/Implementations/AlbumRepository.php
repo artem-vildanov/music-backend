@@ -6,7 +6,7 @@ use App\Exceptions\DataAccessExceptions\AlbumException;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Models\Album;
 use App\Repository\Interfaces\IAlbumRepository;
-
+use Illuminate\Support\Facades\Log;
 
 class AlbumRepository implements IAlbumRepository
 {
@@ -36,17 +36,30 @@ class AlbumRepository implements IAlbumRepository
         // TODO: Implement getAllByGenre() method.
     }
 
+    public function getAllReadyToPublish(): array
+    {
+        // try {
+            
+        // } catch (\Throwable $th) {
+        //     Log::error($th);
+        // }
+        $albums = Album::query()->where('publish_at', '<=', now())->get()->all();
+        return $albums;
+    }
+
     public function create(
         string $name,
         string $photoPath,
         int $artistId,
-        int $genreId
+        int $genreId,
+        string $publishTime
     ): int {
         $album = new Album;
         $album->name = $name;
         $album->photo_path = $photoPath;
         $album->artist_id = $artistId;
         $album->genre_id = $genreId;
+        $album->publish_at = $publishTime;
 
         $album->likes = 0;
         $album->cdn_folder_id = uniqid(more_entropy: true);
@@ -65,7 +78,8 @@ class AlbumRepository implements IAlbumRepository
         int $albumId,
         string $name,
         string $status,
-        int $genreId
+        int $genreId,
+        ?string $publishTime
     ): void {
         try {
             $album = $this->getById($albumId);
@@ -76,6 +90,7 @@ class AlbumRepository implements IAlbumRepository
         $album->name = $name;
         $album->status = $status;
         $album->genre_id = $genreId;
+        $album->publish_at = $publishTime;
 
         if (!$album->save()) {
             throw AlbumException::failedToUpdate($albumId);

@@ -4,6 +4,7 @@ volumes:
   db-mysql:
   minio:
   api-server-storage:
+  cron-server-storage:
   redis:
 
 networks:
@@ -94,3 +95,37 @@ services:
       - "6379:6379"
     volumes:
       - redis:/data
+
+  cron-scheduler:
+    build:
+      context: ./
+      dockerfile: cron-scheduler.Dockerfile
+    restart: always
+    container_name: cron-scheduler
+    networks:
+      c4_network:
+        ipv4_address: 172.15.0.10
+    extra_hosts:
+      - "db.music.local:172.15.0.4"
+      - "redis.music.local:172.15.0.5"
+    volumes:
+      - ./:/var/www/api-server
+      - cron-server-storage:/var/www/api-server/storage
+
+  cron-default:
+    build:
+      context: ./
+      dockerfile: cron-worker.Dockerfile
+    restart: always
+    container_name: cron-default
+    working_dir: /var/www/api-server
+    networks:
+      c4_network:
+        ipv4_address: 172.15.0.11
+    extra_hosts:
+      - "db.music.local:172.15.0.4"
+      - "redis.music.local:172.15.0.5"
+    volumes:
+      - ./:/var/www/api-server
+      - cron-server-storage:/var/www/api-server/storage
+    command: php /var/www/api-server/artisan queue:work --queue=default --timeout 60

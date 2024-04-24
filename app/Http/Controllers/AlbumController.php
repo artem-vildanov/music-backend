@@ -13,6 +13,7 @@ use App\Repository\Interfaces\ISongRepository;
 use App\Services\CacheServices\AlbumCacheService;
 use App\Services\DomainServices\AlbumService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class AlbumController extends Controller
 {
@@ -57,7 +58,8 @@ class AlbumController extends Controller
         $albumId = $this->albumService->saveAlbum(
             $data->name,
             $data->photo,
-            $data->genreId
+            $data->genreId,
+            $data->publishTime
         );
 
         return response()->json([
@@ -78,7 +80,8 @@ class AlbumController extends Controller
             $data->name,
             $data->photo,
             $data->status,
-            $data->genreId
+            $data->genreId,
+            $data->publishTime
         );
 
         return response()->json();

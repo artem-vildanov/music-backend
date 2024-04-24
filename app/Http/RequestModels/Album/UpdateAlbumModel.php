@@ -10,4 +10,5 @@ class UpdateAlbumModel
     public ?UploadedFile $photo;
     public ?string $status;
     public ?int $genreId;
+    public ?string $publishTime;
 }

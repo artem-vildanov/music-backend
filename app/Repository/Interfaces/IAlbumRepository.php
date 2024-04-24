@@ -27,6 +27,12 @@ interface IAlbumRepository {
 
     public function getAllByGenre(int $genreId);
 
+
+    /**
+     * @return array<Album>
+     */
+    public function getAllReadyToPublish(): array;
+
     /**
      * @param string $name
      * @param string $photoPath
@@ -39,7 +45,8 @@ interface IAlbumRepository {
         string $name,
         string $photoPath,
         int $artistId,
-        int $genreId
+        int $genreId,
+        string $publishTime
     ): int;
 
     /**
@@ -54,7 +61,8 @@ interface IAlbumRepository {
         int $albumId,
         string $name,
         string $status,
-        int $genreId
+        int $genreId,
+        ?string $publishTime
     ): void;
 
     /**

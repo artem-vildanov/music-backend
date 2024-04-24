@@ -14,7 +14,8 @@ class UpdateAlbumRequest extends BaseFormRequest
             'name' => 'nullable|string',
             'photo' => 'nullable|mimes:png',
             'status' => 'nullable|string|in:private,public',
-            'genreId' => 'nullable|integer'
+            'genreId' => 'nullable|integer',
+            'publishTime' => 'nullable|string'
         ];
     }
 
@@ -25,6 +26,7 @@ class UpdateAlbumRequest extends BaseFormRequest
         $model->photo = $this->file('photo');
         $model->status = $this->string('status');
         $model->genreId = $this->integer('genreId');
+        $model->publishTime = $this->string('publishTime');
 
         return $model;
     }
