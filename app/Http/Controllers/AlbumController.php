@@ -79,7 +79,6 @@ class AlbumController extends Controller
             $albumId,
             $data->name,
             $data->photo,
-            $data->status,
             $data->genreId,
             $data->publishTime
         );

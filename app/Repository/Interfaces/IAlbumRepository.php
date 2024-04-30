@@ -60,7 +60,6 @@ interface IAlbumRepository {
     public function update(
         int $albumId,
         string $name,
-        string $status,
         int $genreId,
         ?string $publishTime
     ): void;

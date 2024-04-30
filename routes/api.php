@@ -91,7 +91,7 @@ Route::group(['prefix' => 'albums', 'middleware' => Authenticate::class], functi
 
 
 
-Route::group(['prefix' => 'genre', 'middleware' => Authenticate::class], function() {
+Route::group(['prefix' => 'genres', 'middleware' => Authenticate::class], function() {
     Route::get('/all', [GenreController::class, 'showAll']);
 
     Route::group(['prefix' => '{genreId}', 'middleware' => CheckGenreExists::class], function() {
