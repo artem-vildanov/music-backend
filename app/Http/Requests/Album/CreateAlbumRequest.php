@@ -14,7 +14,7 @@ class CreateAlbumRequest extends BaseFormRequest
             'name' => 'required|string',
             'photo' => 'required|mimes:png',
             'genreId' => 'required|int',
-            'publishTime' => 'required|string'
+            'publishTime' => 'nullable|string'
         ];
     }
 

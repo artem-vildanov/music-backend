@@ -39,7 +39,7 @@ class AlbumService
         string $name,
         UploadedFile $albumPhoto,
         int $genreId,
-        string $publishTime
+        ?string $publishTime
     ): int {
         $this->genreRepository->getById($genreId);
 
@@ -47,6 +47,10 @@ class AlbumService
 
         $authUserId = AuthFacade::getUserId();
         $artist = $this->artistRepository->getByUserId($authUserId);
+
+        if (!$publishTime) {
+            $publishTime = now();
+        }
 
         $albumId = $this->albumRepository->create(
             $name,
