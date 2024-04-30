@@ -2,6 +2,7 @@
 
 namespace App\Services\DomainServices;
 
+use App\Exceptions\DataAccessExceptions\AlbumException;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\MinioException;
 use App\Facades\AuthFacade;
@@ -73,7 +74,6 @@ class AlbumService
         int $albumId,
         ?string $name,
         ?UploadedFile $photoFile,
-        ?string $status,
         ?int $genreId,
         ?string $publishTime
     ): void {
@@ -94,18 +94,17 @@ class AlbumService
             $this->photoStorageService->updatePhoto($album->photo_path, $photoFile);
         }
 
-        if ($status) {
-            $updatedAlbum->status = $status;
-        }
-
         if ($publishTime) {
+            if ($album->status === 'public') {
+                throw AlbumException::failedToUpdate($album->id);
+            }
+
             $updatedAlbum->publish_at = $publishTime;
         }
 
         $this->albumRepository->update(
             $albumId,
             $updatedAlbum->name,
-            $updatedAlbum->photo_path,
             $updatedAlbum->genre_id,
             $updatedAlbum->publish_at
         );

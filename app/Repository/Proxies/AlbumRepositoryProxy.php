@@ -66,14 +66,12 @@ class AlbumRepositoryProxy implements IAlbumRepository
     public function update(
         int $albumId,
         string $name,
-        string $status,
         int $genreId,
         ?string $publishTime
     ): void {
         $this->albumRepository->update(
             $albumId,
             $name,
-            $status,
             $genreId,
             $publishTime
         );

@@ -77,7 +77,6 @@ class AlbumRepository implements IAlbumRepository
     public function update(
         int $albumId,
         string $name,
-        string $status,
         int $genreId,
         ?string $publishTime
     ): void {
@@ -88,7 +87,6 @@ class AlbumRepository implements IAlbumRepository
         }
 
         $album->name = $name;
-        $album->status = $status;
         $album->genre_id = $genreId;
         $album->publish_at = $publishTime;
 
