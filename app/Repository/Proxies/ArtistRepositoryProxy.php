@@ -45,9 +45,15 @@ class ArtistRepositoryProxy implements IArtistRepository
         );
     }
 
-    public function update(int $artistId, string $name): void
+    public function updateName(int $artistId, string $name): void
     {
-        $this->artistRepository->update($artistId, $name);
+        $this->artistRepository->updateName($artistId, $name);
+        $this->artistCacheService->deleteArtistFromCache($artistId);
+    }
+
+    public function updatePhoto(int $artistId, string $photoPath): void
+    {
+        $this->artistRepository->updatePhoto($artistId, $photoPath);
         $this->artistCacheService->deleteArtistFromCache($artistId);
     }
 

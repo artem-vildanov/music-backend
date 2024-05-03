@@ -8,6 +8,8 @@ use App\Facades\AuthFacade;
 use App\Repository\Interfaces\IPlaylistRepository;
 use App\Services\FilesStorageServices\PhotoStorageService;
 use Illuminate\Http\UploadedFile;
+use App\Models\Playlist;
+use Aws\Multipart\UploadState;
 
 class PlaylistService
 {
@@ -17,52 +19,34 @@ class PlaylistService
     ) {}
 
     /**
-     * @throws DataAccessException
      * @throws MinioException
+     * @throws DataAccessException
      */
-    public function savePlaylist(
-        string $name,
-        ?UploadedFile $playlistPhoto,
-    ): int {
+    public function updatePlaylistPhoto(int $playlistId, UploadedFile $playlistPhoto): void
+    {
+        $playlist = $this->playlistRepository->getById($playlistId);        
+ 
 
-        if ($playlistPhoto) {
-            $photoPath = $this->photoStorageService->savePlaylistPhoto($playlistPhoto);
-        } else {
-            $photoPath = 'no_image_provided';
+        // $newPhotoPath = $this->updatePhoto($playlist->photo_path, $playlistPhoto);
+
+        $newPhotoPath = '';
+
+        if ($playlist->photo_status === "unset") {
+            $newPhotoPath = $this->photoStorageService->savePhoto($playlistPhoto, Playlist::getModelName());
+        } 
+
+        elseif ($playlist->photo_status === "set") {
+            $newPhotoPath = $this->photoStorageService
+                ->updatePhoto(
+                    $playlist->photo_path, 
+                    $playlistPhoto, 
+                    Playlist::getModelName()
+                );
         }
         
-        $authUserId = AuthFacade::getUserId();
-        return $this->playlistRepository->create(
-            $name,
-            $photoPath,
-            $authUserId
-        );
-    }
-
-    /**
-     * @throws MinioException
-     * @throws DataAccessException
-     */
-    public function updatePlaylist(
-        int $playlistId,
-        ?string $name,
-        ?UploadedFile $playlistPhoto
-    ): void
-    {
-        $playlist = $this->playlistRepository->getById($playlistId);
-        $updatedPlaylist = $playlist;
-
-        if ($name) {
-            $updatedPlaylist->name = $name;
-        }
-
-        if ($playlistPhoto) {
-            $this->photoStorageService->updatePhoto($playlist->photo_path, $playlistPhoto);
-        }
-
-        $this->playlistRepository->update(
+        $this->playlistRepository->updatePhoto(
             $playlistId,
-            $updatedPlaylist->name,
+            $newPhotoPath
         );
     }
 

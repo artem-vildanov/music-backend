@@ -57,12 +57,17 @@ interface IAlbumRepository {
      * @throws DataAccessException
      * @return void
      */
-    public function update(
+    public function updateNameAndGenre(
         int $albumId,
         string $name,
-        int $genreId,
-        ?string $publishTime
+        int $genreId
     ): void;
+
+    public function makePublic(int $albumId): void;
+
+    public function updatePublishTime(int $albumId, string $publishTime): void;
+
+    public function updatePhoto(int $albumId, string $photoPath): void;
 
     /**
      * @param int $albumId

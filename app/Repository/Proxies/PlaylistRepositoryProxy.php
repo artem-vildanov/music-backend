@@ -56,21 +56,23 @@ class PlaylistRepositoryProxy implements IPlaylistRepository
      * @inheritDoc
      * @throws DataAccessException
      */
-    public function create(string $name, string $photoPath, int $userId): int
+    public function create(string $name, int $userId): int
     {
-        return $this->playlistRepository->create(
-            $name,
-            $photoPath,
-            $userId
-        );
+        return $this->playlistRepository->create($name, $userId);
     }
 
     /**
      * @throws DataAccessException
      */
-    public function update(int $playlistId, string $name): void
+    public function updateName(int $playlistId, string $name): void
     {
-        $this->playlistRepository->update($playlistId, $name);
+        $this->playlistRepository->updateName($playlistId, $name);
+        $this->playlistCacheService->deletePlaylistFromCache($playlistId);
+    }
+
+    public function updatePhoto(int $playlistId, string $photoPath): void
+    {
+        $this->playlistRepository->updatePhoto($playlistId, $photoPath);
         $this->playlistCacheService->deletePlaylistFromCache($playlistId);
     }
 

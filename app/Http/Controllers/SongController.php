@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\MinioException;
 use App\Http\Requests\Song\CreateSongRequest;
-use App\Http\Requests\Song\UpdateSongRequest;
+use App\Http\Requests\Song\UpdateSongAudioRequest;
+use App\Http\Requests\Song\UpdateSongNameRequest;
 use App\Mappers\SongMapper;
 use App\Repository\Interfaces\ISongRepository;
 use App\Services\DomainServices\SongService;
@@ -24,7 +25,7 @@ class SongController extends Controller
     /**
      * @throws DataAccessException
      */
-    public function show(int $songId): JsonResponse
+    public function show(int $albumId, int $songId): JsonResponse
     {
         $song = $this->songRepository->getById($songId);
         $songDto = $this->songMapper->mapSingleSong($song);
@@ -52,11 +53,17 @@ class SongController extends Controller
      * @throws DataAccessException
      * @throws MinioException
      */
-    public function update(int $songId, UpdateSongRequest $request): JsonResponse
+    public function updateName(int $albumId, int $songId, UpdateSongNameRequest $request): JsonResponse
     {
         $data = $request->body();
+        $this->songRepository->updateName($songId, $data->name);
+        return response()->json();
+    }
 
-        $this->songService->updateSong($songId, $data->name, $data->music);
+    public function updateAudio(int $albumId, int $songId, UpdateSongAudioRequest $request): JsonResponse
+    {
+        $data = $request->body();
+        $this->songService->updateSongAudio($songId, $data->audio);
         return response()->json();
     }
 
@@ -64,7 +71,7 @@ class SongController extends Controller
      * @throws DataAccessException
      * @throws MinioException
      */
-    public function delete(int $songId): JsonResponse
+    public function delete(int $albumId, int $songId): JsonResponse
     {
         $this->songService->deleteSong($songId);
         return response()->json();

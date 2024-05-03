@@ -34,16 +34,11 @@ interface IPlaylistRepository
 
     /**
      * @param string $name
-     * @param string $photoPath
      * @param int $userId
      * @throws DataAccessException
      * @return int playlistId
      */
-    public function create(
-        string $name,
-        string $photoPath,
-        int $userId
-    ): int;
+    public function create(string $name, int $userId): int;
 
     /**
      * @param int $playlistId
@@ -51,7 +46,9 @@ interface IPlaylistRepository
      * @throws DataAccessException
      * @return void
      */
-    public function update(int $playlistId, string $name): void;
+    public function updateName(int $playlistId, string $name): void;
+
+    public function updatePhoto(int $playlistId, string $photoPath): void;
 
     /**
      * @param int $playlistId

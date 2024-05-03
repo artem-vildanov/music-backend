@@ -50,12 +50,12 @@ class PlaylistRepository implements IPlaylistRepository
      * @inheritDoc
      * @throws DataAccessException
      */
-    public function create(string $name, string $photoPath, int $userId): int
+    public function create(string $name, int $userId): int
     {
         $playlist = new Playlist();
         $playlist->name = $name;
-        $playlist->photo_path = $photoPath;
         $playlist->user_id = $userId;
+        $playlist->photo_path = "playlist/base_playlist_image.png";
 
         if (!$playlist->save()) {
             throw PlaylistException::failedToCreate();
@@ -67,20 +67,27 @@ class PlaylistRepository implements IPlaylistRepository
     /**
      * @throws DataAccessException
      */
-    public function update(int $playlistId, string $name): void
+    public function updateName(int $playlistId, string $name): void
     {
         try {
             $playlist = $this->getById($playlistId);
+            $playlist->name = $name;
+            $playlist->save();
         } catch (DataAccessException $e) {
             throw PlaylistException::failedToUpdate($playlistId);
         }
+    }
 
-        $playlist->name = $name;
-
-        if (!$playlist->save()) {
+    public function updatePhoto(int $playlistId, string $photoPath): void
+    {
+        try {
+            $playlist = $this->getById($playlistId);
+            $playlist->photo_path = $photoPath;
+            $playlist->photo_status = 'set'; // TODO refactor into enum
+            $playlist->save();
+        } catch (DataAccessException $e) {
             throw PlaylistException::failedToUpdate($playlistId);
         }
-
     }
 
     /**

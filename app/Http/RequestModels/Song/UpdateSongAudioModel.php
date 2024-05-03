@@ -4,8 +4,7 @@ namespace App\Http\RequestModels\Song;
 
 use Illuminate\Http\UploadedFile;
 
-class UpdateSongModel
+class UpdateSongAudioModel
 {
-    public ?string $name;
-    public ?UploadedFile $music;
+    public UploadedFile $audio;
 }

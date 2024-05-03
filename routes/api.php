@@ -51,7 +51,8 @@ Route::group(['prefix' => 'artists', 'middleware' => Authenticate::class], funct
     Route::group(['prefix' => '{artistId}'], function() {
         Route::get('', [ArtistController::class, 'show']);
         Route::group(['middleware' => ArtistOwnership::class], function() {
-            Route::post('update-artist', [ArtistController::class, 'update']);
+            Route::post('update-artist-name', [ArtistController::class, 'updateName']);
+            Route::post('update-artist-photo', [ArtistController::class, 'updatePhoto']);
             Route::delete('delete-artist', [ArtistController::class, 'delete']);
         })->withoutMiddleware([CheckArtistExists::class]);;
     });
@@ -65,7 +66,9 @@ Route::group(['prefix' => 'albums', 'middleware' => Authenticate::class], functi
         Route::get('', [AlbumController::class, 'show']);
         Route::group(['middleware' => [AlbumOwnership::class]], function() {
             Route::delete('delete-album', [AlbumController::class, 'delete']);
-            Route::post('update-album', [AlbumController::class, 'update']);
+            Route::post('update-album-name-genre', [AlbumController::class, 'updateNameAndGenre']);
+            Route::post('update-album-publish-time', [AlbumController::class, 'updatePublishTime']);
+            Route::post('update-album-photo', [AlbumController::class, 'updatePhoto']);
         })->withoutMiddleware(CheckAlbumStatus::class);
 
         Route::group(['prefix' => 'songs'], function () {
@@ -74,14 +77,9 @@ Route::group(['prefix' => 'albums', 'middleware' => Authenticate::class], functi
             Route::group(['prefix' => '{songId}', 'middleware' => CheckSongExists::class], function () {
                 Route::get('', [SongController::class, 'show'])->withoutMiddleware(CheckSongExists::class);
 
-                // TODO вынести в группу рутов плейлиста
-                // Route::group(['middleware' => PlaylistOwnership::class], function () {   
-                //     Route::put('add-to-playlist/{playlistId}', [PlaylistController::class, 'addSongToPlaylist'])->middleware(CheckSongInPlaylist::class);
-                //     Route::put('delete-from-playlist/{playlistId}', [PlaylistController::class, 'deleteSongsFromPlaylist']);
-                // })->withoutMiddleware(CheckSongExists::class);
-
                 Route::group(['middleware' => [AlbumOwnership::class]], function() {
-                    Route::post('/update-song', [SongController::class, 'update']);
+                    Route::post('/update-song-name', [SongController::class, 'updateName']);
+                    Route::post('/update-song-audio', [SongController::class, 'updateAudio']);
                     Route::delete('/delete-song', [SongController::class, 'delete']);
                 })->withoutMiddleware(CheckAlbumStatus::class);;
             });
@@ -138,7 +136,8 @@ Route::group(['prefix' => 'playlists', 'middleware' => Authenticate::class], fun
     Route::group(['prefix' => '{playlistId}', 'middleware' => PlaylistOwnership::class], function () {
         Route::get('', [PlaylistController::class, 'show']);
         Route::get('playlist-songs', [PlaylistController::class, 'showSongsInPlaylist']);
-        Route::post('update-playlist', [PlaylistController::class, 'update']);
+        Route::post('update-playlist-name', [PlaylistController::class, 'updateName']);
+        Route::post('update-playlist-photo', [PlaylistController::class, 'updatePhoto']);
         Route::delete('delete-playlist', [PlaylistController::class, 'delete']);
 
         // TODO добавить проверку на публичность трека, запрос по albumId и проверить album status

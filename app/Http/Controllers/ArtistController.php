@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\JwtException;
 use App\Exceptions\MinioException;
+use App\Http\Requests\Artist\UpdateArtistPhotoRequest;
 use App\Http\Requests\Artist\CreateArtistRequest;
-use App\Http\Requests\Artist\UpdateArtistRequest;
+use App\Http\Requests\Artist\UpdateArtistNameRequest;
 use App\Mappers\AlbumMapper;
 use App\Mappers\ArtistMapper;
 use App\Repository\Interfaces\IAlbumRepository;
@@ -85,18 +86,19 @@ class ArtistController extends Controller
      * @throws DataAccessException
      * @throws MinioException
      */
-    public function update(int $artistId, UpdateArtistRequest $request): JsonResponse
+    public function updateName(int $artistId, UpdateArtistNameRequest $request): JsonResponse
     {
         $data = $request->body();
-
-        $this->artistService->updateArtist(
-            $artistId,
-            $data->name,
-            $data->photo
-        );
-
+        $this->artistRepository->updateName($artistId, $data->name);
         return response()->json();
     }
+
+    public function updatePhoto(int $artistId, UpdateArtistPhotoRequest $request): JsonResponse
+    {
+        $data = $request->body();        
+        $this->artistService->updateArtistPhoto($artistId, $data->photo);
+        return response()->json();
+    }    
 
     /**
      * @throws DataAccessException

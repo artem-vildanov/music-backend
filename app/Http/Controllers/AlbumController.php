@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\MinioException;
+use App\Http\RequestModels\Album\UpdateAlbumPublishTimeModel;
 use App\Http\Requests\Album\CreateAlbumRequest;
-use App\Http\Requests\Album\UpdateAlbumRequest;
+use App\Http\Requests\Album\UpdateAlbumPhotoRequest;
+use App\Http\Requests\Album\UpdateAlbumPublishTimeRequest;
+use App\Http\Requests\Album\UpdateAlbumNameAndGenreRequest;
 use App\Mappers\AlbumMapper;
 use App\Mappers\SongMapper;
 use App\Repository\Interfaces\IAlbumRepository;
+use App\Repository\Interfaces\IGenreRepository;
 use App\Repository\Interfaces\ISongRepository;
 use App\Services\CacheServices\AlbumCacheService;
 use App\Services\DomainServices\AlbumService;
@@ -23,6 +27,7 @@ class AlbumController extends Controller
         private readonly IAlbumRepository $albumRepository,
         private readonly AlbumMapper $albumMapper,
         private readonly SongMapper $songMapper,
+        private readonly IGenreRepository $genreRepository
     ) {}
 
     /**
@@ -71,18 +76,32 @@ class AlbumController extends Controller
      * @throws DataAccessException
      * @throws MinioException
      */
-    public function update(int $albumId, UpdateAlbumRequest $request): JsonResponse
+    public function updateNameAndGenre(int $albumId, UpdateAlbumNameAndGenreRequest $request): JsonResponse
     {
         $data = $request->body();
 
-        $this->albumService->updateAlbum(
+        $this->genreRepository->getById($data->genreId); // check for existance
+
+        $this->albumRepository->updateNameAndGenre(
             $albumId,
             $data->name,
-            $data->photo,
             $data->genreId,
-            $data->publishTime
         );
 
+        return response()->json();
+    }
+
+    public function updatePublishTime(int $albumId, UpdateAlbumPublishTimeRequest $request): JsonResponse
+    {
+        $data = $request->body();
+        $this->albumRepository->updatePublishTime($albumId, $data->publishTime);
+        return response()->json();
+    }
+
+    public function updatePhoto(int $albumId, UpdateAlbumPhotoRequest $request): JsonResponse
+    {
+        $data = $request->body();
+        $this->albumService->updateAlbumPhoto($albumId, $data->photo);
         return response()->json();
     }
 

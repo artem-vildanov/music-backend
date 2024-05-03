@@ -2,11 +2,10 @@
 
 namespace App\Http\Requests\Playlist;
 
-use App\Http\RequestModels\Artist\CreateArtistModel;
-use App\Http\RequestModels\Playlist\CreatePlaylistModel;
+use App\Http\RequestModels\Playlist\UpdatePlaylistNameModel;
 use App\Http\Requests\BaseFormRequest;
 
-class CreatePlaylistRequest extends BaseFormRequest
+class UpdatePlaylistNameRequest extends BaseFormRequest
 {
     public function rules(): array
     {
@@ -16,11 +15,11 @@ class CreatePlaylistRequest extends BaseFormRequest
     }
 
     /**
-     * @return mixed
+     * @return UpdatePlaylistNameModel
      */
-    public function body(): CreatePlaylistModel
+    public function body(): UpdatePlaylistNameModel
     {
-        $model = new CreatePlaylistModel();
+        $model = new UpdatePlaylistNameModel();
         $model->name = $this->string('name');
 
         return $model;

@@ -4,8 +4,7 @@ namespace App\Http\RequestModels\Playlist;
 
 use Illuminate\Http\UploadedFile;
 
-class UpdatePlaylistModel
+class UpdatePlaylistPhotoModel
 {
-    public ?string $name;
-    public ?UploadedFile $photo;
+    public UploadedFile $photo;
 }

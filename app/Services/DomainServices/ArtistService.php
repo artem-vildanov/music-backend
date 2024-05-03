@@ -10,6 +10,7 @@ use App\Repository\Interfaces\IArtistRepository;
 use App\Repository\Interfaces\IUserRepository;
 use App\Services\FilesStorageServices\PhotoStorageService;
 use Illuminate\Http\UploadedFile;
+use App\Models\Artist;
 
 class ArtistService
 {
@@ -27,7 +28,7 @@ class ArtistService
      */
     public function saveArtist(string $name, UploadedFile $photoFile): int|null
     {
-        $photoPath = $this->photoStorageService->saveArtistPhoto($photoFile);
+        $photoPath = $this->photoStorageService->savePhoto($photoFile, Artist::getModelName());
 
         if (!$photoPath)
             return null;
@@ -38,27 +39,18 @@ class ArtistService
         return $this->artistRepository->create($name, $photoPath, $user->id);
     }
 
-    /**
-     * @throws DataAccessException
-     * @throws MinioException
-     */
-    public function updateArtist(int $artistId, ?string $name, ?UploadedFile $photoFile): void
+    public function updateArtistPhoto(int $artistId, UploadedFile $photoFile): void
     {
         $artist = $this->artistRepository->getById($artistId);
-        $updatedArtist = $artist;
+        $newFilePath = $this
+            ->photoStorageService
+            ->updatePhoto(
+                $artist->photo_path,
+                $photoFile,
+                Artist::getModelName()
+            );
 
-        if ($name) {
-            $updatedArtist->name = $name;
-        }
-
-        if ($photoFile) {
-            $this->photoStorageService->updatePhoto($artist->photo_path, $photoFile);
-        }
-
-        $this->artistRepository->update(
-            $artistId,
-            $updatedArtist->name
-        );
+        $this->artistRepository->updatePhoto($artistId, $newFilePath);
     }
 
     /**

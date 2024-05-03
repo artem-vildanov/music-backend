@@ -62,9 +62,21 @@ class SongRepositoryProxy implements ISongRepository
     /**
      * @throws DataAccessException
      */
-    public function update(int $songId, string $name): void
+    public function updateName(int $songId, string $name): void
     {
-        $this->songRepository->update($songId, $name);
+        $this->songRepository->updateName($songId, $name);
+        $this->songCacheService->deleteSongFromCache($songId);
+    }
+
+    public function updatePhoto(int $songId, string $photoPath): void
+    {
+        $this->songRepository->updatePhoto($songId, $photoPath);
+        $this->songCacheService->deleteSongFromCache($songId);
+    }
+
+    public function updateAudio(int $songId, string $musicPath): void
+    {
+        $this->songRepository->updateAudio($songId, $musicPath);
         $this->songCacheService->deleteSongFromCache($songId);
     }
 }

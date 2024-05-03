@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Exception;
 
 /**
  * App\Models\Song
@@ -31,7 +32,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Song whereArtistId($value)
  * @mixin \Eloquent
  */
-class Song extends Model
+class Song extends BaseModel
 {
     use HasFactory;
 }

@@ -5,54 +5,29 @@ declare(strict_types=1);
 namespace App\Services\FilesStorageServices;
 
 use App\Exceptions\MinioException;
+use App\Models\BaseModel;
 use Aws\S3\S3Client;
+use Faker\Provider\Base;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 
 class PhotoStorageService
 {
-    /**
-     * @throws MinioException
-     */
-    public function saveAlbumPhoto(UploadedFile $file): string|null
+    public function savePhoto(UploadedFile $file, string $modelName): string 
     {
         $fileName = uniqid(more_entropy: true);
-        $filePath = "album/{$fileName}.png";
+        $filePath = "{$modelName}/{$fileName}.png";
 
         return $this->storePhoto($filePath, $file);
     }
 
     /**
-     * @throws MinioException
+     * @return string new photo path
      */
-    public function saveArtistPhoto(UploadedFile $file): string
+    public function updatePhoto(string $oldPhotoPath, UploadedFile $newFile, string $modelName): string
     {
-        $fileName = uniqid(more_entropy: true);
-        $filePath = "artist/{$fileName}.png";
-
-        return $this->storePhoto($filePath, $file);
-    }
-
-    /**
-     * @throws MinioException
-     */
-    public function savePlaylistPhoto(UploadedFile $file): string
-    {
-        $fileName = uniqid(more_entropy: true);
-        $filePath = "playlist/{$fileName}.png";
-
-        return $this->storePhoto($filePath, $file);
-    }
-
-    /**
-     * @throws MinioException
-     */
-    public function updatePhoto(string $filePath, UploadedFile $file): void
-    {
-        try {
-            $this->storePhoto($filePath, $file);
-        } catch (MinioException $e) {
-            throw MinioException::failedToUpdatePhoto();
-        }
+        $this->deletePhoto($oldPhotoPath);
+        return $this->savePhoto($newFile, $modelName);
     }
 
     /**

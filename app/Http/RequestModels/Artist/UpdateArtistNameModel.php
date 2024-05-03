@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\RequestModels\Playlist;
+namespace App\Http\RequestModels\Artist;
 
 use Illuminate\Http\UploadedFile;
 
-class CreatePlaylistModel
+class UpdateArtistNameModel
 {
     public string $name;
 }

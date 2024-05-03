@@ -63,19 +63,35 @@ class AlbumRepositoryProxy implements IAlbumRepository
         );
     }
 
-    public function update(
+    public function updateNameAndGenre(
         int $albumId,
         string $name,
         int $genreId,
-        ?string $publishTime
     ): void {
-        $this->albumRepository->update(
+        $this->albumRepository->updateNameAndGenre(
             $albumId,
             $name,
-            $genreId,
-            $publishTime
+            $genreId
         );
 
+        $this->albumCacheService->deleteAlbumFromCache($albumId);
+    }
+
+    public function updatePublishTime(int $albumId, string $publishTime): void
+    {
+        $this->albumRepository->updatePublishTime($albumId, $publishTime);
+        $this->albumCacheService->deleteAlbumFromCache($albumId);
+    }
+
+    public function makePublic(int $albumId): void
+    {
+        $this->albumRepository->makePublic($albumId);
+        $this->albumCacheService->deleteAlbumFromCache($albumId);
+    }
+
+    public function updatePhoto(int $albumId, string $photoPath): void
+    {
+        $this->albumRepository->updatePhoto($albumId, $photoPath);
         $this->albumCacheService->deleteAlbumFromCache($albumId);
     }
 

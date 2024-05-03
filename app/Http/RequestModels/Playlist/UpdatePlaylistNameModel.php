@@ -2,9 +2,7 @@
 
 namespace App\Http\RequestModels\Playlist;
 
-use Illuminate\Http\UploadedFile;
-
-class CreatePlaylistModel
+class UpdatePlaylistNameModel
 {
     public string $name;
 }

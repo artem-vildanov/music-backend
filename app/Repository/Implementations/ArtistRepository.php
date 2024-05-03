@@ -58,16 +58,24 @@ class ArtistRepository implements IArtistRepository
         return $artist->id;
     }
 
-    public function update(int $artistId, string $name): void
+    public function updateName(int $artistId, string $name): void
     {
         try {
             $artist = $this->getById($artistId);
+            $artist->name = $name;
+            $artist->save();
         } catch (DataAccessException $e) {
             throw ArtistException::failedToUpdate($artistId);
         }
+    }
 
-        $artist->name = $name;
-        if (!$artist->save()) {
+    public function updatePhoto(int $artistId, string $photoPath): void 
+    {
+        try {
+            $artist = $this->getById($artistId);
+            $artist->photo_path = $photoPath;
+            $artist->save();
+        } catch (DataAccessException $e) {
             throw ArtistException::failedToUpdate($artistId);
         }
     }

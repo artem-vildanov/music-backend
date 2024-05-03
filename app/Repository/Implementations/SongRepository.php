@@ -72,17 +72,35 @@ class SongRepository implements ISongRepository
     /**
      * @throws DataAccessException
      */
-    public function update(int $songId, string $name): void
+    public function updateName(int $songId, string $name): void
     {
         try {
             $song = $this->getById($songId);
+            $song->name = $name;
+            $song->save();
         } catch (DataAccessException $e) {
             throw SongException::failedToUpdate($songId);
         }
+    }
 
-        $song->name = $name;
+    public function updatePhoto(int $songId, string $photoPath): void
+    {
+        try {
+            $song = $this->getById($songId);
+            $song->photo_path = $photoPath;
+            $song->save();
+        } catch (DataAccessException $e) {
+            throw SongException::failedToUpdate($songId);
+        }
+    }
 
-        if (!$song->save()) {
+    public function updateAudio(int $songId, string $musicPath): void
+    {
+        try {
+            $song = $this->getById($songId);
+            $song->music_path = $musicPath;
+            $song->save();
+        } catch (DataAccessException $e) {
             throw SongException::failedToUpdate($songId);
         }
     }

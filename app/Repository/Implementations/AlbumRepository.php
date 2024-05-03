@@ -74,23 +74,51 @@ class AlbumRepository implements IAlbumRepository
         return $album->id;
     }
 
-    public function update(
+    public function updateNameAndGenre(
         int $albumId,
         string $name,
-        int $genreId,
-        ?string $publishTime
+        int $genreId
     ): void {
         try {
             $album = $this->getById($albumId);
+            $album->name = $name;
+            $album->genre_id = $genreId;
+            $album->save();
         } catch (DataAccessException $e) {
             throw AlbumException::failedToUpdate($albumId);
         }
+    }
 
-        $album->name = $name;
-        $album->genre_id = $genreId;
-        $album->publish_at = $publishTime;
+    public function makePublic(int $albumId): void
+    {
+        try {
+            $album = $this->getById($albumId);
+            $album->status = 'public';
+            $album->publish_at = null; 
+            $album->save();
+        } catch (DataAccessException $e) {
+            throw AlbumException::failedToUpdate($albumId);
+        }
+    }
 
-        if (!$album->save()) {
+    public function updatePublishTime(int $albumId, string $publishTime): void
+    {
+        try {
+            $album = $this->getById($albumId);
+            $album->publish_at = $publishTime; 
+            $album->save();
+        } catch (DataAccessException $e) {
+            throw AlbumException::failedToUpdate($albumId);
+        }
+    }
+
+    public function updatePhoto(int $albumId, string $photoPath): void
+    {
+        try {
+            $album = $this->getById($albumId);
+            $album->photo_path = $photoPath; 
+            $album->save();
+        } catch (DataAccessException $e) {
             throw AlbumException::failedToUpdate($albumId);
         }
     }

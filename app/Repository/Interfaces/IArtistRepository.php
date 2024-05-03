@@ -47,9 +47,14 @@ interface IArtistRepository
      * @throws DataAccessException
      * @return void
      */
-    public function update(
+    public function updateName(
         int $artistId,
         string $name
+    ): void;
+
+    public function updatePhoto(
+        int $artistId,
+        string $photoPath
     ): void;
 
     /**

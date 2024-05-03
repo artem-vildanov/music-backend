@@ -4,8 +4,7 @@ namespace App\Http\RequestModels\Artist;
 
 use Illuminate\Http\UploadedFile;
 
-class UpdateArtistModel
+class UpdateArtistPhotoModel
 {
-    public ?string $name;
-    public ?UploadedFile $photo;
+    public UploadedFile $photo;
 }

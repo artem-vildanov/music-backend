@@ -7,7 +7,8 @@ use App\Exceptions\MinioException;
 use App\Exceptions\PlaylistSongsException;
 use App\Facades\AuthFacade;
 use App\Http\Requests\Playlist\CreatePlaylistRequest;
-use App\Http\Requests\Playlist\UpdatePlaylistRequest;
+use App\Http\Requests\Playlist\UpdatePlaylistNameRequest;
+use App\Http\Requests\Playlist\UpdatePlaylistPhotoRequest;
 use App\Mappers\PlaylistMapper;
 use App\Mappers\SongMapper;
 use App\Repository\Interfaces\IPlaylistRepository;
@@ -82,24 +83,33 @@ class PlaylistController extends Controller
     public function create(CreatePlaylistRequest $request): JsonResponse
     {
         $data = $request->body();
-
-        $this->playlistService->savePlaylist($data->name, $data->photo);
-
-        return response()->json();
+        $authUserId = AuthFacade::getUserId();
+        $playlistId = $this->playlistRepository->create($data->name, $authUserId);
+        return response()->json([
+            'playlistId' => $playlistId
+        ]);
     }
 
     /**
      * @throws DataAccessException
      * @throws MinioException
      */
-    public function update(int $playlistId, UpdatePlaylistRequest $request): JsonResponse
+    public function updateName(int $playlistId, UpdatePlaylistNameRequest $request): JsonResponse
     {
         $data = $request->body();
-
-        $this->playlistService->updatePlaylist($playlistId, $data->name, $data->photo);
-
+        $this->playlistRepository->updateName($playlistId, $data->name);
         return response()->json();
     }
+
+    public function updatePhoto(int $playlistId, UpdatePlaylistPhotoRequest $request): JsonResponse
+    {
+        $data = $request->body();
+        $this->playlistService->updatePlaylistPhoto($playlistId, $data->photo);
+        return response()->json();
+
+        //UpdatePlaylistPhotoRequest
+    }
+
 
     /**
      * @throws DataAccessException

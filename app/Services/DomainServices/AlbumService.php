@@ -44,7 +44,7 @@ class AlbumService
     ): int {
         $this->genreRepository->getById($genreId);
 
-        $photoPath = $this->photoStorageService->saveAlbumPhoto($albumPhoto);
+        $photoPath = $this->photoStorageService->savePhoto($albumPhoto, Album::getModelName());
 
         $authUserId = AuthFacade::getUserId();
         $artist = $this->artistRepository->getByUserId($authUserId);
@@ -60,54 +60,30 @@ class AlbumService
             $genreId,
             $publishTime
         );
-
-        // $this->addAlbumToPublishQueue($albumId, $publishTime);
         
         return $albumId;
     }
 
-    /**
-     * @throws DataAccessException
-     * @throws MinioException
-     */
-    public function updateAlbum(
-        int $albumId,
-        ?string $name,
-        ?UploadedFile $photoFile,
-        ?int $genreId,
-        ?string $publishTime
-    ): void {
-
+    public function updateAlbumPhoto(int $albumId, UploadedFile $file): void
+    {
         $album = $this->albumRepository->getById($albumId);
-        $updatedAlbum = $album;
+        $newFilePath = $this
+            ->photoStorageService
+            ->updatePhoto(
+                $album->photo_path,
+                $file,
+                Album::getModelName()
+            );
 
-        if ($genreId) {
-            $this->genreRepository->getById($genreId);
-            $updatedAlbum->genre_id = $genreId;
+        $this->albumRepository->updatePhoto($albumId, $newFilePath);
+
+        /**
+         * update photoPath for album songs
+         */
+        $albumSongs = $this->songRepository->getAllByAlbum($albumId);
+        foreach ($albumSongs as $song) {
+            $this->songRepository->updatePhoto($song->id, $newFilePath);
         }
-
-        if ($name) {
-            $updatedAlbum->name = $name;
-        }
-
-        if ($photoFile) {
-            $this->photoStorageService->updatePhoto($album->photo_path, $photoFile);
-        }
-
-        if ($publishTime) {
-            if ($album->status === 'public') {
-                throw AlbumException::failedToUpdate($album->id);
-            }
-
-            $updatedAlbum->publish_at = $publishTime;
-        }
-
-        $this->albumRepository->update(
-            $albumId,
-            $updatedAlbum->name,
-            $updatedAlbum->genre_id,
-            $updatedAlbum->publish_at
-        );
     }
 
     /**
@@ -133,13 +109,7 @@ class AlbumService
     {
         $albums = $this->albumRepository->getAllReadyToPublish();
         foreach ($albums as $album) {
-            $this->albumRepository->update(
-                $album->id,
-                $album->name,
-                'public',
-                $album->genre_id,
-                null
-            );
+            $this->albumRepository->makePublic($album->id);
         }
     }
 }

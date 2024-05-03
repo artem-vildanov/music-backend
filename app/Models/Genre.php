@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -23,7 +24,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Genre whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class Genre extends Model
+class Genre extends BaseModel
 {
     use HasFactory;
 }

@@ -24,10 +24,11 @@ class AudioStorageService
     /**
      * @throws MinioException
      */
-    public function updateAudio(string $filePath, UploadedFile $file): void
+    public function updateAudio(string $filePath, string $albumFolderId, UploadedFile $file): string
     {
         try {
-            $this->storeAudio($filePath, $file);
+            $this->deleteAudio($filePath);
+            return $this->saveAudio($albumFolderId, $file);
         } catch (MinioException $exception) {
             throw MinioException::failedToUpdateAudio();
         }
@@ -63,8 +64,6 @@ class AudioStorageService
                 'Body' => $file->getContent(),
             ]
         );
-
-        // $this->getClient()->waitUntil('ObjectExists', ['Bucket' => 'audio', 'Key' => $filePath]);
 
         $statusCode = $result['@metadata']['statusCode'];
 

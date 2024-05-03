@@ -48,5 +48,9 @@ interface ISongRepository {
      * @throws DataAccessException
      * @return void
      */
-    public function update(int $songId, string $name): void;
+    public function updateName(int $songId, string $name): void;
+
+    public function updatePhoto(int $songId, string $photoPath): void;
+
+    public function updateAudio(int $songId, string $musicPath): void;
 }

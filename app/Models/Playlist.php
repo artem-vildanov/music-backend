@@ -25,7 +25,12 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Playlist whereUserId($value)
  * @mixin \Eloquent
  */
-class Playlist extends Model
+class Playlist extends BaseModel
 {
     use HasFactory;
+
+    public static function getModelName(): string 
+    {
+        return 'playlist';
+    }
 }
