@@ -1,5 +1,5 @@
 ## Description:
-This repository contains the backend for my pet project, a Laravel-based API web application. The project utilizes MySQL as a relational database, Redis for caching and storing JWT tokens, and MinIO as an object storage for storing music and images. It employs cron jobs for scheduling album releases. Authentication is implemented using JWT tokens. The corresponding frontend part is located in another repository.
+This repository serves as the backend for my pet project, an API-driven web application built with Laravel. The project leverages MySQL as its relational database, Redis for efficient caching and storing JWT tokens, and MinIO as an object storage solution for housing music and image files. It utilizes cron jobs to manage the scheduled release of albums. Authentication is implemented via JWT tokens. The frontend component of this project resides in a separate repository.
 
 ## Technologies Used:
 - Laravel
