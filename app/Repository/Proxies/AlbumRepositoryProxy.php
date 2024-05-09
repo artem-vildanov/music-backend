@@ -52,14 +52,16 @@ class AlbumRepositoryProxy implements IAlbumRepository
         string $photoPath,
         int $artistId,
         int $genreId,
-        string $publishTime
+        ?string $publishTime,
+        string $status
     ): int {
         return $this->albumRepository->create(
             $name,
             $photoPath,
             $artistId,
             $genreId,
-            $publishTime
+            $publishTime,
+            $status
         );
     }
 

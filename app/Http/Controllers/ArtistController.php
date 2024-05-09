@@ -10,19 +10,20 @@ use App\Http\Requests\Artist\CreateArtistRequest;
 use App\Http\Requests\Artist\UpdateArtistNameRequest;
 use App\Mappers\AlbumMapper;
 use App\Mappers\ArtistMapper;
+use App\Models\Artist;
 use App\Repository\Interfaces\IAlbumRepository;
 use App\Repository\Interfaces\IArtistRepository;
 use App\Services\DomainServices\ArtistService;
 use App\Services\JwtServices\TokenService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
-use App\Models\Artist;
+use App\Services\DomainServices\AlbumService;
 
 class ArtistController extends Controller
 {
     public function __construct(
         private readonly ArtistService       $artistService,
+        private readonly AlbumService $albumService,
         private readonly IArtistRepository   $artistRepository,
         private readonly IAlbumRepository    $albumRepository,
         private readonly TokenService        $tokenService,
@@ -56,6 +57,7 @@ class ArtistController extends Controller
     public function showAlbumsMadeByArtist(int $artistId): JsonResponse
     {
         $albumsMadeByArtist = $this->albumRepository->getAllByArtist($artistId);
+        $albumsMadeByArtist = $this->albumService->removePrivateAlbumsFromList($albumsMadeByArtist);
         $albumsDtoGroup = $this->albumMapper->mapMultipleAlbums($albumsMadeByArtist);
 
         return response()->json($albumsDtoGroup);
@@ -77,8 +79,7 @@ class ArtistController extends Controller
 
         return response()->json([
             'artistId' => $artistId,
-            'message' => 'new artist created successfully, your access token has been refreshed',
-            'token' => $newToken
+            'access_token' => $newToken
         ]);
     }
 
@@ -114,7 +115,7 @@ class ArtistController extends Controller
 
         return response()->json([
             'message' => 'artist deleted successfully, your token has been refreshed',
-            'token' => $newToken
+            'access_token' => $newToken
         ]);
     }
 }

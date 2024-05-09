@@ -19,4 +19,5 @@ class AlbumDto
     public int $genreId;
     public string $genreName;
     public bool $isFavourite;
+    public ?string $publishTime; 
 }

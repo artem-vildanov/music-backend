@@ -67,9 +67,7 @@ class AlbumController extends Controller
             $data->publishTime
         );
 
-        return response()->json([
-            "album with id = {$albumId} created successfully"
-        ]);
+        return response()->json($albumId);
     }
 
     /**

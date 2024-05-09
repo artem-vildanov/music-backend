@@ -28,7 +28,7 @@ class CheckAlbumStatus
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $albumId = $request->route('albumId');
+        $albumId = (int)$request->route('albumId');
         $album = $this->albumRepository->getById($albumId); 
         
         $authUser = AuthFacade::getAuthInfo();

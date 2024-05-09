@@ -49,8 +49,10 @@ class AlbumService
         $authUserId = AuthFacade::getUserId();
         $artist = $this->artistRepository->getByUserId($authUserId);
 
-        if (!$publishTime) {
-            $publishTime = now();
+        $status = 'private';
+        if ($publishTime === "null") {
+            $publishTime = null;
+            $status = 'public';
         }
 
         $albumId = $this->albumRepository->create(
@@ -58,7 +60,8 @@ class AlbumService
             $photoPath,
             $artist->id, 
             $genreId,
-            $publishTime
+            $publishTime,
+            $status
         );
         
         return $albumId;
@@ -111,5 +114,25 @@ class AlbumService
         foreach ($albums as $album) {
             $this->albumRepository->makePublic($album->id);
         }
+    }
+
+    public function removePrivateAlbumsFromList(array $albums): array 
+    {
+        $clearedAlbums = [];
+        foreach ($albums as $album) {
+            if ($this->checkAlbumAccessRights($album)) {
+                $clearedAlbums[] = $album;
+            }
+        }
+
+        return $clearedAlbums;
+    }
+
+    /**
+     * @return bool returns true if user have rights to get access to album, else returns false
+     */
+    public function checkAlbumAccessRights(Album $album): bool {
+        $authUser = AuthFacade::getAuthInfo();
+        return !($album->artist_id !== $authUser->artistId && $album->status === 'private');
     }
 }

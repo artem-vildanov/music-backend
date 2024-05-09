@@ -46,7 +46,8 @@ interface IAlbumRepository {
         string $photoPath,
         int $artistId,
         int $genreId,
-        string $publishTime
+        ?string $publishTime,
+        string $status
     ): int;
 
     /**

@@ -43,10 +43,7 @@ class SongController extends Controller
 
         $songId = $this->songService->saveSong($data->name, $data->music, $albumId);
 
-        return response()->json([
-            'songId' => $songId,
-            'message' => 'song created successfully'
-        ]);
+        return response()->json($songId);
     }
 
     /**

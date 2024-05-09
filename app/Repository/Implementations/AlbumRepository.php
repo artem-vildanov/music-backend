@@ -52,7 +52,8 @@ class AlbumRepository implements IAlbumRepository
         string $photoPath,
         int $artistId,
         int $genreId,
-        string $publishTime
+        ?string $publishTime,
+        string $status
     ): int {
         $album = new Album;
         $album->name = $name;
@@ -60,10 +61,10 @@ class AlbumRepository implements IAlbumRepository
         $album->artist_id = $artistId;
         $album->genre_id = $genreId;
         $album->publish_at = $publishTime;
-
+        $album->status = $status;
         $album->likes = 0;
         $album->cdn_folder_id = uniqid(more_entropy: true);
-        $album->status = 'private';
+        
         $album->created_at = now();
         $album->updated_at = now();
 

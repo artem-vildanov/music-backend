@@ -68,6 +68,7 @@ class AlbumMapper
         $albumDto->artistName = $this->artistRepository->getById($albumDto->artistId)->name;
         $albumDto->genreId = $album->genre_id;
         $albumDto->genreName = $this->genreRepository->getById($albumDto->genreId)->name;
+        $albumDto->publishTime = $album->publish_at;
 
         return $albumDto;
     }
