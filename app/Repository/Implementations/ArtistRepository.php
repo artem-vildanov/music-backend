@@ -4,6 +4,7 @@
 namespace App\Repository\Implementations;
 
 use App\Exceptions\DataAccessExceptions\ArtistException;
+use Illuminate\Support\Facades\DB;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Models\Artist;
 use App\Repository\Interfaces\IArtistRepository;
@@ -60,37 +61,42 @@ class ArtistRepository implements IArtistRepository
 
     public function updateName(int $artistId, string $name): void
     {
-        try {
-            $artist = $this->getById($artistId);
-            $artist->name = $name;
-            $artist->save();
-        } catch (DataAccessException $e) {
+        $result = DB::table('artists')
+            ->where('id', $artistId)
+            ->update([
+                'name' => $name
+            ]);
+
+        if ($result === 0) {
             throw ArtistException::failedToUpdate($artistId);
-        }
+        }  
+ 
     }
 
     public function updatePhoto(int $artistId, string $photoPath): void 
     {
-        try {
-            $artist = $this->getById($artistId);
-            $artist->photo_path = $photoPath;
-            $artist->save();
-        } catch (DataAccessException $e) {
+        $result = DB::table('artists')
+            ->where('id', $artistId)
+            ->update([
+                'photo_path' => $photoPath
+            ]);
+
+        if ($result === 0) {
             throw ArtistException::failedToUpdate($artistId);
-        }
+        }  
+ 
     }
 
     public function delete(int $artistId): void
     {
-        try {
-            $artist = $this->getById($artistId);
-        } catch (DataAccessException $e) {
+        $result = DB::table('artists')
+            ->where('id', $artistId)
+            ->delete();
+               
+        if ($result === 0) {
             throw ArtistException::failedToDelete($artistId);
-        }
-
-        if (!$artist->delete()) {
-            throw ArtistException::failedToDelete($artistId);
-        }
+        }  
+        
     }
 }
 

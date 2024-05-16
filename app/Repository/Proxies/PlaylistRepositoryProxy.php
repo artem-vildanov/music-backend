@@ -9,7 +9,7 @@ use App\Repository\Implementations\PlaylistRepository;
 use App\Services\CacheServices\PlaylistCacheService;
 use App\Repository\Interfaces\IPlaylistRepository;
 
-class PlaylistRepositoryProxy implements IPlaylistRepository
+class PlaylistRepositoryProxy extends PlaylistRepository implements IPlaylistRepository
 {
     public function __construct(
         private readonly PlaylistCacheService $playlistCacheService,
@@ -29,36 +29,6 @@ class PlaylistRepositoryProxy implements IPlaylistRepository
         }
 
         return $playlist;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getMultipleByIds(array $playlistsIds): array
-    {
-        return $this->playlistRepository->getMultipleByIds($playlistsIds);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getPlaylistsModelsByUserId(int $userId): array
-    {
-        return $this->playlistRepository->getPlaylistsModelsByUserId($userId);
-    }
-
-    public function getPlaylistsIdsByUserId(int $userId): array
-    {
-        return $this->playlistRepository->getPlaylistsIdsByUserId($userId);
-    }
-
-    /**
-     * @inheritDoc
-     * @throws DataAccessException
-     */
-    public function create(string $name, int $userId): int
-    {
-        return $this->playlistRepository->create($name, $userId);
     }
 
     /**

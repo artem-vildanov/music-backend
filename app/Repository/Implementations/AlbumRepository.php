@@ -6,6 +6,7 @@ use App\Exceptions\DataAccessExceptions\AlbumException;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Models\Album;
 use App\Repository\Interfaces\IAlbumRepository;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class AlbumRepository implements IAlbumRepository
@@ -38,11 +39,6 @@ class AlbumRepository implements IAlbumRepository
 
     public function getAllReadyToPublish(): array
     {
-        // try {
-            
-        // } catch (\Throwable $th) {
-        //     Log::error($th);
-        // }
         $albums = Album::query()->where('publish_at', '<=', now())->get()->all();
         return $albums;
     }
@@ -80,60 +76,71 @@ class AlbumRepository implements IAlbumRepository
         string $name,
         int $genreId
     ): void {
-        try {
-            $album = $this->getById($albumId);
-            $album->name = $name;
-            $album->genre_id = $genreId;
-            $album->save();
-        } catch (DataAccessException $e) {
+
+        $result = DB::table('albums')
+            ->where('id', $albumId)
+            ->update([
+                'name' => $name,
+                'genre_id' => $genreId
+            ]);
+
+        if ($result === 0) {
             throw AlbumException::failedToUpdate($albumId);
-        }
+        }  
     }
 
     public function makePublic(int $albumId): void
     {
-        try {
-            $album = $this->getById($albumId);
-            $album->status = 'public';
-            $album->publish_at = null; 
-            $album->save();
-        } catch (DataAccessException $e) {
+        $result = DB::table('albums')
+            ->where('id', $albumId)
+            ->update([
+                'status' => 'public',
+                'publish_at' => null
+            ]);
+
+        if ($result === 0) {
             throw AlbumException::failedToUpdate($albumId);
-        }
+        }  
+ 
     }
 
     public function updatePublishTime(int $albumId, string $publishTime): void
     {
-        try {
-            $album = $this->getById($albumId);
-            $album->publish_at = $publishTime; 
-            $album->save();
-        } catch (DataAccessException $e) {
+        $result = DB::table('albums')
+            ->where('id', $albumId)
+            ->update([
+                'publish_time' => $publishTime
+            ]);
+
+        if ($result === 0) {
             throw AlbumException::failedToUpdate($albumId);
-        }
+        }  
+ 
     }
 
     public function updatePhoto(int $albumId, string $photoPath): void
     {
-        try {
-            $album = $this->getById($albumId);
-            $album->photo_path = $photoPath; 
-            $album->save();
-        } catch (DataAccessException $e) {
+        $result = DB::table('albums')
+            ->where('id', $albumId)
+            ->update([
+                'photo_path' => $photoPath
+            ]);
+
+        if ($result === 0) {
             throw AlbumException::failedToUpdate($albumId);
-        }
+        }  
+ 
     }
 
     public function delete(int $albumId): void
     {
-        try {
-            $album = $this->getById($albumId);
-        } catch (DataAccessException $e) {
-            throw AlbumException::failedToDelete($albumId);
-        }
+        $result = DB::table('albums')
+            ->where('id', $albumId)
+            ->delete();
 
-        if (!$album->delete()) {
+        if ($result === 0) {
             throw AlbumException::failedToDelete($albumId);
-        }
+        }  
+ 
     }
 }

@@ -27,6 +27,7 @@ use App\Http\Middleware\CheckSongIsFavourite;
 use App\Http\Middleware\ForArtistPermitted;
 use App\Http\Middleware\ForBaseUserPermitted;
 use App\Http\Middleware\ArtistOwnership;
+use App\Http\Middleware\ExceptionHandler;
 use App\Http\Middleware\PlaylistOwnership;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;

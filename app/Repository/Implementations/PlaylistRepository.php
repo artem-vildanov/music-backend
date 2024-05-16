@@ -3,6 +3,7 @@
 namespace App\Repository\Implementations;
 
 use App\Exceptions\DataAccessExceptions\DataAccessException;
+use Illuminate\Support\Facades\DB;
 use App\Exceptions\DataAccessExceptions\PlaylistException;
 use App\Models\Playlist;
 use App\Repository\Interfaces\IPlaylistRepository;
@@ -69,23 +70,27 @@ class PlaylistRepository implements IPlaylistRepository
      */
     public function updateName(int $playlistId, string $name): void
     {
-        try {
-            $playlist = $this->getById($playlistId);
-            $playlist->name = $name;
-            $playlist->save();
-        } catch (DataAccessException $e) {
+        $result = DB::table('playlists')
+            ->where('id', $playlistId)
+            ->update([
+                'name' => $name
+            ]);
+
+        if ($result === 0) {
             throw PlaylistException::failedToUpdate($playlistId);
-        }
+        }  
+ 
     }
 
     public function updatePhoto(int $playlistId, string $photoPath): void
     {
-        try {
-            $playlist = $this->getById($playlistId);
-            $playlist->photo_path = $photoPath;
-            $playlist->photo_status = 'set'; // TODO refactor into enum
-            $playlist->save();
-        } catch (DataAccessException $e) {
+        $result = DB::table('playlists')
+            ->where('id', $playlistId)
+            ->update([
+                'photo_path' => $photoPath
+            ]);
+
+        if ($result === 0) {
             throw PlaylistException::failedToUpdate($playlistId);
         }
     }
@@ -95,14 +100,13 @@ class PlaylistRepository implements IPlaylistRepository
      */
     public function delete(int $playlistId): void
     {
-        try {
-            $playlist = $this->getById($playlistId);
-        } catch (DataAccessException $e) {
-            throw PlaylistException::failedToDelete($playlistId);
-        }
+        $result = DB::table('playlists')
+            ->where('id', $playlistId)
+            ->delete();
 
-        if (!$playlist->delete()) {
+        if ($result === 0) {
             throw PlaylistException::failedToDelete($playlistId);
-        }
+        }  
+ 
     }
 }

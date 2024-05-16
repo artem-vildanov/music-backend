@@ -8,7 +8,7 @@ use App\Services\CacheServices\AlbumCacheService;
 use App\Repository\Implementations\AlbumRepository;
 
 
-class AlbumRepositoryProxy implements IAlbumRepository
+class AlbumRepositoryProxy extends AlbumRepository implements IAlbumRepository
 {
     public function __construct(
         private readonly AlbumCacheService $albumCacheService,
@@ -27,55 +27,8 @@ class AlbumRepositoryProxy implements IAlbumRepository
         return $album;
     }
 
-    public function getMultipleByIds(array $albumsIds): array
-    {
-        return $this->albumRepository->getMultipleByIds($albumsIds);
-    }
-
-    public function getAllByArtist(int $artistId): array
-    {
-        return $this->albumRepository->getAllByArtist($artistId);
-    }
-
-    public function getAllByGenre(int $genreId)
-    {
-        // TODO: Implement getAllByGenre() method.
-    }
-
-    public function getAllReadyToPublish(): array
-    {
-        return $this->albumRepository->getAllReadyToPublish();
-    }
-
-    public function create(
-        string $name,
-        string $photoPath,
-        int $artistId,
-        int $genreId,
-        ?string $publishTime,
-        string $status
-    ): int {
-        return $this->albumRepository->create(
-            $name,
-            $photoPath,
-            $artistId,
-            $genreId,
-            $publishTime,
-            $status
-        );
-    }
-
-    public function updateNameAndGenre(
-        int $albumId,
-        string $name,
-        int $genreId,
-    ): void {
-        $this->albumRepository->updateNameAndGenre(
-            $albumId,
-            $name,
-            $genreId
-        );
-
+    public function updateNameAndGenre(int $albumId, string $name, int $genreId): void {
+        $this->albumRepository->updateNameAndGenre($albumId, $name, $genreId);
         $this->albumCacheService->deleteAlbumFromCache($albumId);
     }
 

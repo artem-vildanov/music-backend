@@ -13,8 +13,8 @@ class RedisConnectionService
         if (self::$redisClient === null) {
             self::$redisClient = new Client([
                 'scheme' => 'tcp',
-                'host'   => env('REDIS_HOST'),
-                'port'   => env('REDIS_PORT')
+                'host'   => 'redis', 
+                'port'   => '6379'
             ]);
         }
         return self::$redisClient;

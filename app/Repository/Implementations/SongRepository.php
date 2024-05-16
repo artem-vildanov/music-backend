@@ -3,6 +3,7 @@
 namespace App\Repository\Implementations;
 
 use App\Exceptions\DataAccessExceptions\DataAccessException;
+use Illuminate\Support\Facades\DB;
 use App\Exceptions\DataAccessExceptions\SongException;
 use App\Models\Song;
 use App\Repository\Interfaces\ISongRepository;
@@ -58,13 +59,11 @@ class SongRepository implements ISongRepository
      */
     public function delete(int $songId): void
     {
-        try {
-            $song = $this->getById($songId);
-        } catch (DataAccessException $e) {
-            throw SongException::failedToDelete($songId);
-        }
+        $result = DB::table('songs')
+            ->where('id', $songId)
+            ->delete();
 
-        if (!$song->delete()) {
+        if ($result === 0) {
             throw SongException::failedToDelete($songId);
         }
     }
@@ -74,33 +73,39 @@ class SongRepository implements ISongRepository
      */
     public function updateName(int $songId, string $name): void
     {
-        try {
-            $song = $this->getById($songId);
-            $song->name = $name;
-            $song->save();
-        } catch (DataAccessException $e) {
+        $result = DB::table('songs')
+            ->where('id', $songId)
+            ->update([
+                'name' => $name
+            ]);
+
+        if ($result === 0) {
             throw SongException::failedToUpdate($songId);
         }
     }
 
     public function updatePhoto(int $songId, string $photoPath): void
     {
-        try {
-            $song = $this->getById($songId);
-            $song->photo_path = $photoPath;
-            $song->save();
-        } catch (DataAccessException $e) {
+        $result = DB::table('songs')
+            ->where('id', $songId)
+            ->update([
+                'photo_path' => $photoPath
+            ]);
+
+        if ($result === 0) {
             throw SongException::failedToUpdate($songId);
-        }
+        }       
     }
 
     public function updateAudio(int $songId, string $musicPath): void
     {
-        try {
-            $song = $this->getById($songId);
-            $song->music_path = $musicPath;
-            $song->save();
-        } catch (DataAccessException $e) {
+        $result = DB::table('songs')
+            ->where('id', $songId)
+            ->update([
+                'music_path' => $musicPath
+            ]);
+
+        if ($result === 0) {
             throw SongException::failedToUpdate($songId);
         }
     }

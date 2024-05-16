@@ -8,7 +8,7 @@ use App\Models\Artist;
 use App\Repository\Interfaces\IArtistRepository;
 use App\Services\CacheServices\ArtistCacheService;
 
-class ArtistRepositoryProxy implements IArtistRepository
+class ArtistRepositoryProxy extends ArtistRepository implements IArtistRepository
 {
     public function __construct(
         private readonly ArtistCacheService $artistCacheService,
@@ -24,25 +24,6 @@ class ArtistRepositoryProxy implements IArtistRepository
         }
 
         return $artist;
-    }
-
-    public function getMultipleByIds(array $artistIds): array
-    {
-        return $this->artistRepository->getMultipleByIds($artistIds);
-    }
-
-    public function getByUserId(int $userId): Artist
-    {
-        return $this->artistRepository->getByUserId($userId);
-    }
-
-    public function create(string $name, string $photoPath, int $userId): int
-    {
-        return $this->artistRepository->create(
-            $name,
-            $photoPath, 
-            $userId
-        );
     }
 
     public function updateName(int $artistId, string $name): void
