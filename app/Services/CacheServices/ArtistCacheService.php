@@ -35,7 +35,7 @@ class ArtistCacheService
 
     public function deleteArtistFromCache(int $artistId): void
     {
-        $idInRedis = "album_{$artistId}";
+        $idInRedis = "artist_{$artistId}";
         $this->cacheStorageService->deleteFromCache($idInRedis);
     }
 }
