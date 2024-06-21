@@ -2,10 +2,7 @@
 
 namespace App\Services\CacheServices;
 
-use App\Exceptions\DataAccessExceptions\DataAccessException;
-use App\Models\Album;
-use App\Models\Artist;
-use App\Repository\Interfaces\IArtistRepository;
+use App\DataAccessLayer\DbModels\Artist;
 
 class ArtistCacheService
 {

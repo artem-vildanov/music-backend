@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\DataAccessLayer\Repository\Interfaces\IPlaylistRepository;
+use App\DataAccessLayer\Repository\Interfaces\IPlaylistSongsRepository;
+use App\DataAccessLayer\Repository\Interfaces\ISongRepository;
+use App\DtoLayer\DtoMappers\PlaylistDtoMapper;
+use App\DtoLayer\DtoMappers\SongDtoMapper;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\MinioException;
 use App\Exceptions\PlaylistSongsException;
@@ -9,23 +14,18 @@ use App\Facades\AuthFacade;
 use App\Http\Requests\Playlist\CreatePlaylistRequest;
 use App\Http\Requests\Playlist\UpdatePlaylistNameRequest;
 use App\Http\Requests\Playlist\UpdatePlaylistPhotoRequest;
-use App\Mappers\PlaylistMapper;
-use App\Mappers\SongMapper;
-use App\Repository\Interfaces\IPlaylistRepository;
-use App\Repository\Interfaces\IPlaylistSongsRepository;
-use App\Repository\Interfaces\ISongRepository;
 use App\Services\DomainServices\PlaylistService;
 use Illuminate\Http\JsonResponse;
 
 class PlaylistController extends Controller
 {
     public function __construct(
-        private readonly IPlaylistRepository $playlistRepository,
+        private readonly IPlaylistRepository      $playlistRepository,
         private readonly IPlaylistSongsRepository $playlistSongsRepository,
-        private readonly ISongRepository $songRepository,
-        private readonly PlaylistMapper $playlistMapper,
-        private readonly SongMapper $songMapper,
-        private readonly PlaylistService $playlistService,
+        private readonly ISongRepository          $songRepository,
+        private readonly PlaylistDtoMapper        $playlistMapper,
+        private readonly SongDtoMapper            $songMapper,
+        private readonly PlaylistService          $playlistService,
     ) {}
 
     /**

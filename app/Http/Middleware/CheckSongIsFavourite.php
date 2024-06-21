@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\DataAccessLayer\Repository\Interfaces\IFavouritesRepository;
 use App\Exceptions\FavouritesExceptions\FavouriteSongsException;
 use App\Facades\AuthFacade;
-use App\Repository\Interfaces\IFavouritesRepository;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;

@@ -2,21 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\DataAccessLayer\Repository\Interfaces\IFavouritesRepository;
+use App\DataAccessLayer\Repository\Interfaces\ISongRepository;
+use App\DtoLayer\DtoMappers\SongDtoMapper;
 use App\Exceptions\FavouritesExceptions\FavouritesException;
 use App\Facades\AuthFacade;
-use App\Mappers\SongMapper;
 use App\Repository\Interfaces\IFavouriteSongsRepository;
-use App\Repository\Interfaces\IFavouritesRepository;
-use App\Repository\Interfaces\ISongRepository;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class FavouriteSongsController extends Controller
 {
     public function __construct(
         private readonly IFavouritesRepository $favouritesRepository,
-        private readonly ISongRepository $songRepository,
-        private readonly SongMapper $songMapper,
+        private readonly ISongRepository       $songRepository,
+        private readonly SongDtoMapper         $songMapper,
     ) {}
 
     public function showFavouriteSongs(): JsonResponse

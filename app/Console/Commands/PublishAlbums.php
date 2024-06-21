@@ -2,8 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Repository\Implementations\AlbumRepository;
-use App\Repository\Interfaces\IAlbumRepository;
 use App\Services\DomainServices\AlbumService;
 use Illuminate\Console\Command;
 

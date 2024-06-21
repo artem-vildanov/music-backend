@@ -2,7 +2,7 @@
 
 namespace App\Services\CacheServices;
 
-use App\Models\Song;
+use App\DataAccessLayer\DbModels\Song;
 
 class SongCacheService
 {

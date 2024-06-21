@@ -5,15 +5,12 @@ declare(strict_types=1);
 namespace App\Services\FilesStorageServices;
 
 use App\Exceptions\MinioException;
-use App\Models\BaseModel;
 use Aws\S3\S3Client;
-use Faker\Provider\Base;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Log;
 
 class PhotoStorageService
 {
-    public function savePhoto(UploadedFile $file, string $modelName): string 
+    public function savePhoto(UploadedFile $file, string $modelName): string
     {
         $fileName = uniqid(more_entropy: true);
         $filePath = "{$modelName}/{$fileName}.png";

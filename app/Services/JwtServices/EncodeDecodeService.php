@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services\JwtServices;
 
+use App\DataAccessLayer\DbModels\TokenPayloadModel;
+use App\DtoLayer\DtoMappers\TokenPayloadMapper;
 use App\Exceptions\JwtException;
-use App\Mappers\TokenPayloadMapper;
-use App\Models\TokenPayloadModel;
 use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -42,6 +42,6 @@ class EncodeDecodeService
             throw JwtException::invalidToken();
         }
 
-        return $this->tokenPayloadMapper->mapAuthJwtModelFromStdClass($payloadStdClass);
+        return $this->tokenPayloadMapper->mapTokenPayload($payloadStdClass);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Services\CacheServices;
 
-use App\Models\Playlist;
+use App\DataAccessLayer\DbModels\Playlist;
 
 class PlaylistCacheService
 {

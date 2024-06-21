@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\DataAccessLayer\Repository\Interfaces\IAlbumRepository;
+use App\DataAccessLayer\Repository\Interfaces\IGenreRepository;
+use App\DtoLayer\DtoMappers\AlbumDtoMapper;
+use App\DtoLayer\DtoMappers\GenreDtoMapper;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
-use App\Mappers\AlbumMapper;
-use App\Mappers\GenreMapper;
-use App\Repository\Interfaces\IAlbumRepository;
-use App\Repository\Interfaces\IGenreRepository;
 use App\Services\DomainServices\AlbumService;
 use Illuminate\Http\JsonResponse;
 
@@ -15,9 +15,9 @@ class GenreController extends Controller
     public function __construct(
         private readonly IGenreRepository $genreRepository,
         private readonly IAlbumRepository $albumRepository,
-        private readonly GenreMapper $genreMapper,
-        private readonly AlbumMapper $albumMapper,
-        private readonly AlbumService $albumService
+        private readonly GenreDtoMapper   $genreMapper,
+        private readonly AlbumDtoMapper   $albumMapper,
+        private readonly AlbumService     $albumService
     ) {}
 
     public function show(int $genreId): JsonResponse

@@ -2,12 +2,12 @@
 
 namespace App\Facades;
 
-use App\Models\TokenPayloadModel;
+use App\DataAccessLayer\DbModels\TokenPayloadModel;
 use Illuminate\Support\Facades\Request;
 
 class AuthFacade
 {
-    public static function getUserId(): int
+    public static function getUserId(): string
     {
         return self::getAuthInfo()->id;
     }

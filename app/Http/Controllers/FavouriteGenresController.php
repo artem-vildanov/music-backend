@@ -2,21 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\DataAccessLayer\Repository\Interfaces\IFavouritesRepository;
+use App\DataAccessLayer\Repository\Interfaces\IGenreRepository;
+use App\DtoLayer\DtoMappers\GenreDtoMapper;
 use App\Exceptions\FavouritesExceptions\FavouritesException;
 use App\Facades\AuthFacade;
-use App\Mappers\GenreMapper;
 use App\Repository\Interfaces\IFavouriteGenresRepository;
-use App\Repository\Interfaces\IFavouritesRepository;
-use App\Repository\Interfaces\IGenreRepository;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class FavouriteGenresController extends Controller
 {
     public function __construct(
         private readonly IFavouritesRepository $favouritesRepository,
-        private readonly IGenreRepository $genreRepository,
-        private readonly GenreMapper $genreMapper,
+        private readonly IGenreRepository      $genreRepository,
+        private readonly GenreDtoMapper        $genreMapper,
     ) {}
 
     public function showFavouriteGenres(): JsonResponse

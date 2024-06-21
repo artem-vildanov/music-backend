@@ -2,8 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\DataAccessLayer\Repository\Interfaces\ISongRepository;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
-use App\Repository\Interfaces\ISongRepository;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;

@@ -2,7 +2,7 @@
 
 namespace App\Exceptions;
 
-use App\Models\TokenPayloadModel;
+use App\DataAccessLayer\DbModels\TokenPayloadModel;
 use Exception;
 
 class JwtException extends Exception

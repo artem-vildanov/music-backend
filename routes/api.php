@@ -10,7 +10,7 @@ use App\Http\Controllers\FavouriteSongsController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\PlaylistController;
 use App\Http\Controllers\SongController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\TestController;
 use App\Http\Middleware\AlbumOwnership;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\CheckAlbumExists;
@@ -107,7 +107,7 @@ Route::group(['prefix' => 'favourite', 'middleware' => Authenticate::class], fun
             ->middleware([CheckAlbumIsFavourite::class]);
         Route::put('delete-from-favourites/{albumId}', [FavouriteAlbumsController::class, 'deleteFromFavouriteAlbums']);
     });
-    
+
     // TODO могу добавить трек из альбома, который еще не выложен в публику... исправить !
     Route::group(['prefix' => 'songs'], function () {
         Route::get('', [FavouriteSongsController::class, 'showFavouriteSongs']);
@@ -154,4 +154,15 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('logout', [AuthController::class, 'logout'])->middleware(Authenticate::class);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::get('me', [AuthController::class, 'me'])->middleware(Authenticate::class);
+});
+
+// for testing mongodb
+Route::group(['prefix' => 'test-mongo'], function () {
+    Route::get('all', [TestController::class, 'showAll']);
+    Route::post('create', [TestController::class, 'create']);
+    Route::group(['prefix' => '{id}'], function () {
+        Route::get('', [TestController::class, 'show']);
+        Route::put('update', [TestController::class, 'update']);
+        Route::delete('delete', [TestController::class, 'delete']);
+    });
 });

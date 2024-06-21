@@ -2,33 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\DataAccessLayer\DbModels\Artist;
+use App\DataAccessLayer\Repository\Interfaces\IAlbumRepository;
+use App\DataAccessLayer\Repository\Interfaces\IArtistRepository;
+use App\DtoLayer\DtoMappers\AlbumDtoMapper;
+use App\DtoLayer\DtoMappers\ArtistDtoMapper;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\JwtException;
 use App\Exceptions\MinioException;
-use App\Http\Requests\Artist\UpdateArtistPhotoRequest;
 use App\Http\Requests\Artist\CreateArtistRequest;
 use App\Http\Requests\Artist\UpdateArtistNameRequest;
-use App\Mappers\AlbumMapper;
-use App\Mappers\ArtistMapper;
-use App\Models\Artist;
-use App\Repository\Interfaces\IAlbumRepository;
-use App\Repository\Interfaces\IArtistRepository;
+use App\Http\Requests\Artist\UpdateArtistPhotoRequest;
+use App\Services\DomainServices\AlbumService;
 use App\Services\DomainServices\ArtistService;
 use App\Services\JwtServices\TokenService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Services\DomainServices\AlbumService;
 
 class ArtistController extends Controller
 {
     public function __construct(
-        private readonly ArtistService       $artistService,
-        private readonly AlbumService $albumService,
-        private readonly IArtistRepository   $artistRepository,
-        private readonly IAlbumRepository    $albumRepository,
-        private readonly TokenService        $tokenService,
-        private readonly ArtistMapper        $artistMapper,
-        private readonly AlbumMapper         $albumMapper
+        private readonly ArtistService     $artistService,
+        private readonly AlbumService      $albumService,
+        private readonly IArtistRepository $artistRepository,
+        private readonly IAlbumRepository  $albumRepository,
+        private readonly TokenService      $tokenService,
+        private readonly ArtistDtoMapper   $artistMapper,
+        private readonly AlbumDtoMapper $albumMapper
     ) {}
 
     /**
@@ -42,7 +42,7 @@ class ArtistController extends Controller
         return response()->json($artistDto);
     }
 
-    // TODO для тестирования фронта, убрать потом 
+    // TODO для тестирования фронта, убрать потом
     public function showAll(): JsonResponse
     {
         $artists = Artist::all()->all();
@@ -96,10 +96,10 @@ class ArtistController extends Controller
 
     public function updatePhoto(int $artistId, UpdateArtistPhotoRequest $request): JsonResponse
     {
-        $data = $request->body();        
+        $data = $request->body();
         $this->artistService->updateArtistPhoto($artistId, $data->photo);
         return response()->json();
-    }    
+    }
 
     /**
      * @throws DataAccessException

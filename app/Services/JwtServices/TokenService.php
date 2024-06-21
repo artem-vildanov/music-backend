@@ -2,13 +2,13 @@
 
 namespace App\Services\JwtServices;
 
+use App\DataAccessLayer\DbModels\TokenPayloadModel;
+use App\DataAccessLayer\DbModels\User;
+use App\DataAccessLayer\Repository\Interfaces\IArtistRepository;
+use App\DataAccessLayer\Repository\Interfaces\IUserRepository;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\JwtException;
 use App\Exceptions\RedisException;
-use App\Models\TokenPayloadModel;
-use App\Models\User;
-use App\Repository\Interfaces\IArtistRepository;
-use App\Repository\Interfaces\IUserRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -62,22 +62,24 @@ class TokenService
         $timeToLive = (int)config('jwt.ttl');
         $timeToRefresh = (int)config('jwt.ttr');
 
-        $model = new TokenPayloadModel();
-        $model->id = $user->id;
-        $model->email = $user->email;
-        $model->name = $user->name;
+        return new TokenPayloadModel(
+            id: $user->_id,
+            name: $user->name,
+            email: $user->email,
+            artistId: $this->getArtistId($user->_id),
+            createdAt: Carbon::now()->getTimestamp(),
+            refreshableUntil: Carbon::now()->addSeconds($timeToRefresh)->getTimestamp(),
+            expiredAt: Carbon::now()->addSeconds($timeToLive)->getTimestamp(),
+        );
+    }
 
+    private function getArtistId(string $userId): ?string {
         try {
-            $model->artistId = $this->artistRepository->getByUserId($user->id)->id;
+            $artistId = $this->artistRepository->getByUserId($userId)->id;
         } catch (DataAccessException $e) {
-            $model->artistId = null;
+            $artistId = null;
         }
-
-        $model->createdAt = Carbon::now()->getTimestamp();
-        $model->refreshableUntil = Carbon::now()->addSeconds($timeToRefresh)->getTimestamp();
-        $model->expiredAt = Carbon::now()->addSeconds($timeToLive)->getTimestamp();
-
-        return $model;
+        return $artistId;
     }
 
     /**

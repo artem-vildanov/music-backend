@@ -2,9 +2,7 @@
 
 namespace App\Services\CacheServices;
 
-use App\Exceptions\DataAccessExceptions\DataAccessException;
-use App\Models\Album;
-use App\Repository\Interfaces\IAlbumRepository;
+use App\DataAccessLayer\DbModels\Album;
 
 class AlbumCacheService
 {

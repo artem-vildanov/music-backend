@@ -2,25 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\DataTransferObjects\AlbumDto;
+use App\DataAccessLayer\Repository\Interfaces\IAlbumRepository;
+use App\DataAccessLayer\Repository\Interfaces\IFavouritesRepository;
+use App\DtoLayer\DtoMappers\AlbumDtoMapper;
 use App\Exceptions\FavouritesExceptions\FavouritesException;
 use App\Facades\AuthFacade;
-use App\Mappers\AlbumMapper;
-use App\Models\Album;
-use App\Repository\Interfaces\IAlbumRepository;
-use App\Repository\Interfaces\IArtistRepository;
 use App\Repository\Interfaces\IFavouriteAlbumsRepository;
-use App\Repository\Interfaces\IFavouritesRepository;
-use App\Repository\Interfaces\IGenreRepository;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class FavouriteAlbumsController extends Controller
 {
     public function __construct(
         private readonly IFavouritesRepository $favouritesRepository,
-        private readonly IAlbumRepository $albumRepository,
-        private readonly AlbumMapper $albumMapper,
+        private readonly IAlbumRepository      $albumRepository,
+        private readonly AlbumDtoMapper        $albumMapper,
     ) {}
 
     public function showFavouriteAlbums(): JsonResponse

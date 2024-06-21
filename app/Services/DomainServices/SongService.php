@@ -2,13 +2,12 @@
 
 namespace App\Services\DomainServices;
 
+use App\DataAccessLayer\Repository\Interfaces\IAlbumRepository;
+use App\DataAccessLayer\Repository\Interfaces\IArtistRepository;
+use App\DataAccessLayer\Repository\Interfaces\ISongRepository;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\MinioException;
 use App\Facades\AuthFacade;
-use App\Repository\Interfaces\IAlbumRepository;
-use App\Repository\Interfaces\IArtistRepository;
-use App\Repository\Interfaces\ISongRepository;
-use App\Services\CacheServices\AlbumCacheService;
 use App\Services\FilesStorageServices\AudioStorageService;
 use Illuminate\Http\UploadedFile;
 
@@ -29,7 +28,7 @@ class SongService
     public function saveSong(string $name, UploadedFile $musicFile, int $albumId): int
     {
         $album = $this->albumRepository->getById($albumId);
-        
+
         $userId = AuthFacade::getUserId();
         $artistId = $this->artistRepository->getByUserId($userId)->id;
 

@@ -2,30 +2,29 @@
 
 namespace App\Providers;
 
-use App\Repository\Proxies\AlbumRepositoryProxy;
-use App\Repository\Proxies\ArtistRepositoryProxy;
-use App\Repository\Proxies\SongRepositoryProxy;
-use App\Repository\Proxies\GenreRepositoryProxy;
-use App\Repository\Proxies\PlaylistRepositoryProxy;
+use App\DataAccessLayer\Repository\Implementations\FavouritesRepository;
+use App\DataAccessLayer\Repository\Implementations\PlaylistSongsRepository;
+use App\DataAccessLayer\Repository\Implementations\UserRepository;
+use App\DataAccessLayer\Repository\Interfaces\IAlbumRepository;
+use App\DataAccessLayer\Repository\Interfaces\IArtistRepository;
+use App\DataAccessLayer\Repository\Interfaces\IFavouritesRepository;
+use App\DataAccessLayer\Repository\Interfaces\IGenreRepository;
+use App\DataAccessLayer\Repository\Interfaces\IPlaylistRepository;
+use App\DataAccessLayer\Repository\Interfaces\IPlaylistSongsRepository;
+use App\DataAccessLayer\Repository\Interfaces\ISongRepository;
+use App\DataAccessLayer\Repository\Interfaces\IUserRepository;
+use App\DataAccessLayer\Repository\Proxies\AlbumRepositoryProxy;
+use App\DataAccessLayer\Repository\Proxies\ArtistRepositoryProxy;
+use App\DataAccessLayer\Repository\Proxies\GenreRepositoryProxy;
+use App\DataAccessLayer\Repository\Proxies\PlaylistRepositoryProxy;
+use App\DataAccessLayer\Repository\Proxies\SongRepositoryProxy;
+use Illuminate\Support\ServiceProvider;
 
 // use App\Repository\Implementations\AlbumRepository;
 // use App\Repository\Implementations\ArtistRepository;
 // use App\Repository\Implementations\SongRepository;
 // use App\Repository\Implementations\GenreRepository;
 // use App\Repository\Implementations\PlaylistRepository;
-
-use App\Repository\Interfaces\IAlbumRepository;
-use App\Repository\Interfaces\IArtistRepository;
-use App\Repository\Interfaces\IFavouritesRepository;
-use App\Repository\Interfaces\IGenreRepository;
-use App\Repository\Interfaces\IPlaylistRepository;
-use App\Repository\Interfaces\IPlaylistSongsRepository;
-use App\Repository\Interfaces\ISongRepository;
-use App\Repository\Interfaces\IUserRepository;
-use App\Repository\Implementations\PlaylistSongsRepository;
-use App\Repository\Implementations\FavouritesRepository;
-use App\Repository\Implementations\UserRepository;
-use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {

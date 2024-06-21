@@ -2,17 +2,17 @@
 
 namespace App\Http\Middleware;
 
+use App\DataAccessLayer\DbModels\TokenPayloadModel;
+use App\Services\JwtServices\TokenService;
 use Closure;
 use Illuminate\Http\Request;
-use App\Services\JwtServices\TokenService;
-use App\Models\TokenPayloadModel;
 
 class Authenticate
 {
     public function __construct(
         private readonly TokenService $tokenService,
     ) {}
-    
+
     function handle(Request $request, Closure $next)
     {
         $authInfo = $this->getAuthInfo($request);

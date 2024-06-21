@@ -2,15 +2,15 @@
 
 namespace App\Services\DomainServices;
 
+use App\DataAccessLayer\DbModels\Artist;
+use App\DataAccessLayer\Repository\Interfaces\IAlbumRepository;
+use App\DataAccessLayer\Repository\Interfaces\IArtistRepository;
+use App\DataAccessLayer\Repository\Interfaces\IUserRepository;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\MinioException;
 use App\Facades\AuthFacade;
-use App\Repository\Interfaces\IAlbumRepository;
-use App\Repository\Interfaces\IArtistRepository;
-use App\Repository\Interfaces\IUserRepository;
 use App\Services\FilesStorageServices\PhotoStorageService;
 use Illuminate\Http\UploadedFile;
-use App\Models\Artist;
 
 class ArtistService
 {

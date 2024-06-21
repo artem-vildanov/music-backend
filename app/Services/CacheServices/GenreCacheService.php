@@ -2,7 +2,7 @@
 
 namespace App\Services\CacheServices;
 
-use App\Models\Genre;
+use App\DataAccessLayer\DbModels\Genre;
 
 class GenreCacheService
 {

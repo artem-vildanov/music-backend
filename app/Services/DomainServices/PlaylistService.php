@@ -2,14 +2,12 @@
 
 namespace App\Services\DomainServices;
 
+use App\DataAccessLayer\DbModels\Playlist;
+use App\DataAccessLayer\Repository\Interfaces\IPlaylistRepository;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\MinioException;
-use App\Facades\AuthFacade;
-use App\Repository\Interfaces\IPlaylistRepository;
 use App\Services\FilesStorageServices\PhotoStorageService;
 use Illuminate\Http\UploadedFile;
-use App\Models\Playlist;
-use Aws\Multipart\UploadState;
 
 class PlaylistService
 {
@@ -24,8 +22,8 @@ class PlaylistService
      */
     public function updatePlaylistPhoto(int $playlistId, UploadedFile $playlistPhoto): void
     {
-        $playlist = $this->playlistRepository->getById($playlistId);        
- 
+        $playlist = $this->playlistRepository->getById($playlistId);
+
 
         // $newPhotoPath = $this->updatePhoto($playlist->photo_path, $playlistPhoto);
 
@@ -33,17 +31,17 @@ class PlaylistService
 
         if ($playlist->photo_status === "unset") {
             $newPhotoPath = $this->photoStorageService->savePhoto($playlistPhoto, Playlist::getModelName());
-        } 
+        }
 
         elseif ($playlist->photo_status === "set") {
             $newPhotoPath = $this->photoStorageService
                 ->updatePhoto(
-                    $playlist->photo_path, 
-                    $playlistPhoto, 
+                    $playlist->photo_path,
+                    $playlistPhoto,
                     Playlist::getModelName()
                 );
         }
-        
+
         $this->playlistRepository->updatePhoto(
             $playlistId,
             $newPhotoPath

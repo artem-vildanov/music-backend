@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\DataAccessLayer\Repository\Interfaces\IPlaylistRepository;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Facades\AuthFacade;
-use App\Repository\Interfaces\IPlaylistRepository;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;

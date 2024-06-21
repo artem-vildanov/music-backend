@@ -13,7 +13,9 @@
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
         "league/flysystem-aws-s3-v3": "^3.24",
-        "predis/predis": "^2.2"
+        "predis/predis": "^2.2",
+        "mongodb/mongodb": "*",
+        "mongodb/laravel-mongodb": "*"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.15",

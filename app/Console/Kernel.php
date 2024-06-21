@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $this->job($schedule, 'app:publish-albums', 'default')->everyMinute();
+        # $this->job($schedule, 'app:publish-albums', 'default')->everyMinute();
     }
 
     private function job(Schedule $schedule, string $commandName, string $queue): CallbackEvent

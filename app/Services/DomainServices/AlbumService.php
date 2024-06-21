@@ -2,23 +2,17 @@
 
 namespace App\Services\DomainServices;
 
-use App\Exceptions\DataAccessExceptions\AlbumException;
+use App\DataAccessLayer\DbModels\Album;
+use App\DataAccessLayer\Repository\Interfaces\IAlbumRepository;
+use App\DataAccessLayer\Repository\Interfaces\IArtistRepository;
+use App\DataAccessLayer\Repository\Interfaces\IGenreRepository;
+use App\DataAccessLayer\Repository\Interfaces\ISongRepository;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\MinioException;
 use App\Facades\AuthFacade;
 use App\Jobs\PublishAlbums;
-use App\Models\Album;
-use App\Repository\Interfaces\IAlbumRepository;
-use App\Repository\Interfaces\IArtistRepository;
-use App\Repository\Interfaces\IGenreRepository;
-use App\Repository\Interfaces\ISongRepository;
-use App\Services\CacheServices\AlbumCacheService;
-use App\Services\CacheServices\CacheStorageService;
 use App\Services\FilesStorageServices\PhotoStorageService;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Log;
 
 class AlbumService
 {
@@ -58,12 +52,12 @@ class AlbumService
         $albumId = $this->albumRepository->create(
             $name,
             $photoPath,
-            $artist->id, 
+            $artist->id,
             $genreId,
             $publishTime,
             $status
         );
-        
+
         return $albumId;
     }
 
@@ -108,7 +102,7 @@ class AlbumService
 
     }
 
-    public function publishAllReadyAlbums(): void 
+    public function publishAllReadyAlbums(): void
     {
         $albums = $this->albumRepository->getAllReadyToPublish();
         foreach ($albums as $album) {
@@ -116,7 +110,7 @@ class AlbumService
         }
     }
 
-    public function removePrivateAlbumsFromList(array $albums): array 
+    public function removePrivateAlbumsFromList(array $albums): array
     {
         $clearedAlbums = [];
         foreach ($albums as $album) {

@@ -6,6 +6,7 @@ volumes:
   api-server-storage:
   cron-server-storage:
   redis:
+  mongo_db:
 
 networks:
   c4_network:
@@ -96,36 +97,49 @@ services:
     volumes:
       - redis:/data
 
-  cron-scheduler:
-    build:
-      context: ./
-      dockerfile: cron-scheduler.Dockerfile
-    restart: always
-    container_name: cron-scheduler
-    networks:
-      c4_network:
-        ipv4_address: 172.15.0.10
-    extra_hosts:
-      - "db.music.local:172.15.0.4"
-      - "redis.music.local:172.15.0.5"
-    volumes:
-      - ./:/var/www/api-server
-      - cron-server-storage:/var/www/api-server/storage
+#  cron-scheduler:
+#    build:
+#      context: ./
+#      dockerfile: cron-scheduler.Dockerfile
+#    restart: always
+#    container_name: cron-scheduler
+#    networks:
+#      c4_network:
+#        ipv4_address: 172.15.0.10
+#    extra_hosts:
+#      - "db.music.local:172.15.0.4"
+#      - "redis.music.local:172.15.0.5"
+#    volumes:
+#      - ./:/var/www/api-server
+#      - cron-server-storage:/var/www/api-server/storage
+#
+#  cron-default:
+#    build:
+#      context: ./
+#      dockerfile: cron-worker.Dockerfile
+#    restart: always
+#    container_name: cron-default
+#    working_dir: /var/www/api-server
+#    networks:
+#      c4_network:
+#        ipv4_address: 172.15.0.11
+#    extra_hosts:
+#      - "db.music.local:172.15.0.4"
+#      - "redis.music.local:172.15.0.5"
+#    volumes:
+#      - ./:/var/www/api-server
+#      - cron-server-storage:/var/www/api-server/storage
+#    command: php /var/www/api-server/artisan queue:work --queue=default --timeout 60
 
-  cron-default:
-    build:
-      context: ./
-      dockerfile: cron-worker.Dockerfile
-    restart: always
-    container_name: cron-default
-    working_dir: /var/www/api-server
+  mongodb_music:
+    container_name: mongodb_music
+    restart: unless-stopped
+    image: mongo:latest
+    volumes:
+      - mongo_db:/data/db
+    ports:
+      - "27017:27017"
     networks:
       c4_network:
-        ipv4_address: 172.15.0.11
-    extra_hosts:
-      - "db.music.local:172.15.0.4"
-      - "redis.music.local:172.15.0.5"
-    volumes:
-      - ./:/var/www/api-server
-      - cron-server-storage:/var/www/api-server/storage
-    command: php /var/www/api-server/artisan queue:work --queue=default --timeout 60
+        ipv4_address: 172.15.0.12
+

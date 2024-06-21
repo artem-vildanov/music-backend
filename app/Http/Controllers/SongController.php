@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\DataAccessLayer\Repository\Interfaces\ISongRepository;
+use App\DtoLayer\DtoMappers\SongDtoMapper;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\MinioException;
 use App\Http\Requests\Song\CreateSongRequest;
 use App\Http\Requests\Song\UpdateSongAudioRequest;
 use App\Http\Requests\Song\UpdateSongNameRequest;
-use App\Mappers\SongMapper;
-use App\Repository\Interfaces\ISongRepository;
 use App\Services\DomainServices\SongService;
 use Illuminate\Http\JsonResponse;
 
@@ -17,9 +17,9 @@ class SongController extends Controller
 
 
     public function __construct(
-        private readonly ISongRepository   $songRepository,
-        private readonly SongService       $songService,
-        private readonly SongMapper $songMapper,
+        private readonly ISongRepository $songRepository,
+        private readonly SongService     $songService,
+        private readonly SongDtoMapper   $songMapper,
     ) {}
 
     /**

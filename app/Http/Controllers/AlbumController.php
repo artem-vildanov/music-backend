@@ -2,31 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\DataAccessLayer\Repository\Interfaces\IAlbumRepository;
+use App\DataAccessLayer\Repository\Interfaces\IGenreRepository;
+use App\DataAccessLayer\Repository\Interfaces\ISongRepository;
+use App\DtoLayer\DtoMappers\AlbumDtoMapper;
+use App\DtoLayer\DtoMappers\SongDtoMapper;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\MinioException;
-use App\Http\RequestModels\Album\UpdateAlbumPublishTimeModel;
 use App\Http\Requests\Album\CreateAlbumRequest;
+use App\Http\Requests\Album\UpdateAlbumNameAndGenreRequest;
 use App\Http\Requests\Album\UpdateAlbumPhotoRequest;
 use App\Http\Requests\Album\UpdateAlbumPublishTimeRequest;
-use App\Http\Requests\Album\UpdateAlbumNameAndGenreRequest;
-use App\Mappers\AlbumMapper;
-use App\Mappers\SongMapper;
-use App\Repository\Interfaces\IAlbumRepository;
-use App\Repository\Interfaces\IGenreRepository;
-use App\Repository\Interfaces\ISongRepository;
-use App\Services\CacheServices\AlbumCacheService;
 use App\Services\DomainServices\AlbumService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
 
 class AlbumController extends Controller
 {
     public function __construct(
-        private readonly ISongRepository $songRepository,
-        private readonly AlbumService $albumService,
+        private readonly ISongRepository  $songRepository,
+        private readonly AlbumService     $albumService,
         private readonly IAlbumRepository $albumRepository,
-        private readonly AlbumMapper $albumMapper,
-        private readonly SongMapper $songMapper,
+        private readonly AlbumDtoMapper   $albumMapper,
+        private readonly SongDtoMapper    $songMapper,
         private readonly IGenreRepository $genreRepository
     ) {}
 
