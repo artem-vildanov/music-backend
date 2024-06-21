@@ -13,7 +13,6 @@ interface IFavouritesRepository
     public function checkSongIsFavourite(int $userId, int $songId): bool;
     public function checkAlbumIsFavourite(int $userId, int $albumId): bool;
     public function checkArtistIsFavourite(int $userId, int $artistId): bool;
-    public function checkGenreIsFavourite(int $userId, int $genreId): bool;
 
     /**
      * Get favourites
@@ -35,7 +34,6 @@ interface IFavouritesRepository
      * @param int $userId
      * @return int[]
      */
-    public function getFavouriteGenresIds(int $userId): array;
 
     /**
      * @param int $userId
@@ -69,7 +67,6 @@ interface IFavouritesRepository
      * @throws FavouritesException
      * @return void
      */
-    public function addGenreToFavourites(int $genreId, int $userId): void;
 
     /**
      * @param int $artistId
@@ -105,7 +102,6 @@ interface IFavouritesRepository
      * @throws FavouritesException
      * @return void
      */
-    public function deleteGenreFromFavourites(int $genreId, int $userId): void;
 
     /**
      * @param int $artistId
@@ -138,7 +134,6 @@ interface IFavouritesRepository
      * @throws FavouritesException
      * @return void
      */
-    public function incrementGenreLikes(int $genreId): void;
 
     /**
      * @param int $artistId
@@ -170,7 +165,6 @@ interface IFavouritesRepository
      * @throws FavouritesException
      * @return void
      */
-    public function decrementGenreLikes(int $genreId): void;
 
     /**
      * @param int $artistId

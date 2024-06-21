@@ -2,13 +2,13 @@
 
 namespace App\Services\JwtServices;
 
-use App\DataAccessLayer\DbModels\TokenPayloadModel;
 use App\DataAccessLayer\DbModels\User;
 use App\DataAccessLayer\Repository\Interfaces\IArtistRepository;
 use App\DataAccessLayer\Repository\Interfaces\IUserRepository;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\JwtException;
 use App\Exceptions\RedisException;
+use App\Utils\UtilModels\TokenPayloadModel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 

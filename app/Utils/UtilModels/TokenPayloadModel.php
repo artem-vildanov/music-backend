@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\DataAccessLayer\DbModels;
+namespace App\Utils\UtilModels;
 
 class TokenPayloadModel
 {

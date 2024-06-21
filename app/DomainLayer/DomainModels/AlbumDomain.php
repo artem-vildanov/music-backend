@@ -2,6 +2,8 @@
 
 namespace App\DomainLayer\DomainModels;
 
+use App\Utils\Enums\Genres;
+
 class AlbumDomain
 {
     public function  __construct(
@@ -15,7 +17,6 @@ class AlbumDomain
         public array $songsIds,
         public string $artistId,
         public string $artistName,
-        public string $genreId,
-        public string $genreName,
+        public Genres $genre,
     ) {}
 }

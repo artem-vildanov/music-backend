@@ -10,12 +10,25 @@ class ArtistDtoMapper
 {
     public function mapToBigDto(ArtistDomain $artist): ArtistBigDto
     {
-
+        return new ArtistBigDto(
+            id: $artist->id,
+            name: $artist->name,
+            photoPath: $artist->photoPath,
+            likes: $artist->likes,
+            userId: $artist->userId,
+            isFavourite: $artist->isFavourite,
+            albumsIds: $artist->albumsIds,
+        );
     }
 
     public function mapToLightDto(ArtistDomain $artist): ArtistLightDto
     {
-
+        return new ArtistLightDto(
+            id: $artist->id,
+            name: $artist->name,
+            photoPath: $artist->photoPath,
+            isFavourite: $artist->isFavourite,
+        );
     }
 
     /**
@@ -24,6 +37,6 @@ class ArtistDtoMapper
      */
     public function mapMultipleToLightDto(array $artists): array
     {
-
+        return array_map(fn (ArtistDomain $artist) => $this->mapToLightDto($artist), $artists);
     }
 }

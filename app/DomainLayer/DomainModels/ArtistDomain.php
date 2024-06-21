@@ -10,6 +10,7 @@ class ArtistDomain
         public int $likes,
         public string $photoPath,
         public string $userId,
+        public bool $isFavourite,
         /** @var string[] */
         public array $albumsIds
     ) {}

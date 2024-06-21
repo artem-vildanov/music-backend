@@ -2,8 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use App\DataAccessLayer\DbModels\TokenPayloadModel;
 use App\Services\JwtServices\TokenService;
+use App\Utils\UtilModels\TokenPayloadModel;
 use Closure;
 use Illuminate\Http\Request;
 

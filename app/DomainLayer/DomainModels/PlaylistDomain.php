@@ -9,5 +9,7 @@ class PlaylistDomain
         public string $name,
         public ?string $photoPath,
         public string $userId,
+        /** @var string[] */
+        public array $songsIds,
     ) {}
 }

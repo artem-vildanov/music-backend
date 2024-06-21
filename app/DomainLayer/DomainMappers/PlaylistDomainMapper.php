@@ -25,10 +25,6 @@ class PlaylistDomainMapper
      */
     public function mapMultipleToDomain(array $models): array
     {
-        $playlistsDomainModels = [];
-        foreach ($models as $model) {
-            $playlistsDomainModels[] = $this->mapToDomain($model);
-        }
-        return $playlistsDomainModels;
+        return array_map(fn (Playlist $playlist) => $this->mapToDomain($playlist), $models);
     }
 }

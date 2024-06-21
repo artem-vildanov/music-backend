@@ -21,9 +21,16 @@ class SongDomainMapper
         private readonly IAlbumRepository $albumRepository,
         private readonly IUserRepository $userRepository,
     ) {
-        $authUserId = AuthFacade::getUserId();
-        $userInfo = $this->userRepository->getById($authUserId);
-        $this->favouriteSongsIds = $userInfo->favouriteSongsIds;
+        $this->favouriteSongsIds = $this->getFavouriteSongsIds();
+    }
+
+    /**
+     * @param Song[] $models
+     * @return SongDomain[]
+     */
+    public function mapMultipleToDomain(array $models): array
+    {
+        return array_map(fn (Song $song) => $this->mapToDomain($song), $models);
     }
 
     public function mapToDomain(Song $model): SongDomain
@@ -47,12 +54,10 @@ class SongDomainMapper
         return in_array($songId, $this->favouriteSongsIds);
     }
 
-    /**
-     * @param Song[] $models
-     * @return SongDomain[]
-     */
-    public function mapMultipleToDomain(array $models): array
+    /** @return string[] */
+    private function getFavouriteSongsIds(): array
     {
-        return array_map(fn (Song $song) => $this->mapToDomain($song), $models);
+        $authUserId = AuthFacade::getUserId();
+        return $this->userRepository->getById($authUserId)->favouriteSongsIds;
     }
 }

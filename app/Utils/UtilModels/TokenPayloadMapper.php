@@ -1,8 +1,7 @@
 <?php
 
-namespace App\DtoLayer\DtoMappers;
+namespace App\Utils\UtilModels;
 
-use App\DataAccessLayer\DbModels\TokenPayloadModel;
 use stdClass;
 
 class TokenPayloadMapper

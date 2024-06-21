@@ -48,16 +48,6 @@ class FavouritesRepository implements IFavouritesRepository
             ->first();
     }
 
-    public function checkGenreIsFavourite(int $userId, int $genreId): bool
-    {
-        return (bool)DB::table('users_genres')
-            ->where([
-                'user_id' => $userId,
-                'genre_id' => $genreId
-            ])
-            ->first();
-    }
-
     /**
      * Add to favourites
      */
@@ -95,18 +85,6 @@ class FavouritesRepository implements IFavouritesRepository
 
         if (!$result) {
             throw FavouriteArtistsException::failedAddToFavourites($artistId);
-        }
-    }
-
-    public function addGenreToFavourites(int $genreId, int $userId): void
-    {
-        $result = DB::table('users_genres')->insert([
-            'user_id' => $userId,
-            'genre_id' => $genreId
-        ]);
-
-        if (!$result) {
-            throw FavouriteGenresException::failedAddToFavourites($genreId);
         }
     }
 
@@ -150,18 +128,6 @@ class FavouritesRepository implements IFavouritesRepository
         }
     }
 
-    public function deleteGenreFromFavourites(int $genreId, int $userId): void
-    {
-        $result = DB::table('users_genres')->where([
-            'user_id' => $userId,
-            'genre_id' => $genreId
-        ])->delete();
-
-        if (!$result) {
-            throw FavouriteGenresException::failedDeleteFromFavourites($genreId);
-        }
-    }
-
     /**
      * Get favourites
      */
@@ -187,14 +153,6 @@ class FavouritesRepository implements IFavouritesRepository
         return DB::table('users_artists')
             ->where('user_id', $userId)
             ->pluck('artist_id')->toArray();
-    }
-
-    public function getFavouriteGenresIds(int $userId): array
-    {
-        return DB::table('users_genres')
-            ->where('user_id', $userId)
-            ->pluck('genre_id')
-            ->toArray();
     }
 
     /**
@@ -228,15 +186,6 @@ class FavouritesRepository implements IFavouritesRepository
         }
     }
 
-    public function incrementGenreLikes(int $genreId): void
-    {
-        $result = Genre::query()->where('id', $genreId)->increment('likes');
-
-        if (!$result) {
-            throw FavouriteGenresException::failedIncrementLikes($genreId);
-        }
-    }
-
     /**
      * Decrement likes
      */
@@ -265,15 +214,6 @@ class FavouritesRepository implements IFavouritesRepository
 
         if (!$result) {
             throw FavouriteArtistsException::failedDecrementLikes($artistId);
-        }
-    }
-
-    public function decrementGenreLikes(int $genreId): void
-    {
-        $result = Genre::query()->where('id', $genreId)->decrement('likes');
-
-        if (!$result) {
-            throw FavouriteGenresException::failedDecrementLikes($genreId);
         }
     }
 }

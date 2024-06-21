@@ -13,8 +13,7 @@ class AlbumBigDto
         public array $songsIds,
         public string $artistId,
         public string $artistName,
-        public string $genreId,
-        public string $genreName,
+        public string $genre,
         public bool $isFavourite,
         public ?string $publishTime,
     ) {}

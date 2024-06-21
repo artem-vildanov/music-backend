@@ -11,12 +11,21 @@ class PlaylistDtoMapper
 {
     public function mapToBigDto(PlaylistDomain $playlist): PlaylistBigDto
     {
-
+        return new PlaylistBigDto(
+            id: $playlist->id,
+            name: $playlist->name,
+            photoPath: $playlist->photoPath,
+            songsIds: $playlist->songsIds
+        );
     }
 
     public function mapToLightDto(PlaylistDomain $playlist): PlaylistLightDto
     {
-
+        return new PlaylistLightDto(
+            id: $playlist->id,
+            name: $playlist->name,
+            photoPath: $playlist->photoPath,
+        );
     }
 
     /**
@@ -25,6 +34,6 @@ class PlaylistDtoMapper
      */
     public function mapMultipleToLightDto(array $playlists): array
     {
-
+        return array_map(fn (PlaylistDomain $playlist) => $this->mapToLightDto($playlist), $playlists);
     }
 }

@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string|null publishTime
  * @property string[] songsIds
  * @property string artistId
- * @property string genreId
+ * @property string genre
  */
 class Album extends BaseModel
 {

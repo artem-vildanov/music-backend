@@ -88,17 +88,6 @@ Route::group(['prefix' => 'albums', 'middleware' => Authenticate::class], functi
     });
 });
 
-
-
-Route::group(['prefix' => 'genres', 'middleware' => Authenticate::class], function() {
-    Route::get('/all', [GenreController::class, 'showAll']);
-
-    Route::group(['prefix' => '{genreId}', 'middleware' => CheckGenreExists::class], function() {
-        Route::get('', [GenreController::class, 'show']);
-        Route::get('albums-by-genre', [GenreController::class, 'albumsWithGenre']);
-    });
-});
-
 Route::group(['prefix' => 'favourite', 'middleware' => Authenticate::class], function () {
 
     Route::group(['prefix' => 'albums'], function () {
@@ -121,13 +110,6 @@ Route::group(['prefix' => 'favourite', 'middleware' => Authenticate::class], fun
         Route::put('add-to-favourites/{artistId}', [FavouriteArtistsController::class, 'addToFavouriteArtists'])
             ->middleware([CheckArtistIsFavourite::class]);
         Route::put('delete-from-favourites/{artistId}', [FavouriteArtistsController::class, 'deleteFromFavouriteArtists']);
-    });
-
-    Route::group(['prefix' => 'genres'], function () {
-        Route::get('', [FavouriteGenresController::class, 'showFavouriteGenres']);
-        Route::put('add-to-favourites/{genreId}', [FavouriteGenresController::class, 'addToFavouriteGenres'])
-            ->middleware([CheckGenreIsFavourite::class]);
-        Route::put('delete-from-favourites/{genreId}', [FavouriteGenresController::class, 'deleteFromFavouriteGenres']);
     });
 });
 
@@ -154,15 +136,4 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('logout', [AuthController::class, 'logout'])->middleware(Authenticate::class);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::get('me', [AuthController::class, 'me'])->middleware(Authenticate::class);
-});
-
-// for testing mongodb
-Route::group(['prefix' => 'test-mongo'], function () {
-    Route::get('all', [TestController::class, 'showAll']);
-    Route::post('create', [TestController::class, 'create']);
-    Route::group(['prefix' => '{id}'], function () {
-        Route::get('', [TestController::class, 'show']);
-        Route::put('update', [TestController::class, 'update']);
-        Route::delete('delete', [TestController::class, 'delete']);
-    });
 });
