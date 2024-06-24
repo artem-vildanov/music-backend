@@ -2,24 +2,23 @@
 
 namespace App\DataAccessLayer\DbModels;
 
+use MongoDB\Laravel\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 /**
  * @property string _id
  * @property string name
  * @property string email
+ * @property string password
  * @property string[] favouriteArtistsIds
  * @property string[] favouriteAlbumsIds
  * @property string[] favouriteSongsIds
  * @property string[] playlistsIds
  * @property string role
  */
-class User extends Authenticatable
+class User extends Model
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.

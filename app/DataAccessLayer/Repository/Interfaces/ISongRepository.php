@@ -7,50 +7,65 @@ use App\Exceptions\DataAccessExceptions\DataAccessException;
 
 interface ISongRepository {
     /**
-     * @param int $songId
+     * @param string $songId
      * @throws DataAccessException
      * @return Song
      */
-    public function getById(int $songId): Song;
+    public function getById(string $songId): Song;
 
     /**
-     * @param int[] $songsIds
+     * @param string[] $songsIds
      * @return Song[]
      */
     public function getMultipleByIds(array $songsIds): array;
 
     /**
-     * @param int $albumId
+     * @param string $albumId
      * @return array<Song>
      */
-    public function getAllByAlbum(int $albumId): array;
+    public function getAllByAlbum(string $albumId): array;
 
     /**
      * @param string $name
      * @param string $photoPath
      * @param string $musicPath
-     * @param int $albumId
+     * @param string $albumId
      * @throws DataAccessException
-     * @return int
+     * @return string
      */
-    public function create(string $name, string $photoPath, string $musicPath, int $albumId, int $artistId): int;
+    public function create(
+        string $name,
+        string $photoPath,
+        string $musicPath,
+        string $albumId,
+        string $artistId
+    ): string;
 
     /**
-     * @param int $songId
+     * @param string $songId
      * @throws DataAccessException
      * @return void
      */
-    public function delete(int $songId): void;
+    public function delete(string $songId): void;
 
     /**
-     * @param int $songId
+     * @param string $songId
      * @param string $name
      * @throws DataAccessException
      * @return void
      */
-    public function updateName(int $songId, string $name): void;
+    public function updateName(string $songId, string $name): void;
 
-    public function updatePhoto(int $songId, string $photoPath): void;
+    public function updatePhoto(string $songId, string $photoPath): void;
 
-    public function updateAudio(int $songId, string $musicPath): void;
+    public function updateAudio(string $songId, string $musicPath): void;
+
+    /**
+     * @param string $id song id
+     */
+    public function incrementLikes(string $id): void;
+    /**
+     * @param string $id song id
+     */
+    public function decrementLikes(string $id): void;
 }

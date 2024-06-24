@@ -18,7 +18,7 @@ class SongRepositoryProxy extends SongRepository implements ISongRepository
     /**
      * @throws DataAccessException
      */
-    public function getById(int $songId): Song
+    public function getById(string $songId): Song
     {
         $song = $this->songCacheService->getSongFromCache($songId);
         if (!$song) {
@@ -32,7 +32,7 @@ class SongRepositoryProxy extends SongRepository implements ISongRepository
     /**
      * @throws DataAccessException
      */
-    public function delete(int $songId): void
+    public function delete(string $songId): void
     {
         $this->songRepository->delete($songId);
         $this->songCacheService->deleteSongFromCache($songId);
@@ -41,19 +41,19 @@ class SongRepositoryProxy extends SongRepository implements ISongRepository
     /**
      * @throws DataAccessException
      */
-    public function updateName(int $songId, string $name): void
+    public function updateName(string $songId, string $name): void
     {
         $this->songRepository->updateName($songId, $name);
         $this->songCacheService->deleteSongFromCache($songId);
     }
 
-    public function updatePhoto(int $songId, string $photoPath): void
+    public function updatePhoto(string $songId, string $photoPath): void
     {
         $this->songRepository->updatePhoto($songId, $photoPath);
         $this->songCacheService->deleteSongFromCache($songId);
     }
 
-    public function updateAudio(int $songId, string $musicPath): void
+    public function updateAudio(string $songId, string $musicPath): void
     {
         $this->songRepository->updateAudio($songId, $musicPath);
         $this->songCacheService->deleteSongFromCache($songId);

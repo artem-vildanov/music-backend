@@ -1,85 +1,95 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Services\DomainServices;
 
 use App\DataAccessLayer\DbModels\Album;
 use App\DataAccessLayer\Repository\Interfaces\IAlbumRepository;
 use App\DataAccessLayer\Repository\Interfaces\IArtistRepository;
-use App\DataAccessLayer\Repository\Interfaces\IGenreRepository;
 use App\DataAccessLayer\Repository\Interfaces\ISongRepository;
+use App\DataAccessLayer\Repository\Interfaces\IUserRepository;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
+use App\Exceptions\GenreException;
 use App\Exceptions\MinioException;
 use App\Facades\AuthFacade;
-use App\Jobs\PublishAlbums;
 use App\Services\FilesStorageServices\PhotoStorageService;
+use App\Utils\Enums\Genres;
+use App\Utils\Enums\ModelNames;
 use Illuminate\Http\UploadedFile;
 
 class AlbumService
 {
-
     public function __construct(
+        private readonly IUserRepository $userRepository,
         private readonly IAlbumRepository    $albumRepository,
         private readonly IArtistRepository   $artistRepository,
         private readonly ISongRepository     $songRepository,
-        private readonly IGenreRepository    $genreRepository,
         private readonly PhotoStorageService $photoStorageService,
         private readonly SongService         $songService,
     ) {}
 
     /**
-     * @throws MinioException
      * @throws DataAccessException
+     * @throws GenreException
      */
     public function saveAlbum(
         string $name,
         UploadedFile $albumPhoto,
-        int $genreId,
+        string $genreName,
         ?string $publishTime
-    ): int {
-        $this->genreRepository->getById($genreId);
+    ): string {
+        $this->checkGenreExists($genreName);
 
-        $photoPath = $this->photoStorageService->savePhoto($albumPhoto, Album::getModelName());
+        $photoPath = $this->photoStorageService->savePhoto($albumPhoto, ModelNames::Album);
 
         $authUserId = AuthFacade::getUserId();
         $artist = $this->artistRepository->getByUserId($authUserId);
 
-        $status = 'private';
         if ($publishTime === "null") {
             $publishTime = null;
-            $status = 'public';
         }
 
-        $albumId = $this->albumRepository->create(
+        return $this->albumRepository->create(
             $name,
             $photoPath,
-            $artist->id,
-            $genreId,
+            $artist->_id,
+            $genreName,
             $publishTime,
-            $status
         );
-
-        return $albumId;
     }
 
-    public function updateAlbumPhoto(int $albumId, UploadedFile $file): void
+    public function checkGenreExists(string $inputGenre): void
+    {
+        $result = Genres::tryFrom($inputGenre);
+        if (!$result) {
+            throw GenreException::notFound($inputGenre);
+        }
+    }
+
+    public function updateAlbumPhoto(string $albumId, UploadedFile $file): void
     {
         $album = $this->albumRepository->getById($albumId);
         $newFilePath = $this
             ->photoStorageService
             ->updatePhoto(
-                $album->photo_path,
+                $album->photoPath,
                 $file,
-                Album::getModelName()
+                ModelNames::Album
             );
 
         $this->albumRepository->updatePhoto($albumId, $newFilePath);
+        $this->updateAlbumSongsPhoto($albumId, $newFilePath);
+    }
 
-        /**
-         * update photoPath for album songs
-         */
+    /**
+     * update photoPath for album songs
+     */
+    private function updateAlbumSongsPhoto(string $albumId, string $filePath): void
+    {
         $albumSongs = $this->songRepository->getAllByAlbum($albumId);
         foreach ($albumSongs as $song) {
-            $this->songRepository->updatePhoto($song->id, $newFilePath);
+            $this->songRepository->updatePhoto($song->_id, $filePath);
         }
     }
 
@@ -87,46 +97,52 @@ class AlbumService
      * @throws DataAccessException
      * @throws MinioException
      */
-    public function deleteAlbum(int $albumId): void
+    public function deleteAlbum(string $albumId): void
     {
         $album = $this->albumRepository->getById($albumId);
 
-        $this->photoStorageService->deletePhoto($album->photo_path);
+        $this->userRepository->removeAlbumFromAllUsers($albumId);
+        $this->photoStorageService->deletePhoto($album->photoPath);
+        $this->deleteAlbumSongs($albumId);
+        $this->albumRepository->delete($albumId);
+    }
 
+    private function deleteAlbumSongs(string $albumId): void
+    {
         $songs = $this->songRepository->getAllByAlbum($albumId);
         foreach ($songs as $song) {
-            $this->songService->deleteSong($song->id);
+            $this->songService->deleteSong($song->_id);
         }
-
-        $this->albumRepository->delete($albumId);
-
     }
 
     public function publishAllReadyAlbums(): void
     {
         $albums = $this->albumRepository->getAllReadyToPublish();
         foreach ($albums as $album) {
-            $this->albumRepository->makePublic($album->id);
+            $this->albumRepository->makePublic($album->_id);
         }
     }
 
+    /**
+     * @param Album[] $albums альбомы, из которых надо убрать недоступные
+     * @return Album[] только доступные альбомы
+     */
     public function removePrivateAlbumsFromList(array $albums): array
     {
-        $clearedAlbums = [];
-        foreach ($albums as $album) {
-            if ($this->checkAlbumAccessRights($album)) {
-                $clearedAlbums[] = $album;
-            }
-        }
-
-        return $clearedAlbums;
+        $authUserArtistId = AuthFacade::getAuthInfo()->artistId;
+        return array_filter(
+            $albums,
+            fn ($album) => $this->checkAlbumAccessRights($album, $authUserArtistId)
+        );
     }
 
     /**
      * @return bool returns true if user have rights to get access to album, else returns false
      */
-    public function checkAlbumAccessRights(Album $album): bool {
-        $authUser = AuthFacade::getAuthInfo();
-        return !($album->artist_id !== $authUser->artistId && $album->status === 'private');
+    private function checkAlbumAccessRights(Album $album, string $authUserArtistId): bool {
+        return !(
+            $album->artistId !== $authUserArtistId
+            && $album->publishTime !== null
+        );
     }
 }

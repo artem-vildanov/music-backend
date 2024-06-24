@@ -4,6 +4,7 @@ namespace App\Http\Requests\Playlist;
 
 use App\Http\RequestModels\Playlist\UpdatePlaylistPhotoModel;
 use App\Http\Requests\BaseFormRequest;
+use Illuminate\Http\UploadedFile;
 
 class UpdatePlaylistPhotoRequest extends BaseFormRequest
 {
@@ -14,14 +15,8 @@ class UpdatePlaylistPhotoRequest extends BaseFormRequest
         ];
     }
 
-    /**
-     * @return UpdatePlaylistPhotoModel
-     */
-    public function body(): UpdatePlaylistPhotoModel
+    public function body(): UploadedFile
     {
-        $model = new UpdatePlaylistPhotoModel();
-        $model->photo = $this->file('photo');
-
-        return $model;
+        return $this->file('photo');
     }
 }

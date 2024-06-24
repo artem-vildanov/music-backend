@@ -14,14 +14,8 @@ class UpdateArtistNameRequest extends BaseFormRequest
         ];
     }
 
-    /**
-     * @return UpdateArtistNameModel
-     */
-    public function body(): UpdateArtistNameModel
+    public function body(): string
     {
-        $model = new UpdateArtistNameModel();
-        $model->name = $this->string('name');
-        
-        return $model;
+       return $this->string('name');
     }
 }

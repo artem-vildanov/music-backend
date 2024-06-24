@@ -4,23 +4,21 @@ namespace App\DataAccessLayer\Repository\Interfaces;
 
 use App\DataAccessLayer\DbModels\User;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
+use App\Utils\Enums\UserRoles;
 
-interface IUserRepository {
-
-    /** @returns User[] */
-    public function getAll(): array;
-
+interface IUserRepository
+{
     /**
-     * @param int $userId
-     * @throws DataAccessException
+     * @param string $userId
      * @return User
+     * @throws DataAccessException
      */
-    public function getById(int $userId): User;
+    public function getById(string $userId): User;
 
     /**
      * @param string $email
-     * @throws DataAccessException
      * @return User
+     * @throws DataAccessException
      */
     public function getByEmail(string $email): User;
 
@@ -30,25 +28,81 @@ interface IUserRepository {
      * @param string $password
      * @param string $email
      * @param string $role
-     * @throws DataAccessException
      * @return User
-     */
-    public function create(string $name, string $password, string $email, string $role): User;
-
-    /**
-     * @param int $userId
      * @throws DataAccessException
-     * @return void
      */
-    public function delete(int $userId): void;
+    public function create(
+        string $name,
+        string $password,
+        string $email,
+        UserRoles $role
+    ): User;
 
     /**
-     * @param int $userId
+     * @param string $userId
+     * @return void
+     * @throws DataAccessException
+     */
+    public function delete(string $userId): void;
+
+    /**
+     * @param string $userId
      * @param string $name
      * @param string $email
-     * @param string $role
-     * @throws DataAccessException
+     * @param UserRoles $role
      * @return void
+     * @throws DataAccessException
      */
-    public function update(int $userId, string $name, string $email, string $role): void;
+    public function update(string $userId, string $name, string $email, UserRoles $role): void;
+
+    /**
+     * check favourite
+     */
+
+    public function checkSongFavourite(string $userId, string $songId): bool;
+    public function checkAlbumFavourite(string $userId, string $albumId): bool;
+    public function checkArtistFavourite(string $userId, string $artistId): bool;
+
+    /**
+     * ADD TO FAVOURITES
+     */
+
+    public function addArtistToFavourites(string $userId, string $artistId): void;
+    public function addAlbumToFavourites(string $userId, string $albumId): void;
+    public function addSongToFavourites(string $userId, string $songId): void;
+
+    /**
+     * DELETE FROM FAVOURITES
+     */
+
+    public function removeArtistFromFavourites(string $userId, string $artistId): void;
+    public function removeAlbumFromFavourites(string $userId, string $albumId): void;
+    public function removeSongFromFavourites(string $userId, string $songId): void;
+
+    /**
+     * DELETE FROM ALL FAVOURITES
+     */
+
+    public function removeSongFromAllUsers(string $id): void;
+    public function removeAlbumFromAllUsers(string $id): void;
+    public function removeArtistFromAllUsers(string $id): void;
+
+    /**
+     * GET FAVOURITES
+     */
+
+    /**
+     * @return string[] favourite artists ids
+     */
+    public function getFavouriteArtists(string $userId): array;
+
+    /**
+     * @return string[] favourite songs ids
+     */
+    public function getFavouriteSongs(string $userId): array;
+
+    /**
+     * @return array<string> favourite albums ids
+     */
+    public function getFavouriteAlbums(string $userId): array;
 }

@@ -13,8 +13,6 @@ class AlbumDomain
         public int $likes,
         public bool $isFavourite,
         public ?string $publishTime,
-        /** @var string[] */
-        public array $songsIds,
         public string $artistId,
         public string $artistName,
         public Genres $genre,

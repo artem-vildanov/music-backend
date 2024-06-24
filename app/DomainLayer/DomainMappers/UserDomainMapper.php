@@ -1,14 +1,23 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\DomainLayer\DomainMappers;
 
 use App\DataAccessLayer\DbModels\BaseModel;
 use App\DataAccessLayer\DbModels\User;
+use App\DataAccessLayer\Repository\Interfaces\IArtistRepository;
+use App\DomainLayer\DomainModels\ArtistDomain;
 use App\DomainLayer\DomainModels\DomainModel;
 use App\DomainLayer\DomainModels\UserDomain;
+use App\Utils\Enums\UserRoles;
 
 class UserDomainMapper
 {
+    public function __construct(
+        private readonly IArtistRepository $artistRepository,
+        private readonly ArtistDomainMapper $artistDomainMapper,
+    ) {}
 
     public function mapToDomain(User $model): UserDomain
     {
@@ -20,7 +29,8 @@ class UserDomainMapper
             favouriteAlbumsIds: $model->favouriteAlbumsIds,
             favouriteSongsIds: $model->favouriteSongsIds,
             playlistsIds: $model->playlistsIds,
-            role: $model->role,
+            role: UserRoles::from($model->role),
+            artist: $this->getUserArtist($model)
         );
     }
 
@@ -30,6 +40,16 @@ class UserDomainMapper
      */
     public function mapMultipleToDomain(array $models): array
     {
-        return array_map(fn (BaseModel $model) => $this->mapToDomain($model), $models);
+        return array_map(fn ($model) => $this->mapToDomain($model), $models);
+    }
+
+    private function getUserArtist(User $user): ?ArtistDomain
+    {
+        if ($user->role !== UserRoles::ArtistUser->value) {
+            return null;
+        }
+
+        $artistDb = $this->artistRepository->getById($user->_id);
+        return $this->artistDomainMapper->mapToDomain($artistDb);
     }
 }

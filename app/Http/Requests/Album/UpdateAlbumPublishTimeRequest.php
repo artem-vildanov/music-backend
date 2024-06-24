@@ -15,11 +15,8 @@ class UpdateAlbumPublishTimeRequest extends BaseFormRequest
         ];
     }
 
-    public function body(): UpdateAlbumPublishTimeModel
+    public function body(): string
     {
-        $model = new UpdateAlbumPublishTimeModel();
-        $model->publishTime = $this->string('publishTime');
-
-        return $model;
+        return $this->string('publishTime');
     }
 }

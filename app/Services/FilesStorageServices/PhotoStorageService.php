@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace App\Services\FilesStorageServices;
 
 use App\Exceptions\MinioException;
+use App\Utils\Enums\ModelNames;
 use Aws\S3\S3Client;
 use Illuminate\Http\UploadedFile;
 
 class PhotoStorageService
 {
-    public function savePhoto(UploadedFile $file, string $modelName): string
+    public function savePhoto(UploadedFile $file, ModelNames $modelName): string
     {
         $fileName = uniqid(more_entropy: true);
-        $filePath = "{$modelName}/{$fileName}.png";
+        $filePath = "{$modelName->value}/{$fileName}.png";
 
         return $this->storePhoto($filePath, $file);
     }
@@ -21,7 +22,7 @@ class PhotoStorageService
     /**
      * @return string new photo path
      */
-    public function updatePhoto(string $oldPhotoPath, UploadedFile $newFile, string $modelName): string
+    public function updatePhoto(string $oldPhotoPath, UploadedFile $newFile, ModelNames $modelName): string
     {
         $this->deletePhoto($oldPhotoPath);
         return $this->savePhoto($newFile, $modelName);

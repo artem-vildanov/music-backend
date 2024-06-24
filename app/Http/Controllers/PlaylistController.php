@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\DataAccessLayer\Repository\Interfaces\IPlaylistRepository;
 use App\DataAccessLayer\Repository\Interfaces\IPlaylistSongsRepository;
 use App\DataAccessLayer\Repository\Interfaces\ISongRepository;
+use App\DomainLayer\DomainMappers\PlaylistDomainMapper;
+use App\DomainLayer\DomainMappers\SongDomainMapper;
 use App\DtoLayer\DtoMappers\PlaylistDtoMapper;
 use App\DtoLayer\DtoMappers\SongDtoMapper;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
@@ -20,12 +22,13 @@ use Illuminate\Http\JsonResponse;
 class PlaylistController extends Controller
 {
     public function __construct(
-        private readonly IPlaylistRepository      $playlistRepository,
-        private readonly IPlaylistSongsRepository $playlistSongsRepository,
-        private readonly ISongRepository          $songRepository,
-        private readonly PlaylistDtoMapper        $playlistMapper,
-        private readonly SongDtoMapper            $songMapper,
-        private readonly PlaylistService          $playlistService,
+        private readonly IPlaylistRepository  $playlistRepository,
+        private readonly ISongRepository      $songRepository,
+        private readonly PlaylistDtoMapper    $playlistDtoMapper,
+        private readonly SongDtoMapper        $songDtoMapper,
+        private readonly PlaylistDomainMapper $playlistDomainMapper,
+        private readonly SongDomainMapper     $songDomainMapper,
+        private readonly PlaylistService      $playlistService,
     ) {}
 
     /**
@@ -34,16 +37,18 @@ class PlaylistController extends Controller
     public function show(int $playlistId): JsonResponse
     {
         $playlist = $this->playlistRepository->getById($playlistId);
-        $playlistDto = $this->playlistMapper->mapSinglePlaylist($playlist);
+        $playlistDomain = $this->playlistDomainMapper->mapToDomain($playlist);
+        $playlistDto = $this->playlistDtoMapper->mapToLightDto($playlistDomain);
 
         return response()->json($playlistDto);
     }
 
     public function showSongsInPlaylist(int $playlistId): JsonResponse
     {
-        $songsIdsGroup = $this->playlistSongsRepository->getSongsIdsContainedInPlaylist($playlistId);
-        $songsModelsGroup = $this->songRepository->getMultipleByIds($songsIdsGroup);
-        $songsDtoGroup = $this->songMapper->mapMultipleSongs($songsModelsGroup);
+        $songsIdsGroup = $this->playlistRepository->getSongsInPlaylist($playlistId);
+        $songsDbGroup = $this->songRepository->getMultipleByIds($songsIdsGroup);
+        $songsDomainGroup = $this->songDomainMapper->mapMultipleToDomain($songsDbGroup);
+        $songsDtoGroup = $this->songDtoMapper->mapMultipleToLightDto($songsDomainGroup);
 
         return response()->json($songsDtoGroup);
     }
@@ -52,64 +57,56 @@ class PlaylistController extends Controller
     {
         $userId = AuthFacade::getUserId();
 
-        $playlists = $this->playlistRepository->getPlaylistsModelsByUserId($userId);
-        $playlistDtoCollection = $this->playlistMapper->mapMultiplePlaylists($playlists);
+        $playlistsDbGroup = $this->playlistRepository->getPlaylistsByUserId($userId);
+        $playlistsDomainGroup = $this->playlistDomainMapper->mapMultipleToDomain($playlistsDbGroup);
+        $playlistDtoCollection = $this->playlistDtoMapper->mapMultipleToLightDto($playlistsDomainGroup);
 
         return response()->json($playlistDtoCollection);
     }
 
-    /**
-     * @throws PlaylistSongsException
-     */
     public function addSongToPlaylist(int $playlistId, int $songId): JsonResponse
     {
-        $this->playlistSongsRepository->addSongToPlaylist($songId, $playlistId);
+        $this->playlistRepository->addSongToPlaylist($playlistId, $songId);
         return response()->json();
     }
 
-    /**
-     * @throws PlaylistSongsException
-     */
     public function deleteSongsFromPlaylist(int $playlistId, int $songId): JsonResponse
     {
-        $this->playlistSongsRepository->deleteSongFromPlaylist($songId, $playlistId);
+        $this->playlistRepository->removeSongFromPlaylist($playlistId, $songId);
         return response()->json();
     }
 
     /**
      * @throws DataAccessException
-     * @throws MinioException
      */
     public function create(CreatePlaylistRequest $request): JsonResponse
     {
         $data = $request->body();
         $authUserId = AuthFacade::getUserId();
         $playlistId = $this->playlistRepository->create($data->name, $authUserId);
-        return response()->json([
-            'playlistId' => $playlistId
-        ]);
+        return response()->json($playlistId);
+    }
+
+    /**
+     * @throws DataAccessException
+     */
+    public function updateName(int $playlistId, UpdatePlaylistNameRequest $request): JsonResponse
+    {
+        $newName = $request->body();
+        $this->playlistRepository->updateName($playlistId, $newName);
+        return response()->json();
     }
 
     /**
      * @throws DataAccessException
      * @throws MinioException
      */
-    public function updateName(int $playlistId, UpdatePlaylistNameRequest $request): JsonResponse
-    {
-        $data = $request->body();
-        $this->playlistRepository->updateName($playlistId, $data->name);
-        return response()->json();
-    }
-
     public function updatePhoto(int $playlistId, UpdatePlaylistPhotoRequest $request): JsonResponse
     {
-        $data = $request->body();
-        $this->playlistService->updatePlaylistPhoto($playlistId, $data->photo);
+        $newPhoto = $request->body();
+        $this->playlistService->updatePlaylistPhoto($playlistId, $newPhoto);
         return response()->json();
-
-        //UpdatePlaylistPhotoRequest
     }
-
 
     /**
      * @throws DataAccessException
@@ -118,7 +115,6 @@ class PlaylistController extends Controller
     public function delete(int $playlistId): JsonResponse
     {
         $this->playlistService->deletePlaylist($playlistId);
-
         return response()->json();
     }
 }

@@ -14,14 +14,8 @@ class UpdatePlaylistNameRequest extends BaseFormRequest
         ];
     }
 
-    /**
-     * @return UpdatePlaylistNameModel
-     */
-    public function body(): UpdatePlaylistNameModel
+    public function body(): string
     {
-        $model = new UpdatePlaylistNameModel();
-        $model->name = $this->string('name');
-
-        return $model;
+        return $this->string('name');
     }
 }

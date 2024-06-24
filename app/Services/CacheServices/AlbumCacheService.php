@@ -3,24 +3,29 @@
 namespace App\Services\CacheServices;
 
 use App\DataAccessLayer\DbModels\Album;
+use App\Utils\Enums\ModelNames;
+use App\Utils\Enums\UserRoles;
 
 class AlbumCacheService
 {
+    private string $redisIdPrefix;
     public function __construct(
         private readonly CacheStorageService $cacheStorageService
-    ) {}
+    ) {
+        $this->redisIdPrefix = ModelNames::Artist->value . '_';
+    }
 
     public function saveAlbumToCache(Album $album): void
     {
         $serializedAlbum = serialize($album);
-        $idInRedis = "album_{$album->id}";
+        $idInRedis = $this->redisIdPrefix . $album->_id;
 
         $this->cacheStorageService->saveToCache($idInRedis, $serializedAlbum);
     }
 
-    public function getAlbumFromCache(int $albumId): ?Album
+    public function getAlbumFromCache(string $albumId): ?Album
     {
-        $idInRedis = "album_{$albumId}";
+        $idInRedis = $this->redisIdPrefix . $albumId;
 
         $serializedAlbum = $this->cacheStorageService->getFromCache($idInRedis);
         if (!$serializedAlbum) {
@@ -30,9 +35,9 @@ class AlbumCacheService
         return unserialize($serializedAlbum);
     }
 
-    public function deleteAlbumFromCache(int $albumId): void
+    public function deleteAlbumFromCache(string $albumId): void
     {
-        $idInRedis = "album_{$albumId}";
+        $idInRedis = $this->redisIdPrefix . $albumId;
         $this->cacheStorageService->deleteFromCache($idInRedis);
     }
 }

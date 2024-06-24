@@ -13,7 +13,7 @@ class CreateAlbumRequest extends BaseFormRequest
         return [
             'name' => 'required|string',
             'photo' => 'required|mimes:png',
-            'genreId' => 'required|int',
+            'genreName' => 'required|string',
             'publishTime' => 'nullable|string'
         ];
     }
@@ -23,7 +23,7 @@ class CreateAlbumRequest extends BaseFormRequest
         $model = new CreateAlbumModel();
         $model->name = $this->string('name');
         $model->photo = $this->file('photo');
-        $model->genreId = $this->integer('genreId');
+        $model->genreName = $this->string('genreName');
         $model->publishTime = $this->string('publishTime');
 
         return $model;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Services\DomainServices;
 
 use App\DataAccessLayer\DbModels\Artist;
@@ -10,6 +12,8 @@ use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\MinioException;
 use App\Facades\AuthFacade;
 use App\Services\FilesStorageServices\PhotoStorageService;
+use App\Utils\Enums\ModelNames;
+use App\Utils\Enums\UserRoles;
 use Illuminate\Http\UploadedFile;
 
 class ArtistService
@@ -26,28 +30,33 @@ class ArtistService
      * @throws DataAccessException
      * @throws MinioException
      */
-    public function saveArtist(string $name, UploadedFile $photoFile): int|null
+    public function saveArtist(string $name, UploadedFile $photoFile): string
     {
-        $photoPath = $this->photoStorageService->savePhoto($photoFile, Artist::getModelName());
+        $photoPath = $this
+            ->photoStorageService
+            ->savePhoto(
+                $photoFile,
+                ModelNames::Artist
+            ) ?? throw MinioException::failedToSavePhoto();
 
-        if (!$photoPath)
-            return null;
+        $this->updateUserRole(UserRoles::ArtistUser);
 
-        $user = AuthFacade::getAuthInfo();
-        $this->userRepository->update($user->id, $user->name, $user->email, 'artist');
-
-        return $this->artistRepository->create($name, $photoPath, $user->id);
+        return $this->artistRepository->create(
+            $name,
+            $photoPath,
+            AuthFacade::getUserId()
+        );
     }
 
-    public function updateArtistPhoto(int $artistId, UploadedFile $photoFile): void
+    public function updateArtistPhoto(string $artistId, UploadedFile $photoFile): void
     {
         $artist = $this->artistRepository->getById($artistId);
         $newFilePath = $this
             ->photoStorageService
             ->updatePhoto(
-                $artist->photo_path,
+                $artist->photoPath,
                 $photoFile,
-                Artist::getModelName()
+                ModelNames::Artist
             );
 
         $this->artistRepository->updatePhoto($artistId, $newFilePath);
@@ -57,26 +66,33 @@ class ArtistService
      * @throws DataAccessException
      * @throws MinioException
      */
-    public function deleteArtist(int $artistId): void
+    public function deleteArtist(string $artistId): void
     {
         $artist = $this->artistRepository->getById($artistId);
 
-        $this->photoStorageService->deletePhoto($artist->photo_path);
-
-        $albums = $this->albumRepository->getAllByArtist($artist->id);
-        foreach ($albums as $album) {
-            $this->albumService->deleteAlbum($album->id);
-        }
-
+        $this->userRepository->removeArtistFromAllUsers($artistId);
+        $this->photoStorageService->deletePhoto($artist->photoPath);
+        $this->deleteArtistAlbums($artistId);
         $this->artistRepository->delete($artistId);
+        $this->updateUserRole(UserRoles::BaseUser);
+    }
 
+    private function deleteArtistAlbums(string $artistId): void
+    {
+        $albums = $this->albumRepository->getAllByArtist($artistId);
+        foreach ($albums as $album) {
+            $this->albumService->deleteAlbum($album->_id);
+        }
+    }
+
+    private function updateUserRole(UserRoles $userRole): void
+    {
         $user = AuthFacade::getAuthInfo();
         $this->userRepository->update(
             $user->id,
             $user->name,
             $user->email,
-            'base_user'
+            $userRole
         );
-
     }
 }

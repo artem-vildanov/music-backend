@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Song;
+namespace App\Http\Requests\Album;
 
-use App\Http\RequestModels\Song\UpdateSongNameModel;
 use App\Http\Requests\BaseFormRequest;
 
-class UpdateSongNameRequest extends BaseFormRequest
+class UpdateAlbumNameRequest extends BaseFormRequest
 {
     public function rules(): array
     {

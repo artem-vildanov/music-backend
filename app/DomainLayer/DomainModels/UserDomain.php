@@ -2,6 +2,8 @@
 
 namespace App\DomainLayer\DomainModels;
 
+use App\Utils\Enums\UserRoles;
+
 class UserDomain
 {
     public function __construct(
@@ -12,6 +14,7 @@ class UserDomain
         public array $favouriteAlbumsIds,
         public array $favouriteSongsIds,
         public array $playlistsIds,
-        public string $role,
+        public UserRoles $role,
+        public ?ArtistDomain $artist,
     ) {}
 }

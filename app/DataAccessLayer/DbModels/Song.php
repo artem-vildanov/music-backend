@@ -3,6 +3,7 @@
 namespace App\DataAccessLayer\DbModels;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use MongoDB\Laravel\Eloquent\Model;
 
 /**
  * @property string _id
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string albumId
  * @property string artistId
  */
-class Song extends BaseModel
+class Song extends Model
 {
     use HasFactory;
 }

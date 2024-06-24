@@ -34,7 +34,7 @@ class AlbumDomainMapper
             songsIds: $model->songsIds,
             artistId: $model->artistId,
             artistName: $this->artistRepository->getById($model->artistId)->name,
-            genre: Genres::from($model->genre)
+            genre: Genres::from($model->genre),
         );
     }
 

@@ -3,6 +3,7 @@
 namespace App\DataAccessLayer\DbModels;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use MongoDB\Laravel\Eloquent\Model;
 
 /**
  * @property string _id
@@ -11,16 +12,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int likes
  * @property bool isFavourite
  * @property string|null publishTime
- * @property string[] songsIds
  * @property string artistId
  * @property string genre
+ * @property string cdnFolderId
  */
-class Album extends BaseModel
+class Album extends Model
 {
     use HasFactory;
-
-    public static function getModelName(): string
-    {
-        return 'album';
-    }
 }

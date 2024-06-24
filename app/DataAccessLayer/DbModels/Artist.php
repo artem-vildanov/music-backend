@@ -3,6 +3,7 @@
 namespace App\DataAccessLayer\DbModels;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use MongoDB\Laravel\Eloquent\Model;
 
 /**
  * @property string _id
@@ -10,14 +11,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string photoPath
  * @property int likes
  * @property string userId
- * @property string[] albumsIds
  */
-class Artist extends BaseModel
+class Artist extends Model
 {
     use HasFactory;
-
-    public static function getModelName(): string
-    {
-        return 'artist';
-    }
 }

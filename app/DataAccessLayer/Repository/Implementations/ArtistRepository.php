@@ -9,93 +9,80 @@ use App\Exceptions\DataAccessExceptions\ArtistException;
 use App\Services\CacheServices\ArtistCacheService;
 use Illuminate\Support\Facades\DB;
 
-class ArtistRepository implements IArtistRepository
+class ArtistRepository
 {
-    public function __construct(
-        private readonly ArtistCacheService $artistCacheService
-    ) {}
-
-    public function getById(int $artistId): Artist
+    public function getAll(): array
     {
-        $artist = Artist::query()->find($artistId);
-        if (!$artist) {
-            throw ArtistException::notFound($artistId);
-        }
+        return Artist::get()->all();
+    }
 
-        return $artist;
+    public function getById(string $artistId): Artist
+    {
+        return Artist::where('_id', $artistId)->first() ?? throw ArtistException::notFound($artistId);
     }
 
     public function getMultipleByIds(array $artistIds): array
     {
-        return Artist::query()->whereIn('id', $artistIds)->get()->all();
+        return Artist::where('_id', $artistIds)->get()->all();
     }
 
-    public function getByUserId(int $userId): Artist
+    public function getByUserId(string $userId): Artist
     {
-        $artist = Artist::query()->where('user_id', $userId)->first();
-        if (!$artist) {
-            throw ArtistException::notFoundByUserId($userId);
-        }
-
-        return $artist;
+        return Artist::where('userId', $userId)->first() ?? throw ArtistException::notFoundByUserId($userId);
     }
 
-    public function create(string $name, string $photoPath, int $userId): int
+    public function create(string $name, string $photoPath, string $userId): string
     {
-        $artist = new Artist;
-
+        $artist = new Artist();
         $artist->name = $name;
-        $artist->photo_path = $photoPath;
-        $artist->user_id = $userId;
+        $artist->photoPath = $photoPath;
+        $artist->userId = $userId;
         $artist->likes = 0;
-        $artist->created_at = now();
-        $artist->updated_at = now();
-
         if (!$artist->save()) {
             throw ArtistException::failedToCreate();
         }
 
-        return $artist->id;
+        return $artist->_id;
     }
 
-    public function updateName(int $artistId, string $name): void
+    public function updateName(string $artistId, string $name): void
     {
-        $result = DB::table('artists')
-            ->where('id', $artistId)
-            ->update([
-                'name' => $name
-            ]);
-
+        $result = Artist::where('_id', $artistId)->update(['name' => $name]);
         if ($result === 0) {
             throw ArtistException::failedToUpdate($artistId);
         }
-
     }
 
-    public function updatePhoto(int $artistId, string $photoPath): void
+    public function updatePhoto(string $artistId, string $photoPath): void
     {
-        $result = DB::table('artists')
-            ->where('id', $artistId)
-            ->update([
-                'photo_path' => $photoPath
-            ]);
-
+        $result = Artist::where('_id', $artistId)->update(['photoPath' => $photoPath]);
         if ($result === 0) {
             throw ArtistException::failedToUpdate($artistId);
         }
-
     }
 
-    public function delete(int $artistId): void
+    public function incrementLikes(string $id): void
     {
-        $result = DB::table('artists')
-            ->where('id', $artistId)
-            ->delete();
+        Artist::where('_id', $id)
+            ->update([
+                '$inc' => ['likes' => 1]
+            ]);
+    }
 
+    public function decrementLikes(string $id): void
+    {
+        Artist::where('_id', $id)
+            ->update([
+                '$inc' => ['likes' => -1]
+            ]);
+    }
+
+    public function delete(string $artistId): void
+    {
+        $result = Artist::destroy($artistId);
         if ($result === 0) {
             throw ArtistException::failedToDelete($artistId);
         }
-
     }
 }
 

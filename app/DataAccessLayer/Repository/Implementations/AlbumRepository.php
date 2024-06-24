@@ -9,136 +9,112 @@ use Illuminate\Support\Facades\DB;
 
 class AlbumRepository implements IAlbumRepository
 {
-    public function getById(int $albumId): Album
+    public function getById(string $albumId): Album
     {
-        $album = Album::query()->find($albumId);
-
-        if (!$album) {
-            throw AlbumException::notFound($albumId);
-        }
-
-        return $album;
+        return Album::where('_id', $albumId)->first() ?? throw AlbumException::notFound($albumId);
     }
 
     public function getMultipleByIds(array $albumsIds): array
     {
-        return Album::query()->whereIn('id', $albumsIds)->get()->all();
+        return Album::where('_id', $albumsIds)->get();
     }
 
-    public function getAllByArtist(int $artistId): array
+    public function getAllByArtist(string $artistId): array
     {
-        return Album::query()->where('artist_id', $artistId)->get()->all();
+        return Album::where('artistId', $artistId)->get();
     }
 
-    public function getAllByGenre(int $genreId)
+    public function getAllByGenre(string $genre)
     {
         // TODO: Implement getAllByGenre() method.
     }
 
     public function getAllReadyToPublish(): array
     {
-        $albums = Album::query()->where('publish_at', '<=', now())->get()->all();
-        return $albums;
+        return Album::where('publishAt', '<=', now())->get();
     }
 
     public function create(
         string $name,
         string $photoPath,
-        int $artistId,
-        int $genreId,
+        string $artistId,
+        string $genre,
         ?string $publishTime,
-        string $status
-    ): int {
-        $album = new Album;
+    ): string {
+        $album = new Album();
         $album->name = $name;
-        $album->photo_path = $photoPath;
-        $album->artist_id = $artistId;
-        $album->genre_id = $genreId;
-        $album->publish_at = $publishTime;
-        $album->status = $status;
+        $album->photoPath = $photoPath;
+        $album->artistId = $artistId;
+        $album->publishTime = $publishTime;
         $album->likes = 0;
-        $album->cdn_folder_id = uniqid(more_entropy: true);
-
-        $album->created_at = now();
-        $album->updated_at = now();
-
+        $album->cdnFolderId = uniqid(more_entropy: true);
         if (!$album->save()) {
             throw AlbumException::failedToCreate();
         }
-
-        return $album->id;
+        return $album->_id;
     }
 
-    public function updateNameAndGenre(
-        int $albumId,
-        string $name,
-        int $genreId
-    ): void {
-
-        $result = DB::table('albums')
-            ->where('id', $albumId)
-            ->update([
-                'name' => $name,
-                'genre_id' => $genreId
-            ]);
-
+    public function updateName(string $albumId, string $name): void
+    {
+        $result = Album::where('_id', $albumId)->update(['name' => $name]);
         if ($result === 0) {
             throw AlbumException::failedToUpdate($albumId);
         }
     }
 
-    public function makePublic(int $albumId): void
+    public function makePublic(string $albumId): void
     {
-        $result = DB::table('albums')
-            ->where('id', $albumId)
-            ->update([
-                'status' => 'public',
-                'publish_at' => null
-            ]);
-
+        $result = Album::where('_id', $albumId)->update(['publishTime' => null]);
         if ($result === 0) {
             throw AlbumException::failedToUpdate($albumId);
         }
-
     }
 
-    public function updatePublishTime(int $albumId, string $publishTime): void
+    public function updatePublishTime(string $albumId, string $publishTime): void
     {
-        $result = DB::table('albums')
-            ->where('id', $albumId)
-            ->update([
-                'publish_time' => $publishTime
-            ]);
-
+        $result = Album::where('_id', $albumId)->update(['publishTime' => $publishTime]);
         if ($result === 0) {
             throw AlbumException::failedToUpdate($albumId);
         }
-
     }
 
-    public function updatePhoto(int $albumId, string $photoPath): void
+    public function updatePhoto(string $albumId, string $photoPath): void
     {
-        $result = DB::table('albums')
-            ->where('id', $albumId)
-            ->update([
-                'photo_path' => $photoPath
-            ]);
-
+        $result = Album::where('_id', $albumId)->update(['photoPath' => $photoPath]);
         if ($result === 0) {
             throw AlbumException::failedToUpdate($albumId);
         }
-
     }
 
-    public function delete(int $albumId): void
+    public function updateGenre(string $albumId, string $genre): void
     {
-        $result = DB::table('albums')
-            ->where('id', $albumId)
-            ->delete();
+        $result = Album::where('_id', $albumId)->update(['genre' => $genre]);
+        if ($result === 0) {
+            throw AlbumException::failedToUpdate($albumId);
+        }
+    }
 
+    public function delete(string $albumId): void
+    {
+        $result = Album::destroy($albumId);
         if ($result === 0) {
             throw AlbumException::failedToDelete($albumId);
         }
+    }
 
+    public function incrementLikes(string $id): void
+    {
+        Album::where('_id', $id)
+            ->update([
+                '$inc' => ['likes' => 1]
+            ]);
+    }
+
+    public function decrementLikes(string $id): void
+    {
+        Album::where('_id', $id)
+            ->update([
+                '$inc' => ['likes' => -1]
+            ]);
     }
 }

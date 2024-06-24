@@ -10,103 +10,84 @@ use Illuminate\Support\Facades\DB;
 
 class SongRepository implements ISongRepository
 {
-    /**
-     * @throws DataAccessException
-     */
-    public function getById(int $songId): Song
+    public function getById(string $songId): Song
     {
-        $song = Song::query()->find($songId);
-
-        if (!$song) {
-            throw SongException::notFound($songId);
-        }
-
-        return $song;
+        return Song::where('songId', $songId)->first() ?? throw SongException::notFound($songId);
     }
 
     public function getMultipleByIds(array $songsIds): array
     {
-        return Song::query()->whereIn('id', $songsIds)->get()->all();
+        return Song::whereIn('id', $songsIds)->get()->all();
     }
 
-    public function getAllByAlbum(int $albumId): array
+    public function getAllByAlbum(string $albumId): array
     {
-        return Song::query()->where('album_id', $albumId)->get()->all();
+        return Song::where('albumId', $albumId)->get()->all();
     }
 
     public function create(
         string $name,
         string $photoPath,
         string $musicPath,
-        int $albumId,
-        int $artistId
-    ): int {
+        string $albumId,
+        string $artistId
+    ): string {
         $song = new Song;
         $song->name = $name;
         $song->likes = 0;
-        $song->photo_path = $photoPath;
-        $song->music_path = $musicPath;
-        $song->album_id = $albumId;
-        $song->artist_id = $artistId;
-
+        $song->photoPath = $photoPath;
+        $song->musicPath = $musicPath;
+        $song->albumId = $albumId;
+        $song->artistId = $artistId;
         $song->save();
-
-        return $song->id;
+        return $song->_id;
     }
 
-    /**
-     * @throws DataAccessException
-     */
-    public function delete(int $songId): void
+    public function delete(string $songId): void
     {
-        $result = DB::table('songs')
-            ->where('id', $songId)
-            ->delete();
-
+        $result = Song::destroy($songId);
         if ($result === 0) {
             throw SongException::failedToDelete($songId);
         }
     }
 
-    /**
-     * @throws DataAccessException
-     */
-    public function updateName(int $songId, string $name): void
+    public function updateName(string $songId, string $name): void
     {
-        $result = DB::table('songs')
-            ->where('id', $songId)
-            ->update([
-                'name' => $name
-            ]);
-
+        $result = Song::where('_id', $songId)->update(['name' => $name]);
         if ($result === 0) {
             throw SongException::failedToUpdate($songId);
         }
     }
 
-    public function updatePhoto(int $songId, string $photoPath): void
+    public function updatePhoto(string $songId, string $photoPath): void
     {
-        $result = DB::table('songs')
-            ->where('id', $songId)
-            ->update([
-                'photo_path' => $photoPath
-            ]);
-
+        $result = Song::where('_id', $songId)->update(['photoPath' => $photoPath]);
         if ($result === 0) {
             throw SongException::failedToUpdate($songId);
         }
     }
 
-    public function updateAudio(int $songId, string $musicPath): void
+    public function updateAudio(string $songId, string $musicPath): void
     {
-        $result = DB::table('songs')
-            ->where('id', $songId)
-            ->update([
-                'music_path' => $musicPath
-            ]);
-
+        $result = Song::where('_id', $songId)->update(['musicPath' => $musicPath]);
         if ($result === 0) {
             throw SongException::failedToUpdate($songId);
         }
+    }
+
+    public function incrementLikes(string $id): void
+    {
+        Song::where('_id', $id)
+            ->update([
+                '$inc' => ['likes' => 1]
+            ]);
+    }
+
+    public function decrementLikes(string $id): void
+    {
+        Song::where('_id', $id)
+            ->update([
+                '$inc' => ['likes' => -1]
+            ]);
     }
 }

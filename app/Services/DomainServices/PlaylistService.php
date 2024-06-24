@@ -7,6 +7,8 @@ use App\DataAccessLayer\Repository\Interfaces\IPlaylistRepository;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\MinioException;
 use App\Services\FilesStorageServices\PhotoStorageService;
+use App\Utils\Enums\ModelNames;
+use App\Utils\Enums\PhotoStatuses;
 use Illuminate\Http\UploadedFile;
 
 class PlaylistService
@@ -23,22 +25,19 @@ class PlaylistService
     public function updatePlaylistPhoto(int $playlistId, UploadedFile $playlistPhoto): void
     {
         $playlist = $this->playlistRepository->getById($playlistId);
-
-
-        // $newPhotoPath = $this->updatePhoto($playlist->photo_path, $playlistPhoto);
-
         $newPhotoPath = '';
 
-        if ($playlist->photo_status === "unset") {
-            $newPhotoPath = $this->photoStorageService->savePhoto($playlistPhoto, Playlist::getModelName());
+        if ($playlist->photoStatus === PhotoStatuses::unset->value) {
+            $newPhotoPath = $this->photoStorageService->savePhoto($playlistPhoto, ModelNames::Playlist);
         }
 
-        elseif ($playlist->photo_status === "set") {
-            $newPhotoPath = $this->photoStorageService
+        elseif ($playlist->photoStatus === PhotoStatuses::set->value) {
+            $newPhotoPath = $this
+                ->photoStorageService
                 ->updatePhoto(
-                    $playlist->photo_path,
+                    $playlist->photoPath,
                     $playlistPhoto,
-                    Playlist::getModelName()
+                    ModelNames::Playlist
                 );
         }
 
@@ -56,11 +55,12 @@ class PlaylistService
     {
         $playlist = $this->playlistRepository->getById($playlistId);
 
-        if ($playlist->photo_path) {
-            $this->photoStorageService->deletePhoto($playlist->photo_path);
+        if ($playlist->photoPath) {
+            $this->photoStorageService->deletePhoto($playlist->photoPath);
         }
 
         $this->playlistRepository->delete($playlistId);
     }
+
 
 }

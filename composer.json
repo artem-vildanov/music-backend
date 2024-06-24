@@ -15,7 +15,8 @@
         "league/flysystem-aws-s3-v3": "^3.24",
         "predis/predis": "^2.2",
         "mongodb/mongodb": "*",
-        "mongodb/laravel-mongodb": "*"
+        "mongodb/laravel-mongodb": "*",
+        "ext-mongodb": "*"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.15",

@@ -18,7 +18,7 @@ class PlaylistRepositoryProxy extends PlaylistRepository implements IPlaylistRep
     /**
      * @throws DataAccessException
      */
-    public function getById(int $playlistId): Playlist
+    public function getById(string $playlistId): Playlist
     {
         $playlist = $this->playlistCacheService->getPlaylistFromCache($playlistId);
 
@@ -33,13 +33,13 @@ class PlaylistRepositoryProxy extends PlaylistRepository implements IPlaylistRep
     /**
      * @throws DataAccessException
      */
-    public function updateName(int $playlistId, string $name): void
+    public function updateName(string $playlistId, string $name): void
     {
         $this->playlistRepository->updateName($playlistId, $name);
         $this->playlistCacheService->deletePlaylistFromCache($playlistId);
     }
 
-    public function updatePhoto(int $playlistId, string $photoPath): void
+    public function updatePhoto(string $playlistId, string $photoPath): void
     {
         $this->playlistRepository->updatePhoto($playlistId, $photoPath);
         $this->playlistCacheService->deletePlaylistFromCache($playlistId);
@@ -48,7 +48,7 @@ class PlaylistRepositoryProxy extends PlaylistRepository implements IPlaylistRep
     /**
      * @throws DataAccessException
      */
-    public function delete(int $playlistId): void
+    public function delete(string $playlistId): void
     {
         $this->playlistRepository->delete($playlistId);
         $this->playlistCacheService->deletePlaylistFromCache($playlistId);

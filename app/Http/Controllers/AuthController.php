@@ -9,6 +9,7 @@ use App\Facades\AuthFacade;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\SignupRequest;
 use App\Services\JwtServices\TokenService;
+use App\Utils\Enums\UserRoles;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -33,7 +34,7 @@ class AuthController extends Controller
             $data->name,
             Hash::make($data->password),
             $data->email,
-            'base_user',
+            UserRoles::BaseUser
         );
 
         $token = $this->tokenService->createToken($user);

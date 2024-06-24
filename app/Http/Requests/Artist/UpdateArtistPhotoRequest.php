@@ -4,6 +4,7 @@ namespace App\Http\Requests\Artist;
 
 use App\Http\RequestModels\Artist\UpdateArtistPhotoModel;
 use App\Http\Requests\BaseFormRequest;
+use Illuminate\Http\UploadedFile;
 
 class UpdateArtistPhotoRequest extends BaseFormRequest
 {
@@ -14,11 +15,8 @@ class UpdateArtistPhotoRequest extends BaseFormRequest
         ];
     }
 
-    public function body(): UpdateArtistPhotoModel
+    public function body(): UploadedFile
     {
-        $model = new UpdateArtistPhotoModel();
-        $model->photo = $this->file('photo');
-
-        return $model;
+        return $this->file('photo');
     }
 }

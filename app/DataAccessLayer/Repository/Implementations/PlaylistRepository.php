@@ -7,106 +7,100 @@ use App\DataAccessLayer\Repository\Interfaces\IPlaylistRepository;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\DataAccessExceptions\PlaylistException;
 use Illuminate\Support\Facades\DB;
+use MongoDB\BSON\ObjectId;
 
 class PlaylistRepository implements IPlaylistRepository
 {
-    /**
-     * @throws DataAccessException
-     */
-    public function getById(int $playlistId): Playlist
+    public function getById(string $playlistId): Playlist
     {
-        $playlist = Playlist::query()->find($playlistId);
-        if (!$playlist) {
-            throw PlaylistException::notFound($playlistId);
-        }
-
-        return $playlist;
+        return Playlist::where('_id', $playlistId)->first() ?? throw PlaylistException::notFound($playlistId);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getMultipleByIds(array $playlistsIds): array
     {
-        return Playlist::query()->whereIn('id', $playlistsIds)->get()->all();
+        return Playlist::where('_id', $playlistsIds)->get()->toArray();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getPlaylistsModelsByUserId(int $userId): array
+    public function getPlaylistsByUserId(string $userId): array
     {
-        return Playlist::query()->where('user_id', $userId)->get()->all();
-    }
-
-    public function getPlaylistsIdsByUserId(int $userId): array
-    {
-        return Playlist::query()
-            ->where('user_id', $userId)
-            ->pluck('id')
+        return Playlist::where('userId', $userId)
+            ->get()
             ->toArray();
     }
 
+    public function getSongsInPlaylist(string $playlistId): array
+    {
+        return Playlist::where('_id', $playlistId)
+            ->project(['songsIds' => 1, '_id' => 0])
+            ->first()
+            ->songsIds;
+
+    }
+
     /**
      * @inheritDoc
      * @throws DataAccessException
      */
-    public function create(string $name, int $userId): int
+    public function create(string $name, string $userId): string
     {
         $playlist = new Playlist();
         $playlist->name = $name;
-        $playlist->user_id = $userId;
-        $playlist->photo_path = "playlist/base_playlist_image.png";
+        $playlist->userId = $userId;
+        $playlist->photoPath = "playlist/base_playlist_image.png";
 
         if (!$playlist->save()) {
             throw PlaylistException::failedToCreate();
         }
 
-        return $playlist->id;
+        return $playlist->_id;
     }
 
     /**
      * @throws DataAccessException
      */
-    public function updateName(int $playlistId, string $name): void
+    public function updateName(string $playlistId, string $name): void
     {
-        $result = DB::table('playlists')
-            ->where('id', $playlistId)
-            ->update([
-                'name' => $name
-            ]);
+        $result = Playlist::where('_id', $playlistId)->update(['name' => $name]);
+        if ($result === 0) {
+            throw PlaylistException::failedToUpdate($playlistId);
+        }
+    }
 
+    public function updatePhoto(string $playlistId, string $photoPath): void
+    {
+        $result = Playlist::where('_id', $playlistId)->update(['photoPath' => $photoPath]);
         if ($result === 0) {
             throw PlaylistException::failedToUpdate($playlistId);
         }
 
     }
 
-    public function updatePhoto(int $playlistId, string $photoPath): void
+    public function addSongToPlaylist(string $playlistId, string $songId): void
     {
-        $result = DB::table('playlists')
-            ->where('id', $playlistId)
-            ->update([
-                'photo_path' => $photoPath
-            ]);
+        Playlist::where('_id', $playlistId)->push('songsIds', $songId);
+    }
 
-        if ($result === 0) {
-            throw PlaylistException::failedToUpdate($playlistId);
-        }
+    public function removeSongFromPlaylist(string $playlistId, string $songId): void
+    {
+        Playlist::where('_id', $playlistId)->pull('songsIds', $songId);
+    }
+
+    public function removeSongFromAllPlaylists(string $songId): void
+    {
+        Playlist::where('songsIds', $songId)
+            ->update([
+                '$pull' => ['songsIds' => $songId]
+            ]);
     }
 
     /**
      * @throws DataAccessException
      */
-    public function delete(int $playlistId): void
+    public function delete(string $playlistId): void
     {
-        $result = DB::table('playlists')
-            ->where('id', $playlistId)
-            ->delete();
-
+        $result = Playlist::destroy($playlistId);
         if ($result === 0) {
             throw PlaylistException::failedToDelete($playlistId);
         }
-
     }
 }

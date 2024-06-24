@@ -5,12 +5,9 @@ use App\Http\Controllers\ArtistController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FavouriteAlbumsController;
 use App\Http\Controllers\FavouriteArtistsController;
-use App\Http\Controllers\FavouriteGenresController;
 use App\Http\Controllers\FavouriteSongsController;
-use App\Http\Controllers\GenreController;
 use App\Http\Controllers\PlaylistController;
 use App\Http\Controllers\SongController;
-use App\Http\Controllers\TestController;
 use App\Http\Middleware\AlbumOwnership;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\CheckAlbumExists;
@@ -27,7 +24,6 @@ use App\Http\Middleware\CheckSongIsFavourite;
 use App\Http\Middleware\ForArtistPermitted;
 use App\Http\Middleware\ForBaseUserPermitted;
 use App\Http\Middleware\ArtistOwnership;
-use App\Http\Middleware\ExceptionHandler;
 use App\Http\Middleware\PlaylistOwnership;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -43,7 +39,47 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('test', function () {
 
+    $documentId = new \MongoDB\BSON\ObjectId('66729f1a79b79dccb80b7f32');
+
+    $mongoResponse = \Illuminate\Support\Facades\DB::connection('mongodb')
+        ->collection('tests')
+        ->raw(function($collection) use ($documentId) {
+            return $collection->aggregate([
+                [
+                    '$match' => [ '_id' => $documentId ]
+                ],
+                [
+                    '$lookup' => [
+                        'from' => 'posts',
+                        'localField' => 'postsIds',
+                        'foreignField' => '_id',
+                        'as' => 'result',
+                    ]
+                ],
+                [
+                    '$project' => [
+                        'result' => 1,
+                        '_id' => 0
+                    ]
+                ]
+            ]);
+        });
+
+
+
+    $bsonDocumentsArray = $mongoResponse
+        ->toArray()
+        [0]['result']
+        ->getArrayCopy();
+
+    $associatedArray = array_map(fn ($bsonDocument) => $bsonDocument->getArrayCopy(), $bsonDocumentsArray);
+
+    var_dump($associatedArray);
+
+//    return response()->json($result);
+});
 
 Route::group(['prefix' => 'artists', 'middleware' => Authenticate::class], function () {
     Route::post('/create-artist', [ArtistController::class, 'create'])->middleware(ForBaseUserPermitted::class);
@@ -67,7 +103,8 @@ Route::group(['prefix' => 'albums', 'middleware' => Authenticate::class], functi
         Route::get('', [AlbumController::class, 'show']);
         Route::group(['middleware' => [AlbumOwnership::class]], function() {
             Route::delete('delete-album', [AlbumController::class, 'delete']);
-            Route::post('update-album-name-genre', [AlbumController::class, 'updateNameAndGenre']);
+            Route::post('update-album-name', [AlbumController::class, 'updateName']);
+            Route::post('update-album-genre', [AlbumController::class, 'updateGenre']);
             Route::post('update-album-publish-time', [AlbumController::class, 'updatePublishTime']);
             Route::post('update-album-photo', [AlbumController::class, 'updatePhoto']);
         })->withoutMiddleware(CheckAlbumStatus::class);

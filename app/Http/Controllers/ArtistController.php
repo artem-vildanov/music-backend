@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\DataAccessLayer\DbModels\Artist;
 use App\DataAccessLayer\Repository\Interfaces\IAlbumRepository;
 use App\DataAccessLayer\Repository\Interfaces\IArtistRepository;
+use App\DomainLayer\DomainMappers\AlbumDomainMapper;
+use App\DomainLayer\DomainMappers\ArtistDomainMapper;
 use App\DtoLayer\DtoMappers\AlbumDtoMapper;
 use App\DtoLayer\DtoMappers\ArtistDtoMapper;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
@@ -22,22 +24,25 @@ use Illuminate\Http\Request;
 class ArtistController extends Controller
 {
     public function __construct(
-        private readonly ArtistService     $artistService,
-        private readonly AlbumService      $albumService,
-        private readonly IArtistRepository $artistRepository,
-        private readonly IAlbumRepository  $albumRepository,
-        private readonly TokenService      $tokenService,
-        private readonly ArtistDtoMapper   $artistMapper,
-        private readonly AlbumDtoMapper $albumMapper
+        private readonly ArtistService      $artistService,
+        private readonly AlbumService       $albumService,
+        private readonly IArtistRepository  $artistRepository,
+        private readonly IAlbumRepository   $albumRepository,
+        private readonly TokenService       $tokenService,
+        private readonly ArtistDtoMapper    $artistDtoMapper,
+        private readonly AlbumDtoMapper     $albumDtoMapper,
+        private readonly ArtistDomainMapper $artistDomainMapper,
+        private readonly AlbumDomainMapper $albumDomainMapper,
     ) {}
 
     /**
      * @throws DataAccessException
      */
-    public function show(int $artistId): JsonResponse
+    public function show(string $artistId): JsonResponse
     {
-        $artist = $this->artistRepository->getById($artistId);
-        $artistDto = $this->artistMapper->mapSingleArtist($artist);
+        $artistDb = $this->artistRepository->getById($artistId);
+        $artistDomain = $this->artistDomainMapper->mapToDomain($artistDb);
+        $artistDto = $this->artistDtoMapper->mapToBigDto($artistDomain);
 
         return response()->json($artistDto);
     }
@@ -45,20 +50,19 @@ class ArtistController extends Controller
     // TODO для тестирования фронта, убрать потом
     public function showAll(): JsonResponse
     {
-        $artists = Artist::all()->all();
-        $artistsDtoGroup = $this->artistMapper->mapMultipleArtists($artists);
+        $artistsDbGroup = $this->artistRepository->getAll();
+        $artistsDomainGroup = $this->artistDomainMapper->mapMultipleToDomain($artistsDbGroup);
+        $artistsDtoGroup = $this->artistDtoMapper->mapMultipleToLightDto($artistsDomainGroup);
 
         return response()->json($artistsDtoGroup);
     }
 
-    /**
-     * @throws DataAccessException
-     */
-    public function showAlbumsMadeByArtist(int $artistId): JsonResponse
+    public function showAlbumsMadeByArtist(string $artistId): JsonResponse
     {
         $albumsMadeByArtist = $this->albumRepository->getAllByArtist($artistId);
         $albumsMadeByArtist = $this->albumService->removePrivateAlbumsFromList($albumsMadeByArtist);
-        $albumsDtoGroup = $this->albumMapper->mapMultipleAlbums($albumsMadeByArtist);
+        $albumsDomainGroup = $this->albumDomainMapper->mapMultipleToDomain($albumsMadeByArtist);
+        $albumsDtoGroup = $this->albumDtoMapper->mapMultipleToLightDto($albumsDomainGroup);
 
         return response()->json($albumsDtoGroup);
     }
@@ -87,17 +91,17 @@ class ArtistController extends Controller
      * @throws DataAccessException
      * @throws MinioException
      */
-    public function updateName(int $artistId, UpdateArtistNameRequest $request): JsonResponse
+    public function updateName(string $artistId, UpdateArtistNameRequest $request): JsonResponse
     {
-        $data = $request->body();
-        $this->artistRepository->updateName($artistId, $data->name);
+        $newName = $request->body();
+        $this->artistRepository->updateName($artistId, $newName);
         return response()->json();
     }
 
-    public function updatePhoto(int $artistId, UpdateArtistPhotoRequest $request): JsonResponse
+    public function updatePhoto(string $artistId, UpdateArtistPhotoRequest $request): JsonResponse
     {
-        $data = $request->body();
-        $this->artistService->updateArtistPhoto($artistId, $data->photo);
+        $newPhoto = $request->body();
+        $this->artistService->updateArtistPhoto($artistId, $newPhoto);
         return response()->json();
     }
 
@@ -106,7 +110,7 @@ class ArtistController extends Controller
      * @throws MinioException
      * @throws JwtException
      */
-    public function delete(int $artistId, Request $request): JsonResponse
+    public function delete(string $artistId, Request $request): JsonResponse
     {
         $this->artistService->deleteArtist($artistId);
 
@@ -114,7 +118,6 @@ class ArtistController extends Controller
         $newToken = $this->tokenService->refreshToken($token);
 
         return response()->json([
-            'message' => 'artist deleted successfully, your token has been refreshed',
             'access_token' => $newToken
         ]);
     }

@@ -7,25 +7,25 @@ use App\Exceptions\DataAccessExceptions\DataAccessException;
 
 interface IAlbumRepository {
     /**
-     * @param int $albumId
+     * @param string $albumId
      * @throws DataAccessException
      * @return Album
      */
-    public function getById(int $albumId): Album;
+    public function getById(string $albumId): Album;
 
     /**
-     * @param int[] $albumsIds
+     * @param string[] $albumsIds
      * @return Album[]
      */
     public function getMultipleByIds(array $albumsIds): array;
 
     /**
-     * @param int $artistId
+     * @param string $artistId
      * @return array<Album>
      */
-    public function getAllByArtist(int $artistId): array;
+    public function getAllByArtist(string $artistId): array;
 
-    public function getAllByGenre(int $genreId);
+    public function getAllByGenre(string $genre);
 
 
     /**
@@ -33,46 +33,39 @@ interface IAlbumRepository {
      */
     public function getAllReadyToPublish(): array;
 
-    /**
-     * @param string $name
-     * @param string $photoPath
-     * @param int $artistId
-     * @param int $genreId
-     * @throws DataAccessException
-     * @return int
-     */
     public function create(
         string $name,
         string $photoPath,
-        int $artistId,
-        int $genreId,
+        string $artistId,
+        string $genre,
         ?string $publishTime,
-        string $status
-    ): int;
+    ): string;
 
     /**
-     * @param int $albumId
+     * @param string $albumId
      * @param string $name
-     * @param int $genreId
      * @throws DataAccessException
      * @return void
      */
-    public function updateNameAndGenre(
-        int $albumId,
-        string $name,
-        int $genreId
-    ): void;
-
-    public function makePublic(int $albumId): void;
-
-    public function updatePublishTime(int $albumId, string $publishTime): void;
-
-    public function updatePhoto(int $albumId, string $photoPath): void;
+    public function updateName(string $albumId, string $name): void;
+    public function makePublic(string $albumId): void;
+    public function updatePublishTime(string $albumId, string $publishTime): void;
+    public function updatePhoto(string $albumId, string $photoPath): void;
+    public function updateGenre(string $albumId, string $genre): void;
 
     /**
-     * @param int $albumId
+     * @param string $id album id
+     */
+    public function incrementLikes(string $id): void;
+    /**
+     * @param string $id album id
+     */
+    public function decrementLikes(string $id): void;
+
+    /**
+     * @param string $albumId
      * @throws DataAccessException
      * @return void
      */
-    public function delete(int $albumId): void;
+    public function delete(string $albumId): void;
 }

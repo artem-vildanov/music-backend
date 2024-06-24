@@ -15,7 +15,7 @@ class AlbumRepositoryProxy extends AlbumRepository implements IAlbumRepository
         private readonly AlbumRepository $albumRepository
     ) {}
 
-    public function getById(int $albumId): Album
+    public function getById(string $albumId): Album
     {
         $album = $this->albumCacheService->getAlbumFromCache($albumId);
 
@@ -27,30 +27,30 @@ class AlbumRepositoryProxy extends AlbumRepository implements IAlbumRepository
         return $album;
     }
 
-    public function updateNameAndGenre(int $albumId, string $name, int $genreId): void {
-        $this->albumRepository->updateNameAndGenre($albumId, $name, $genreId);
+    public function updateName(string $albumId, string $name): void {
+        $this->albumRepository->updateName($albumId, $name);
         $this->albumCacheService->deleteAlbumFromCache($albumId);
     }
 
-    public function updatePublishTime(int $albumId, string $publishTime): void
+    public function updatePublishTime(string $albumId, string $publishTime): void
     {
         $this->albumRepository->updatePublishTime($albumId, $publishTime);
         $this->albumCacheService->deleteAlbumFromCache($albumId);
     }
 
-    public function makePublic(int $albumId): void
+    public function makePublic(string $albumId): void
     {
         $this->albumRepository->makePublic($albumId);
         $this->albumCacheService->deleteAlbumFromCache($albumId);
     }
 
-    public function updatePhoto(int $albumId, string $photoPath): void
+    public function updatePhoto(string $albumId, string $photoPath): void
     {
         $this->albumRepository->updatePhoto($albumId, $photoPath);
         $this->albumCacheService->deleteAlbumFromCache($albumId);
     }
 
-    public function delete(int $albumId): void
+    public function delete(string $albumId): void
     {
         $this->albumRepository->delete($albumId);
         $this->albumCacheService->deleteAlbumFromCache($albumId);

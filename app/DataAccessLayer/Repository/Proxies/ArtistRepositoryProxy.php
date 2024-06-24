@@ -1,12 +1,11 @@
 <?php
 
-
 namespace App\DataAccessLayer\Repository\Proxies;
 
-use App\DataAccessLayer\DbModels\Artist;
-use App\DataAccessLayer\Repository\Implementations\ArtistRepository;
-use App\DataAccessLayer\Repository\Interfaces\IArtistRepository;
 use App\Services\CacheServices\ArtistCacheService;
+use App\DataAccessLayer\Repository\Interfaces\IArtistRepository;
+use App\DataAccessLayer\Repository\Implementations\ArtistRepository;
+use App\DataAccessLayer\DbModels\Artist;
 
 class ArtistRepositoryProxy extends ArtistRepository implements IArtistRepository
 {
@@ -15,7 +14,7 @@ class ArtistRepositoryProxy extends ArtistRepository implements IArtistRepositor
         private readonly ArtistRepository $artistRepository
     ) {}
 
-    public function getById(int $artistId): Artist
+    public function getById(string $artistId): Artist
     {
         $artist = $this->artistCacheService->getArtistFromCache($artistId);
         if (!$artist) {
@@ -26,19 +25,19 @@ class ArtistRepositoryProxy extends ArtistRepository implements IArtistRepositor
         return $artist;
     }
 
-    public function updateName(int $artistId, string $name): void
+    public function updateName(string $artistId, string $name): void
     {
         $this->artistRepository->updateName($artistId, $name);
         $this->artistCacheService->deleteArtistFromCache($artistId);
     }
 
-    public function updatePhoto(int $artistId, string $photoPath): void
+    public function updatePhoto(string $artistId, string $photoPath): void
     {
         $this->artistRepository->updatePhoto($artistId, $photoPath);
         $this->artistCacheService->deleteArtistFromCache($artistId);
     }
 
-    public function delete(int $artistId): void
+    public function delete(string $artistId): void
     {
         $this->artistRepository->delete($artistId);
         $this->artistCacheService->deleteArtistFromCache($artistId);

@@ -7,61 +7,72 @@ use App\Exceptions\DataAccessExceptions\DataAccessException;
 
 interface IArtistRepository
 {
+    public function getAll(): array;
+
     /**
-     * @param int $artistId
+     * @param string $artistId
      * @throws DataAccessException
      * @return Artist
      */
-    public function getById(int $artistId): Artist;
+    public function getById(string $artistId): Artist;
 
     /**
-     * @param int[] $artistIds
+     * @param string[] $artistIds
      * @return Artist[]
      */
     public function getMultipleByIds(array $artistIds): array;
 
     /**
      * поиск артиста, который управляется пользователем
-     * @param int $userId
+     * @param string $userId
      * @throws DataAccessException
      * @return Artist
      */
-    public function getByUserId(int $userId): Artist;
+    public function getByUserId(string $userId): Artist;
 
     /**
      * @param string $name
      * @param string $photoPath
-     * @param int $userId
+     * @param string $userId
      * @throws DataAccessException
-     * @return int
+     * @return string
      */
     public function create(
         string $name,
         string $photoPath,
-        int $userId
-    ): int;
+        string $userId
+    ): string;
 
     /**
-     * @param int $artistId
+     * @param string $artistId
      * @param string $name
      * @throws DataAccessException
      * @return void
      */
     public function updateName(
-        int $artistId,
+        string $artistId,
         string $name
     ): void;
 
     public function updatePhoto(
-        int $artistId,
+        string $artistId,
         string $photoPath
     ): void;
 
     /**
-     * @param int $artistId
+     * @param string $id artist id
+     */
+    public function incrementLikes(string $id): void;
+    /**
+     * @param string $id artist id
+     */
+    public function decrementLikes(string $id): void;
+
+    /**
+     * @param string $artistId
      * @throws DataAccessException
      * @return void
      */
-    public function delete(int $artistId): void;
+    public function delete(string $artistId): void;
 
 }

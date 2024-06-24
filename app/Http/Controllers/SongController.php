@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DataAccessLayer\Repository\Interfaces\ISongRepository;
+use App\DomainLayer\DomainMappers\SongDomainMapper;
 use App\DtoLayer\DtoMappers\SongDtoMapper;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\MinioException;
@@ -17,19 +18,20 @@ class SongController extends Controller
 
 
     public function __construct(
-        private readonly ISongRepository $songRepository,
-        private readonly SongService     $songService,
-        private readonly SongDtoMapper   $songMapper,
+        private readonly ISongRepository  $songRepository,
+        private readonly SongService      $songService,
+        private readonly SongDtoMapper    $songDtoMapper,
+        private readonly SongDomainMapper $songDomainMapper,
     ) {}
 
     /**
      * @throws DataAccessException
      */
-    public function show(int $albumId, int $songId): JsonResponse
+    public function show(string $albumId, string $songId): JsonResponse
     {
-        $song = $this->songRepository->getById($songId);
-        $songDto = $this->songMapper->mapSingleSong($song);
-
+        $songDb = $this->songRepository->getById($songId);
+        $songDomain = $this->songDomainMapper->mapToDomain($songDb);
+        $songDto = $this->songDtoMapper->mapToBigDto($songDomain);
         return response()->json($songDto);
     }
 
@@ -37,30 +39,20 @@ class SongController extends Controller
      * @throws DataAccessException
      * @throws MinioException
      */
-    public function create(CreateSongRequest $request, int $albumId): JsonResponse
+    public function create(CreateSongRequest $request, string $albumId): JsonResponse
     {
         $data = $request->body();
-
         $songId = $this->songService->saveSong($data->name, $data->music, $albumId);
-
         return response()->json($songId);
     }
 
     /**
      * @throws DataAccessException
-     * @throws MinioException
      */
-    public function updateName(int $albumId, int $songId, UpdateSongNameRequest $request): JsonResponse
+    public function updateName(string $albumId, string $songId, UpdateSongNameRequest $request): JsonResponse
     {
-        $data = $request->body();
-        $this->songRepository->updateName($songId, $data->name);
-        return response()->json();
-    }
-
-    public function updateAudio(int $albumId, int $songId, UpdateSongAudioRequest $request): JsonResponse
-    {
-        $data = $request->body();
-        $this->songService->updateSongAudio($songId, $data->audio);
+        $newName = $request->body();
+        $this->songRepository->updateName($songId, $newName);
         return response()->json();
     }
 
@@ -68,7 +60,18 @@ class SongController extends Controller
      * @throws DataAccessException
      * @throws MinioException
      */
-    public function delete(int $albumId, int $songId): JsonResponse
+    public function updateAudio(string $albumId, string $songId, UpdateSongAudioRequest $request): JsonResponse
+    {
+        $newPhoto = $request->body();
+        $this->songService->updateSongAudio($songId, $newPhoto);
+        return response()->json();
+    }
+
+    /**
+     * @throws DataAccessException
+     * @throws MinioException
+     */
+    public function delete(string $albumId, string $songId): JsonResponse
     {
         $this->songService->deleteSong($songId);
         return response()->json();

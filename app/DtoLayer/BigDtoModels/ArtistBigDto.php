@@ -11,6 +11,5 @@ class ArtistBigDto
         public int $likes,
         public string $userId,
         public bool $isFavourite,
-        public array $albumsIds,
     ) {}
 }

@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Song;
 
-use App\Http\RequestModels\Song\UpdateSongAudioModel;
 use App\Http\Requests\BaseFormRequest;
+use Illuminate\Http\UploadedFile;
 
 class UpdateSongAudioRequest extends BaseFormRequest
 {
@@ -14,14 +14,8 @@ class UpdateSongAudioRequest extends BaseFormRequest
         ];
     }
 
-    /**
-     * @return UpdateSongAudioModel
-     */
-    public function body(): UpdateSongAudioModel
+    public function body(): UploadedFile
     {
-        $model = new UpdateSongAudioModel();
-        $model->audio = $this->file('audio');
-
-        return $model;
+        return $this->file('audio');
     }
 }
