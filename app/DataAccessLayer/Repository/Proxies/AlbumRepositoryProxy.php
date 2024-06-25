@@ -2,6 +2,7 @@
 
 namespace App\DataAccessLayer\Repository\Proxies;
 
+use App\DataAccessLayer\DbMappers\AlbumDbMapper;
 use App\DataAccessLayer\DbModels\Album;
 use App\DataAccessLayer\Repository\Implementations\AlbumRepository;
 use App\DataAccessLayer\Repository\Interfaces\IAlbumRepository;
@@ -12,8 +13,11 @@ class AlbumRepositoryProxy extends AlbumRepository implements IAlbumRepository
 {
     public function __construct(
         private readonly AlbumCacheService $albumCacheService,
-        private readonly AlbumRepository $albumRepository
-    ) {}
+        private readonly AlbumRepository $albumRepository,
+        AlbumDbMapper $albumDbMapper
+    ) {
+        parent::__construct($albumDbMapper);
+    }
 
     public function getById(string $albumId): Album
     {

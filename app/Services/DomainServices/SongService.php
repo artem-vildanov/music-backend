@@ -34,7 +34,7 @@ class SongService
         $album = $this->albumRepository->getById($albumId);
 
         $userId = AuthFacade::getUserId();
-        $artistId = $this->artistRepository->getByUserId($userId)->_id;
+        $artistId = $this->artistRepository->getByUserId($userId)->id;
 
         $musicPath = $this->audioStorageService->saveAudio($album->cdnFolderId, $musicFile);
 

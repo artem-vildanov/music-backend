@@ -5,15 +5,17 @@ namespace App\DataAccessLayer\Repository\Implementations;
 
 use App\DataAccessLayer\DbModels\User;
 use App\DataAccessLayer\Repository\Interfaces\IUserRepository;
+use App\DomainLayer\Enums\UserRoles;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\DataAccessExceptions\UserException;
-use App\Utils\Enums\UserRoles;
+use MongoDB\BSON\ObjectId;
 
 class UserRepository implements IUserRepository
 {
     public function getById(string $userId): User
     {
-        return User::where('_id', $userId)->first() ?? throw UserException::notFound($userId);
+        return User::where('_id', new ObjectId($userId))->first()
+            ?? throw UserException::notFound($userId);
     }
 
     public function create(string $name, string $password, string $email, UserRoles $role): User
@@ -33,7 +35,8 @@ class UserRepository implements IUserRepository
      */
     public function getByEmail(string $email): User
     {
-        return User::where('email', $email)->first() ?? throw UserException::notFoundByEmail($email);
+        return User::where('email', $email)->first()
+            ?? throw UserException::notFoundByEmail($email);
     }
 
     public function delete(string $userId): void
@@ -43,7 +46,7 @@ class UserRepository implements IUserRepository
 
     public function update(string $userId, string $name, string $email, UserRoles $role): void
     {
-        $result = User::where('_id', $userId)
+        $result = User::where('_id', new ObjectId($userId))
             ->update([
                 'name' => $name,
                 'email' => $email,
@@ -60,22 +63,22 @@ class UserRepository implements IUserRepository
 
     public function checkSongFavourite(string $userId, string $songId): bool
     {
-        return User::where('_id', $userId)
-            ->where('favouriteSongsIds', $songId)
+        return User::where('_id', new ObjectId($userId))
+            ->where('favouriteSongsIds', new ObjectId($songId))
             ->exists();
     }
 
     public function checkAlbumFavourite(string $userId, string $albumId): bool
     {
-        return User::where('_id', $userId)
-            ->where('favouriteAlbumsIds', $albumId)
+        return User::where('_id', new ObjectId($userId))
+            ->where('favouriteAlbumsIds', new ObjectId($albumId))
             ->exists();
     }
 
     public function checkArtistFavourite(string $userId, string $artistId): bool
     {
-        return User::where('_id', $userId)
-            ->where('favouriteArtistsIds', $artistId)
+        return User::where('_id', new ObjectId($userId))
+            ->where('favouriteArtistsIds', new ObjectId($artistId))
             ->exists();
     }
 
@@ -85,17 +88,29 @@ class UserRepository implements IUserRepository
 
     public function addArtistToFavourites(string $userId, string $artistId): void
     {
-        User::where('_id', $userId)->push('favouriteArtistsIds', $artistId);
+        User::where('_id', new ObjectId($userId))
+            ->push(
+                'favouriteArtistsIds',
+                new ObjectId($artistId)
+            );
     }
 
     public function addAlbumToFavourites(string $userId, string $albumId): void
     {
-        User::where('_id', $userId)->push('favouriteAlbumsIds', $albumId);
+        User::where('_id', new ObjectId($userId))
+            ->push(
+                'favouriteAlbumsIds',
+                new ObjectId($albumId)
+            );
     }
 
     public function addSongToFavourites(string $userId, string $songId): void
     {
-        User::where('_id', $userId)->push('favouriteSongsIds', $songId);
+        User::where('_id', new ObjectId($userId))
+            ->push(
+                'favouriteSongsIds',
+                new ObjectId($songId)
+            );
     }
 
     /**
@@ -104,17 +119,20 @@ class UserRepository implements IUserRepository
 
     public function removeArtistFromFavourites(string $userId, string $artistId): void
     {
-        User::where('_id', $userId)->pull('favouriteArtistsIds', $artistId);
+        User::where('_id', new ObjectId($userId))
+            ->pull('favouriteArtistsIds', new ObjectId($artistId));
     }
 
     public function removeAlbumFromFavourites(string $userId, string $albumId): void
     {
-        User::where('_id', $userId)->pull('favouriteAlbumsIds', $albumId);
+        User::where('_id', new ObjectId($userId))
+            ->pull('favouriteAlbumsIds', new ObjectId($albumId));
     }
 
     public function removeSongFromFavourites(string $userId, string $songId): void
     {
-        User::where('_id', $userId)->pull('favouriteSongsIds', $songId);
+        User::where('_id', new ObjectId($userId))
+            ->pull('favouriteSongsIds', new ObjectId($songId));
     }
 
     /**
@@ -123,25 +141,25 @@ class UserRepository implements IUserRepository
 
     public function removeSongFromAllUsers(string $songId): void
     {
-        User::where('favouriteSongsIds', $songId)
+        User::where('favouriteSongsIds', new ObjectId($songId))
             ->update([
-                '$pull' => ['favouriteSongsIds' => $songId]
+                '$pull' => ['favouriteSongsIds' => new ObjectId($songId)]
             ]);
     }
 
     public function removeAlbumFromAllUsers(string $albumId): void
     {
-        User::where('favouriteAlbumsIds', $albumId)
+        User::where('favouriteAlbumsIds', new ObjectId($albumId))
             ->update([
-                '$pull' => ['favouriteAlbumsIds' => $albumId]
+                '$pull' => ['favouriteAlbumsIds' => new ObjectId($albumId)]
             ]);
     }
 
     public function removeArtistFromAllUsers(string $artistId): void
     {
-        User::where('favouriteArtistsIds', $artistId)
+        User::where('favouriteArtistsIds', new ObjectId($artistId))
             ->update([
-                '$pull' => ['favouriteArtistsIds' => $artistId]
+                '$pull' => ['favouriteArtistsIds' => new ObjectId($artistId)]
             ]);
     }
 
@@ -149,6 +167,7 @@ class UserRepository implements IUserRepository
      * GET FAVOURITES
      */
 
+    /**
     public function getFavouriteArtists(string $userId): array
     {
         return User::where('_id', $userId)
@@ -172,6 +191,5 @@ class UserRepository implements IUserRepository
             ->first()
             ->favouriteAlbumsIds;
     }
+    */
 }
-
-

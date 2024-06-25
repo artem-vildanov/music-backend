@@ -17,12 +17,6 @@ interface IArtistRepository
     public function getById(string $artistId): Artist;
 
     /**
-     * @param string[] $artistIds
-     * @return Artist[]
-     */
-    public function getMultipleByIds(array $artistIds): array;
-
-    /**
      * поиск артиста, который управляется пользователем
      * @param string $userId
      * @throws DataAccessException

@@ -3,8 +3,7 @@
 namespace App\Services\CacheServices;
 
 use App\DataAccessLayer\DbModels\Album;
-use App\Utils\Enums\ModelNames;
-use App\Utils\Enums\UserRoles;
+use App\DomainLayer\Enums\ModelNames;
 
 class AlbumCacheService
 {
@@ -18,7 +17,7 @@ class AlbumCacheService
     public function saveAlbumToCache(Album $album): void
     {
         $serializedAlbum = serialize($album);
-        $idInRedis = $this->redisIdPrefix . $album->_id;
+        $idInRedis = $this->redisIdPrefix . $album->id;
 
         $this->cacheStorageService->saveToCache($idInRedis, $serializedAlbum);
     }

@@ -19,7 +19,7 @@ class CheckArtistExists
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $artistId = (int)$request->route('artistId');
+        $artistId = $request->route('artistId');
         $this->artistRepository->getById($artistId);
 
         return $next($request);

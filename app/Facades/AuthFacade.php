@@ -2,7 +2,7 @@
 
 namespace App\Facades;
 
-use App\Utils\UtilModels\TokenPayloadModel;
+use App\DomainLayer\DomainModels\TokenPayloadModel;
 use Illuminate\Support\Facades\Request;
 
 class AuthFacade

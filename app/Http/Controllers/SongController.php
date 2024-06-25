@@ -12,6 +12,7 @@ use App\Http\Requests\Song\UpdateSongAudioRequest;
 use App\Http\Requests\Song\UpdateSongNameRequest;
 use App\Services\DomainServices\SongService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class SongController extends Controller
 {
@@ -39,7 +40,7 @@ class SongController extends Controller
      * @throws DataAccessException
      * @throws MinioException
      */
-    public function create(CreateSongRequest $request, string $albumId): JsonResponse
+    public function create(string $albumId, CreateSongRequest $request): JsonResponse
     {
         $data = $request->body();
         $songId = $this->songService->saveSong($data->name, $data->music, $albumId);

@@ -17,7 +17,7 @@ interface IAlbumRepository {
      * @param string[] $albumsIds
      * @return Album[]
      */
-    public function getMultipleByIds(array $albumsIds): array;
+//    public function getMultipleByIds(array $albumsIds): array;
 
     /**
      * @param string $artistId

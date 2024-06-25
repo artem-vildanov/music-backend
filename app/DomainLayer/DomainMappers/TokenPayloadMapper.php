@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Utils\UtilModels;
+namespace App\DomainLayer\DomainMappers;
 
+use App\DomainLayer\DomainModels\TokenPayloadModel;
 use stdClass;
 
 class TokenPayloadMapper

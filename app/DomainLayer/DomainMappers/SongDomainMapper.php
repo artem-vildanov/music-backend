@@ -10,19 +10,18 @@ use App\DataAccessLayer\Repository\Interfaces\IArtistRepository;
 use App\DataAccessLayer\Repository\Interfaces\IUserRepository;
 use App\DomainLayer\DomainModels\DomainModel;
 use App\DomainLayer\DomainModels\SongDomain;
+use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Facades\AuthFacade;
 
 class SongDomainMapper
 {
     /** @var string[] */
-    private array $favouriteSongsIds;
+    private ?array $favouriteSongsIds = null;
     public function __construct(
         private readonly IArtistRepository $artistRepository,
         private readonly IAlbumRepository $albumRepository,
         private readonly IUserRepository $userRepository,
-    ) {
-        $this->favouriteSongsIds = $this->getFavouriteSongsIds();
-    }
+    ) {}
 
     /**
      * @param Song[] $models
@@ -33,8 +32,12 @@ class SongDomainMapper
         return array_map(fn (Song $song) => $this->mapToDomain($song), $models);
     }
 
+    /**
+     * @throws DataAccessException
+     */
     public function mapToDomain(Song $model): SongDomain
     {
+        $this->favouriteSongsIds ?? $this->favouriteSongsIds = $this->getFavouriteSongsIds();
         return new SongDomain(
             id: $model->_id,
             name: $model->name,
@@ -54,10 +57,13 @@ class SongDomainMapper
         return in_array($songId, $this->favouriteSongsIds);
     }
 
-    /** @return string[] */
+    /**
+     * @return string[]
+     * @throws DataAccessException
+     */
     private function getFavouriteSongsIds(): array
     {
         $authUserId = AuthFacade::getUserId();
-        return $this->userRepository->getById($authUserId)->favouriteSongsIds;
+        return $this->userRepository->getById($authUserId)->favouriteSongsIds ?? [];
     }
 }

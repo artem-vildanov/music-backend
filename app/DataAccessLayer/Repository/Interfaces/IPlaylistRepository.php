@@ -15,22 +15,16 @@ interface IPlaylistRepository
     public function getById(string $playlistId): Playlist;
 
     /**
-     * @param string[] $playlistsIds
-     * @return Playlist[]
-     */
-    public function getMultipleByIds(array $playlistsIds): array;
-
-    /**
      * @param string $userId
      * @return Playlist[]
      */
     public function getPlaylistsByUserId(string $userId): array;
 
-    /**
-     * @param string $playlistId
-     * @return string[] songs ids that contained in playlist
-     */
-    public function getSongsInPlaylist(string $playlistId): array;
+//    /**
+//     * @param string $playlistId
+//     * @return string[] songs ids that contained in playlist
+//     */
+//    public function getSongsInPlaylist(string $playlistId): array;
 
     /**
      * @param string $name

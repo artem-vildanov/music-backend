@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use MongoDB\Laravel\Eloquent\Model;
 
 /**
- * @property string _id
+ * @property string id
  * @property string name
  * @property string photoPath
  * @property int likes
@@ -19,4 +19,17 @@ use MongoDB\Laravel\Eloquent\Model;
 class Album extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        '_id',
+        'id',
+        'name',
+        'photoPath',
+        'likes',
+        'isFavourite',
+        'publishTime',
+        'artistId',
+        'genre',
+        'cdnFolderId'
+    ];
 }

@@ -25,7 +25,7 @@ class PlaylistOwnership
         $playlist = $this->playlistRepository->getById($playlistId);
 
         $authUserId = AuthFacade::getUserId();
-        if ($playlist->user_id !== $authUserId) {
+        if ($playlist->userId !== $authUserId) {
             return response()->json([
                 'message' => 'not permitted to access this resource'
             ], 403);

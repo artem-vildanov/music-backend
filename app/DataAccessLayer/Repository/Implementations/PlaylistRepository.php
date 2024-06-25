@@ -2,6 +2,7 @@
 
 namespace App\DataAccessLayer\Repository\Implementations;
 
+use App\DataAccessLayer\DbMappers\PlaylistDbMapper;
 use App\DataAccessLayer\DbModels\Playlist;
 use App\DataAccessLayer\Repository\Interfaces\IPlaylistRepository;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
@@ -11,31 +12,31 @@ use MongoDB\BSON\ObjectId;
 
 class PlaylistRepository implements IPlaylistRepository
 {
+    public function __construct(private readonly PlaylistDbMapper $playlistDbMapper) {}
+
     public function getById(string $playlistId): Playlist
     {
-        return Playlist::where('_id', $playlistId)->first() ?? throw PlaylistException::notFound($playlistId);
-    }
-
-    public function getMultipleByIds(array $playlistsIds): array
-    {
-        return Playlist::where('_id', $playlistsIds)->get()->toArray();
+        $playlist = Playlist::where('_id', $playlistId)->first()
+            ?? throw PlaylistException::notFound($playlistId);
+        return $this->playlistDbMapper->mapDbPlaylist($playlist);
     }
 
     public function getPlaylistsByUserId(string $userId): array
     {
-        return Playlist::where('userId', $userId)
+        $playlists = Playlist::where('userId', $userId)
             ->get()
             ->toArray();
+        return $this->playlistDbMapper->mapMultipleDbPlaylists($playlists);
     }
 
-    public function getSongsInPlaylist(string $playlistId): array
-    {
-        return Playlist::where('_id', $playlistId)
-            ->project(['songsIds' => 1, '_id' => 0])
-            ->first()
-            ->songsIds;
-
-    }
+//    // TODO remake by using aggregation
+//    public function getSongsInPlaylist(string $playlistId): array
+//    {
+//        return Playlist::where('_id', $playlistId)
+//            ->project(['songsIds' => 1, '_id' => 0])
+//            ->first()
+//            ->songsIds;
+//    }
 
     /**
      * @inheritDoc
@@ -45,7 +46,7 @@ class PlaylistRepository implements IPlaylistRepository
     {
         $playlist = new Playlist();
         $playlist->name = $name;
-        $playlist->userId = $userId;
+        $playlist->userId = new ObjectId($userId);
         $playlist->photoPath = "playlist/base_playlist_image.png";
 
         if (!$playlist->save()) {

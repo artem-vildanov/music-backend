@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\DataAccessLayer\Repository\Interfaces\IFavouritesRepository;
+use App\DataAccessLayer\Repository\Interfaces\IUserRepository;
 use App\Exceptions\FavouritesExceptions\FavouriteAlbumsException;
 use App\Facades\AuthFacade;
 use Closure;
@@ -12,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 class CheckAlbumIsFavourite
 {
     public function __construct(
-        private readonly IFavouritesRepository $favouritesRepository
+        private readonly IUserRepository $userRepository,
     ) {}
 
     public function handle(Request $request, Closure $next): Response
@@ -20,7 +21,7 @@ class CheckAlbumIsFavourite
         $albumId = $request->route('albumId');
         $userId = AuthFacade::getUserId();
 
-        if ($this->favouritesRepository->checkAlbumIsFavourite($userId, $albumId)) {
+        if ($this->userRepository->checkAlbumFavourite($userId, $albumId)) {
             throw FavouriteAlbumsException::failedAddToFavourites($albumId);
         }
 

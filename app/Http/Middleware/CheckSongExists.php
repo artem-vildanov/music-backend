@@ -19,13 +19,13 @@ class CheckSongExists
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $songId = (int)$request->route('songId');
-        $albumId = (int)$request->route('albumId');
+        $songId = $request->route('songId');
+        $albumId = $request->route('albumId');
 
         $song = $this->songRepository->getById($songId);
 
-        if ($song->album_id !== $albumId) {
-            return response()->json('', 404);
+        if ($song->albumId !== $albumId) {
+            return response()->json(status: 404);
         }
 
         return $next($request);

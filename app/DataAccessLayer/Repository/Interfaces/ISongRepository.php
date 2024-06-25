@@ -17,7 +17,7 @@ interface ISongRepository {
      * @param string[] $songsIds
      * @return Song[]
      */
-    public function getMultipleByIds(array $songsIds): array;
+//    public function getMultipleByIds(array $songsIds): array;
 
     /**
      * @param string $albumId

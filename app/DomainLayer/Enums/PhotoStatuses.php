@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Utils\Enums;
+namespace App\DomainLayer\Enums;
 
 enum PhotoStatuses: string {
     case set = 'set';

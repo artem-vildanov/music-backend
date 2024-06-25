@@ -18,7 +18,7 @@ class ArtistCacheService
         $this->cacheStorageService->saveToCache($idInRedis, $serializedArtist);
     }
 
-    public function getArtistFromCache(int $artistId): ?Artist
+    public function getArtistFromCache(string $artistId): ?Artist
     {
         $idInRedis = "artist_{$artistId}";
 
@@ -30,7 +30,7 @@ class ArtistCacheService
         return unserialize($serializedArtist);
     }
 
-    public function deleteArtistFromCache(int $artistId): void
+    public function deleteArtistFromCache(string $artistId): void
     {
         $idInRedis = "artist_{$artistId}";
         $this->cacheStorageService->deleteFromCache($idInRedis);

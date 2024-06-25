@@ -11,27 +11,22 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AlbumOwnership
 {
-    public function __construct(
-        private readonly IAlbumRepository $albumRepository
-    ) {}
+    public function __construct(private readonly IAlbumRepository $albumRepository) {}
 
     /**
      * @throws DataAccessException
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $requestAlbumId = (int)$request->route('albumId');
-
+        $requestAlbumId = $request->route('albumId');
         $album = $this->albumRepository->getById($requestAlbumId);
-
         $authUser = AuthFacade::getAuthInfo();
 
-        if ($album->artist_id !== $authUser->artistId) {
+        if ($album->artistId !== $authUser->artistId) {
             return response()->json([
                 'error' => 'You are not permitted to access this resource.',
             ], 403);
         }
-
 
         return $next($request);
     }

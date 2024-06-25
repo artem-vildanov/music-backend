@@ -17,7 +17,6 @@ class ArtistDtoMapper
             likes: $artist->likes,
             userId: $artist->userId,
             isFavourite: $artist->isFavourite,
-            albumsIds: $artist->albumsIds,
         );
     }
 

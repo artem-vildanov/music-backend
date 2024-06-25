@@ -2,26 +2,35 @@
 
 namespace App\DataAccessLayer\Repository\Implementations;
 
+use App\DataAccessLayer\DbMappers\AlbumDbMapper;
 use App\DataAccessLayer\DbModels\Album;
 use App\DataAccessLayer\Repository\Interfaces\IAlbumRepository;
 use App\Exceptions\DataAccessExceptions\AlbumException;
 use Illuminate\Support\Facades\DB;
+use MongoDB\BSON\ObjectId;
 
 class AlbumRepository implements IAlbumRepository
 {
+    public function __construct(private readonly AlbumDbMapper $albumDbMapper) {}
+
     public function getById(string $albumId): Album
     {
-        return Album::where('_id', $albumId)->first() ?? throw AlbumException::notFound($albumId);
+        $album = Album::where('_id', new ObjectId($albumId))->first()
+            ?? throw AlbumException::notFound($albumId);
+        return $this->albumDbMapper->mapDbAlbum($album);
     }
 
-    public function getMultipleByIds(array $albumsIds): array
-    {
-        return Album::where('_id', $albumsIds)->get();
-    }
+//    public function getMultipleByIds(array $albumsIds): array
+//    {
+//        return Album::where('_id', $albumsIds)->get();
+//    }
 
     public function getAllByArtist(string $artistId): array
     {
-        return Album::where('artistId', $artistId)->get();
+        $albums = Album::where('artistId', new ObjectId($artistId))
+            ->get()
+            ->all();
+        return $this->albumDbMapper->mapMultipleDbAlbums($albums);
     }
 
     public function getAllByGenre(string $genre)
@@ -31,7 +40,10 @@ class AlbumRepository implements IAlbumRepository
 
     public function getAllReadyToPublish(): array
     {
-        return Album::where('publishAt', '<=', now())->get();
+        $albums = Album::where('publishAt', '<=', now())
+            ->get()
+            ->all();
+        return $this->albumDbMapper->mapMultipleDbAlbums($albums);
     }
 
     public function create(
@@ -44,8 +56,9 @@ class AlbumRepository implements IAlbumRepository
         $album = new Album();
         $album->name = $name;
         $album->photoPath = $photoPath;
-        $album->artistId = $artistId;
+        $album->artistId = new ObjectId($artistId);
         $album->publishTime = $publishTime;
+        $album->genre = $genre;
         $album->likes = 0;
         $album->cdnFolderId = uniqid(more_entropy: true);
         if (!$album->save()) {
@@ -56,7 +69,8 @@ class AlbumRepository implements IAlbumRepository
 
     public function updateName(string $albumId, string $name): void
     {
-        $result = Album::where('_id', $albumId)->update(['name' => $name]);
+        $result = Album::where('_id', new ObjectId($albumId))
+            ->update(['name' => $name]);
         if ($result === 0) {
             throw AlbumException::failedToUpdate($albumId);
         }
@@ -64,7 +78,8 @@ class AlbumRepository implements IAlbumRepository
 
     public function makePublic(string $albumId): void
     {
-        $result = Album::where('_id', $albumId)->update(['publishTime' => null]);
+        $result = Album::where('_id', new ObjectId($albumId))
+            ->update(['publishTime' => null]);
         if ($result === 0) {
             throw AlbumException::failedToUpdate($albumId);
         }
@@ -72,7 +87,8 @@ class AlbumRepository implements IAlbumRepository
 
     public function updatePublishTime(string $albumId, string $publishTime): void
     {
-        $result = Album::where('_id', $albumId)->update(['publishTime' => $publishTime]);
+        $result = Album::where('_id', new ObjectId($albumId))
+            ->update(['publishTime' => $publishTime]);
         if ($result === 0) {
             throw AlbumException::failedToUpdate($albumId);
         }
@@ -80,7 +96,8 @@ class AlbumRepository implements IAlbumRepository
 
     public function updatePhoto(string $albumId, string $photoPath): void
     {
-        $result = Album::where('_id', $albumId)->update(['photoPath' => $photoPath]);
+        $result = Album::where('_id', new ObjectId($albumId))
+            ->update(['photoPath' => $photoPath]);
         if ($result === 0) {
             throw AlbumException::failedToUpdate($albumId);
         }
@@ -88,7 +105,8 @@ class AlbumRepository implements IAlbumRepository
 
     public function updateGenre(string $albumId, string $genre): void
     {
-        $result = Album::where('_id', $albumId)->update(['genre' => $genre]);
+        $result = Album::where('_id', new ObjectId($albumId))
+            ->update(['genre' => $genre]);
         if ($result === 0) {
             throw AlbumException::failedToUpdate($albumId);
         }
@@ -104,7 +122,7 @@ class AlbumRepository implements IAlbumRepository
 
     public function incrementLikes(string $id): void
     {
-        Album::where('_id', $id)
+        Album::where('_id', new ObjectId($id))
             ->update([
                 '$inc' => ['likes' => 1]
             ]);
@@ -112,7 +130,7 @@ class AlbumRepository implements IAlbumRepository
 
     public function decrementLikes(string $id): void
     {
-        Album::where('_id', $id)
+        Album::where('_id', new ObjectId($id))
             ->update([
                 '$inc' => ['likes' => -1]
             ]);

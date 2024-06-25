@@ -24,14 +24,14 @@ class CheckAlbumStatus
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $albumId = (int)$request->route('albumId');
+        $albumId = $request->route('albumId');
         $album = $this->albumRepository->getById($albumId);
 
         $authUser = AuthFacade::getAuthInfo();
 
         if (
-            $album->artist_id !== $authUser->artistId &&
-            $album->status === 'private'
+            $album->artistId !== $authUser->artistId &&
+            $album->publishTime === null
         ) {
             return response()->json([
                 'error' => 'You are not permitted to access this resource.',

@@ -2,7 +2,7 @@
 
 namespace App\DomainLayer\DomainModels;
 
-use App\Utils\Enums\UserRoles;
+use App\DomainLayer\Enums\UserRoles;
 
 class UserDomain
 {

@@ -2,6 +2,7 @@
 
 namespace App\DataAccessLayer\Repository\Proxies;
 
+use App\DataAccessLayer\DbMappers\PlaylistDbMapper;
 use App\DataAccessLayer\DbModels\Playlist;
 use App\DataAccessLayer\Repository\Implementations\PlaylistRepository;
 use App\DataAccessLayer\Repository\Interfaces\IPlaylistRepository;
@@ -12,8 +13,11 @@ class PlaylistRepositoryProxy extends PlaylistRepository implements IPlaylistRep
 {
     public function __construct(
         private readonly PlaylistCacheService $playlistCacheService,
-        private readonly PlaylistRepository $playlistRepository
-    ) {}
+        private readonly PlaylistRepository $playlistRepository,
+        PlaylistDbMapper $playlistDbMapper
+    ) {
+        parent::__construct($playlistDbMapper);
+    }
 
     /**
      * @throws DataAccessException

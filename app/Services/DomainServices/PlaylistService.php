@@ -2,13 +2,12 @@
 
 namespace App\Services\DomainServices;
 
-use App\DataAccessLayer\DbModels\Playlist;
 use App\DataAccessLayer\Repository\Interfaces\IPlaylistRepository;
+use App\DomainLayer\Enums\ModelNames;
+use App\DomainLayer\Enums\PhotoStatuses;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\MinioException;
 use App\Services\FilesStorageServices\PhotoStorageService;
-use App\Utils\Enums\ModelNames;
-use App\Utils\Enums\PhotoStatuses;
 use Illuminate\Http\UploadedFile;
 
 class PlaylistService

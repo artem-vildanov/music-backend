@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Http\Middleware;
 
+use App\DomainLayer\DomainModels\TokenPayloadModel;
+use App\Exceptions\JwtException;
 use App\Services\JwtServices\TokenService;
-use App\Utils\UtilModels\TokenPayloadModel;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class Authenticate
 {
@@ -13,6 +17,9 @@ class Authenticate
         private readonly TokenService $tokenService,
     ) {}
 
+    /**
+     * @throws JwtException
+     */
     function handle(Request $request, Closure $next)
     {
         $authInfo = $this->getAuthInfo($request);
@@ -21,7 +28,10 @@ class Authenticate
         return $next($request);
     }
 
-    private function getAuthInfo(Request $request): ?TokenPayloadModel
+    /**
+     * @throws JwtException
+     */
+    private function getAuthInfo(Request $request): TokenPayloadModel
     {
         $token = $this->tokenService->getTokenFromRequest($request);
         return $this->tokenService->getTokenPayload($token);

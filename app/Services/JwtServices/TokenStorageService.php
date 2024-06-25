@@ -11,10 +11,10 @@ class TokenStorageService
         private readonly RedisStorageService $redisStorageService,
     ) {}
 
-    public function saveToken(string $token, int $userId): void
+    public function saveToken(string $token, string $userId): void
     {
         $timeToRefresh = (int)config('jwt.ttr');
-        $this->redisStorageService->save($token, (string)$userId, $timeToRefresh);
+        $this->redisStorageService->save($token, $userId, $timeToRefresh);
     }
 
     /**

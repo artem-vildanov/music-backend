@@ -1,23 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\AlbumController;
 use App\Http\Controllers\ArtistController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\FavouriteAlbumsController;
-use App\Http\Controllers\FavouriteArtistsController;
-use App\Http\Controllers\FavouriteSongsController;
 use App\Http\Controllers\PlaylistController;
 use App\Http\Controllers\SongController;
+use App\Http\Controllers\UserController;
 use App\Http\Middleware\AlbumOwnership;
 use App\Http\Middleware\Authenticate;
-use App\Http\Middleware\CheckAlbumExists;
 use App\Http\Middleware\CheckAlbumIsFavourite;
 use App\Http\Middleware\CheckAlbumStatus;
 use App\Http\Middleware\CheckArtistExists;
 use App\Http\Middleware\CheckArtistIsFavourite;
-use App\Http\Middleware\CheckEmailExists;
-use App\Http\Middleware\CheckGenreExists;
-use App\Http\Middleware\CheckGenreIsFavourite;
 use App\Http\Middleware\CheckSongExists;
 use App\Http\Middleware\CheckSongInPlaylist;
 use App\Http\Middleware\CheckSongIsFavourite;
@@ -74,7 +70,10 @@ Route::get('test', function () {
         [0]['result']
         ->getArrayCopy();
 
-    $associatedArray = array_map(fn ($bsonDocument) => $bsonDocument->getArrayCopy(), $bsonDocumentsArray);
+    $associatedArray = array_map(
+        fn ($bsonDocument) => $bsonDocument->getArrayCopy(),
+        $bsonDocumentsArray
+    );
 
     var_dump($associatedArray);
 
@@ -82,7 +81,8 @@ Route::get('test', function () {
 });
 
 Route::group(['prefix' => 'artists', 'middleware' => Authenticate::class], function () {
-    Route::post('/create-artist', [ArtistController::class, 'create'])->middleware(ForBaseUserPermitted::class);
+    Route::post('/create-artist', [ArtistController::class, 'create'])
+        ->middleware(ForBaseUserPermitted::class);
     // TODO для тестирования фронта, убрать потом !!
     Route::get('all', [ArtistController::class, 'showAll']);
     Route::group(['prefix' => '{artistId}'], function() {
@@ -97,7 +97,8 @@ Route::group(['prefix' => 'artists', 'middleware' => Authenticate::class], funct
 
 Route::group(['prefix' => 'albums', 'middleware' => Authenticate::class], function () {
     Route::get('created-by-artist/{artistId}', [ArtistController::class, 'showAlbumsMadeByArtist']);
-    Route::post('/create-album', [AlbumController::class, 'create'])->middleware(ForArtistPermitted::class);
+    Route::post('/create-album', [AlbumController::class, 'create'])
+        ->middleware(ForArtistPermitted::class);
 
     Route::group(['prefix' => '{albumId}', 'middleware' => [CheckAlbumStatus::class]], function () {
         Route::get('', [AlbumController::class, 'show']);
@@ -128,25 +129,25 @@ Route::group(['prefix' => 'albums', 'middleware' => Authenticate::class], functi
 Route::group(['prefix' => 'favourite', 'middleware' => Authenticate::class], function () {
 
     Route::group(['prefix' => 'albums'], function () {
-        Route::get('', [FavouriteAlbumsController::class, 'showFavouriteAlbums']);
-        Route::put('add-to-favourites/{albumId}', [FavouriteAlbumsController::class, 'addToFavouriteAlbums'])
+        Route::get('', [UserController::class, 'showFavouriteAlbums']);
+        Route::put('add-to-favourites/{albumId}', [UserController::class, 'addAlbumToFavourites'])
             ->middleware([CheckAlbumIsFavourite::class]);
-        Route::put('delete-from-favourites/{albumId}', [FavouriteAlbumsController::class, 'deleteFromFavouriteAlbums']);
+        Route::put('delete-from-favourites/{albumId}', [UserController::class, 'removeAlbumFromFavourites']);
     });
 
     // TODO могу добавить трек из альбома, который еще не выложен в публику... исправить !
     Route::group(['prefix' => 'songs'], function () {
-        Route::get('', [FavouriteSongsController::class, 'showFavouriteSongs']);
-        Route::put('add-to-favourites/{songId}', [FavouriteSongsController::class, 'addToFavouriteSongs'])
+        Route::get('', [UserController::class, 'showFavouriteSongs']);
+        Route::put('add-to-favourites/{songId}', [UserController::class, 'addSongToFavourites'])
             ->middleware([CheckSongIsFavourite::class]); // добавить проверку на публичность трека, запрос по albumId и проверить album status
-        Route::put('delete-from-favourites/{songId}', [FavouriteSongsController::class, 'deleteFromFavouriteSongs']);
+        Route::put('delete-from-favourites/{songId}', [UserController::class, 'removeSongFromFavourites']);
     });
 
     Route::group(['prefix' => 'artists'], function () {
-        Route::get('', [FavouriteArtistsController::class, 'showFavouriteArtists']);
-        Route::put('add-to-favourites/{artistId}', [FavouriteArtistsController::class, 'addToFavouriteArtists'])
+        Route::get('', [UserController::class, 'showFavouriteArtists']);
+        Route::put('add-to-favourites/{artistId}', [UserController::class, 'addArtistToFavourites'])
             ->middleware([CheckArtistIsFavourite::class]);
-        Route::put('delete-from-favourites/{artistId}', [FavouriteArtistsController::class, 'deleteFromFavouriteArtists']);
+        Route::put('delete-from-favourites/{artistId}', [UserController::class, 'removeArtistFromFavourites']);
     });
 });
 
@@ -172,5 +173,5 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('signup', [AuthController::class, 'signup']);
     Route::post('logout', [AuthController::class, 'logout'])->middleware(Authenticate::class);
     Route::post('refresh', [AuthController::class, 'refresh']);
-    Route::get('me', [AuthController::class, 'me'])->middleware(Authenticate::class);
+    Route::get('me', [UserController::class, 'showUserInfo'])->middleware(Authenticate::class);
 });

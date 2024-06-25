@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services\JwtServices;
 
+use App\DomainLayer\DomainMappers\TokenPayloadMapper;
+use App\DomainLayer\DomainModels\TokenPayloadModel;
 use App\Exceptions\JwtException;
-use App\Utils\UtilModels\TokenPayloadMapper;
-use App\Utils\UtilModels\TokenPayloadModel;
 use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;

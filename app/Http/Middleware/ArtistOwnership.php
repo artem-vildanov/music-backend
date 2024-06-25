@@ -19,8 +19,7 @@ class ArtistOwnership
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $requestArtistId = (int)$request->route('artistId');
-
+        $requestArtistId = $request->route('artistId');
         $authUser = AuthFacade::getAuthInfo();
 
         if ($requestArtistId !== $authUser->artistId) {

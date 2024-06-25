@@ -2,6 +2,7 @@
 
 namespace App\DataAccessLayer\Repository\Proxies;
 
+use App\DataAccessLayer\DbMappers\SongDbMapper;
 use App\DataAccessLayer\DbModels\Song;
 use App\DataAccessLayer\Repository\Implementations\SongRepository;
 use App\DataAccessLayer\Repository\Interfaces\ISongRepository;
@@ -12,8 +13,11 @@ class SongRepositoryProxy extends SongRepository implements ISongRepository
 {
     public function __construct(
         private readonly SongCacheService $songCacheService,
-        private readonly SongRepository $songRepository
-    ) {}
+        private readonly SongRepository $songRepository,
+        SongDbMapper $songDbMapper
+    ) {
+        parent::__construct($songDbMapper);
+    }
 
     /**
      * @throws DataAccessException

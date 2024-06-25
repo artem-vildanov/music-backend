@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\FilesStorageServices;
 
+use App\DomainLayer\Enums\ModelNames;
 use App\Exceptions\MinioException;
-use App\Utils\Enums\ModelNames;
 use Aws\S3\S3Client;
 use Illuminate\Http\UploadedFile;
 

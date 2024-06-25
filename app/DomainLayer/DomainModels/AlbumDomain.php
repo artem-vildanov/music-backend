@@ -2,7 +2,7 @@
 
 namespace App\DomainLayer\DomainModels;
 
-use App\Utils\Enums\Genres;
+use App\DomainLayer\Enums\Genres;
 
 class AlbumDomain
 {

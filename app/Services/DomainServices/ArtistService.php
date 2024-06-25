@@ -4,16 +4,15 @@ declare(strict_types = 1);
 
 namespace App\Services\DomainServices;
 
-use App\DataAccessLayer\DbModels\Artist;
 use App\DataAccessLayer\Repository\Interfaces\IAlbumRepository;
 use App\DataAccessLayer\Repository\Interfaces\IArtistRepository;
 use App\DataAccessLayer\Repository\Interfaces\IUserRepository;
+use App\DomainLayer\Enums\ModelNames;
+use App\DomainLayer\Enums\UserRoles;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\MinioException;
 use App\Facades\AuthFacade;
 use App\Services\FilesStorageServices\PhotoStorageService;
-use App\Utils\Enums\ModelNames;
-use App\Utils\Enums\UserRoles;
 use Illuminate\Http\UploadedFile;
 
 class ArtistService
@@ -81,7 +80,7 @@ class ArtistService
     {
         $albums = $this->albumRepository->getAllByArtist($artistId);
         foreach ($albums as $album) {
-            $this->albumService->deleteAlbum($album->_id);
+            $this->albumService->deleteAlbum($album->id);
         }
     }
 

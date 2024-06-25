@@ -6,7 +6,7 @@ use MongoDB\Laravel\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property string _id
+ * @property string id
  * @property string name
  * @property string email
  * @property string password
@@ -26,9 +26,16 @@ class User extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        '_id',
+        'id',
         'name',
         'email',
         'password',
+        'favouriteArtistsIds',
+        'favouriteAlbumsIds',
+        'favouriteSongsIds',
+        'playlistsIds',
+        'role'
     ];
 
     /**

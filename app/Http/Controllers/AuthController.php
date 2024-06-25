@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\DataAccessLayer\Repository\Interfaces\IUserRepository;
+use App\DomainLayer\Enums\UserRoles;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\JwtException;
 use App\Facades\AuthFacade;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\SignupRequest;
 use App\Services\JwtServices\TokenService;
-use App\Utils\Enums\UserRoles;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -19,9 +19,7 @@ class AuthController extends Controller
     public function __construct(
         private readonly IUserRepository      $userRepository,
         private readonly TokenService        $tokenService
-    ) {
-    }
-
+    ) {}
 
     /**
      * @throws DataAccessException
@@ -56,12 +54,6 @@ class AuthController extends Controller
         $token = $this->tokenService->createToken($user);
 
         return $this->respondWithToken($token);
-    }
-
-    public function me(): JsonResponse
-    {
-        $tokenPayload = AuthFacade::getAuthInfo();
-        return response()->json($tokenPayload);
     }
 
     /**

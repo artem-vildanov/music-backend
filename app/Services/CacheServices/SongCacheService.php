@@ -18,7 +18,7 @@ class SongCacheService
         $this->cacheStorageService->saveToCache($idInRedis, $serializedSong);
     }
 
-    public function getSongFromCache(int $songId): ?Song
+    public function getSongFromCache(string $songId): ?Song
     {
         $idInRedis = "song_{$songId}";
 
@@ -30,7 +30,7 @@ class SongCacheService
         return unserialize($serializedSong);
     }
 
-    public function deleteSongFromCache(int $songId): void
+    public function deleteSongFromCache(string $songId): void
     {
         $idInRedis = "song_{$songId}";
         $this->cacheStorageService->deleteFromCache($idInRedis);

@@ -3,8 +3,8 @@
 namespace App\DataAccessLayer\Repository\Interfaces;
 
 use App\DataAccessLayer\DbModels\User;
+use App\DomainLayer\Enums\UserRoles;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
-use App\Utils\Enums\UserRoles;
 
 interface IUserRepository
 {
@@ -92,17 +92,8 @@ interface IUserRepository
      */
 
     /**
-     * @return string[] favourite artists ids
-     */
     public function getFavouriteArtists(string $userId): array;
-
-    /**
-     * @return string[] favourite songs ids
-     */
     public function getFavouriteSongs(string $userId): array;
-
-    /**
-     * @return array<string> favourite albums ids
-     */
     public function getFavouriteAlbums(string $userId): array;
+    */
 }

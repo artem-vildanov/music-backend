@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use MongoDB\Laravel\Eloquent\Model;
 
 /**
- * @property string _id
+ * @property string id
  * @property string name
  * @property int likes
  * @property string photoPath
@@ -17,4 +17,15 @@ use MongoDB\Laravel\Eloquent\Model;
 class Song extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        '_id',
+        'id',
+        'name',
+        'likes',
+        'photoPath',
+        'musicPath',
+        'albumId',
+        'artistId'
+    ];
 }

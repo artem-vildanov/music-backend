@@ -2,6 +2,7 @@
 
 namespace App\DataAccessLayer\Repository\Proxies;
 
+use App\DataAccessLayer\DbMappers\ArtistDbMapper;
 use App\Services\CacheServices\ArtistCacheService;
 use App\DataAccessLayer\Repository\Interfaces\IArtistRepository;
 use App\DataAccessLayer\Repository\Implementations\ArtistRepository;
@@ -11,8 +12,11 @@ class ArtistRepositoryProxy extends ArtistRepository implements IArtistRepositor
 {
     public function __construct(
         private readonly ArtistCacheService $artistCacheService,
-        private readonly ArtistRepository $artistRepository
-    ) {}
+        private readonly ArtistRepository $artistRepository,
+        ArtistDbMapper $artistDbMapper
+    ) {
+        parent::__construct($artistDbMapper);
+    }
 
     public function getById(string $artistId): Artist
     {

@@ -9,13 +9,13 @@ use App\DataAccessLayer\Repository\Interfaces\IAlbumRepository;
 use App\DataAccessLayer\Repository\Interfaces\IArtistRepository;
 use App\DataAccessLayer\Repository\Interfaces\ISongRepository;
 use App\DataAccessLayer\Repository\Interfaces\IUserRepository;
+use App\DomainLayer\Enums\Genres;
+use App\DomainLayer\Enums\ModelNames;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\GenreException;
 use App\Exceptions\MinioException;
 use App\Facades\AuthFacade;
 use App\Services\FilesStorageServices\PhotoStorageService;
-use App\Utils\Enums\Genres;
-use App\Utils\Enums\ModelNames;
 use Illuminate\Http\UploadedFile;
 
 class AlbumService
@@ -53,7 +53,7 @@ class AlbumService
         return $this->albumRepository->create(
             $name,
             $photoPath,
-            $artist->_id,
+            $artist->id,
             $genreName,
             $publishTime,
         );
@@ -89,7 +89,7 @@ class AlbumService
     {
         $albumSongs = $this->songRepository->getAllByAlbum($albumId);
         foreach ($albumSongs as $song) {
-            $this->songRepository->updatePhoto($song->_id, $filePath);
+            $this->songRepository->updatePhoto($song->id, $filePath);
         }
     }
 
@@ -111,7 +111,7 @@ class AlbumService
     {
         $songs = $this->songRepository->getAllByAlbum($albumId);
         foreach ($songs as $song) {
-            $this->songService->deleteSong($song->_id);
+            $this->songService->deleteSong($song->id);
         }
     }
 
@@ -119,7 +119,7 @@ class AlbumService
     {
         $albums = $this->albumRepository->getAllReadyToPublish();
         foreach ($albums as $album) {
-            $this->albumRepository->makePublic($album->_id);
+            $this->albumRepository->makePublic($album->id);
         }
     }
 

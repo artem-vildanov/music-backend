@@ -5,10 +5,10 @@ namespace App\Services\JwtServices;
 use App\DataAccessLayer\DbModels\User;
 use App\DataAccessLayer\Repository\Interfaces\IArtistRepository;
 use App\DataAccessLayer\Repository\Interfaces\IUserRepository;
+use App\DomainLayer\DomainModels\TokenPayloadModel;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\JwtException;
 use App\Exceptions\RedisException;
-use App\Utils\UtilModels\TokenPayloadModel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -63,10 +63,10 @@ class TokenService
         $timeToRefresh = (int)config('jwt.ttr');
 
         return new TokenPayloadModel(
-            id: $user->_id,
+            id: $user->id,
             name: $user->name,
             email: $user->email,
-            artistId: $this->getArtistId($user->_id),
+            artistId: $this->getArtistId($user->id),
             createdAt: Carbon::now()->getTimestamp(),
             refreshableUntil: Carbon::now()->addSeconds($timeToRefresh)->getTimestamp(),
             expiredAt: Carbon::now()->addSeconds($timeToLive)->getTimestamp(),
@@ -95,7 +95,6 @@ class TokenService
         } catch (RedisException $e) {
             throw JwtException::invalidToken();
         }
-
         return $tokenPayload;
     }
 

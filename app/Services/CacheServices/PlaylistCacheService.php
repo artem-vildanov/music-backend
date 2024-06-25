@@ -18,7 +18,7 @@ class PlaylistCacheService
         $this->cacheStorageService->saveToCache($idInRedis, $serializedPlaylist);
     }
 
-    public function getPlaylistFromCache(int $playlistId): ?Playlist
+    public function getPlaylistFromCache(string $playlistId): ?Playlist
     {
         $idInRedis = "playlist_{$playlistId}";
 
@@ -30,7 +30,7 @@ class PlaylistCacheService
         return unserialize($serializedPlaylist);
     }
 
-    public function deletePlaylistFromCache(int $playlistId): void
+    public function deletePlaylistFromCache(string $playlistId): void
     {
         $idInRedis = "playlist_{$playlistId}";
         $this->cacheStorageService->deleteFromCache($idInRedis);

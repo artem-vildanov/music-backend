@@ -14,27 +14,25 @@ use App\Facades\AuthFacade;
 
 class ArtistDomainMapper
 {
-    private array $favouriteArtistsIds;
-
-    /**
-     * @throws DataAccessException
-     */
-    public function __construct(private readonly IUserRepository $userRepository)
-    {
-        $this->favouriteArtistsIds = $this->getFavoriteArtistsIds();
-    }
+    private ?array $favouriteArtistsIds = null;
+    public function __construct(private readonly IUserRepository $userRepository) {}
 
     /**
      * @param Artist[] $models
      * @return ArtistDomain[]
+     * @throws DataAccessException
      */
     public function mapMultipleToDomain(array $models): array
     {
         return array_map(fn (Artist $artist) => $this->mapToDomain($artist), $models);
     }
 
+    /**
+     * @throws DataAccessException
+     */
     public function mapToDomain(Artist $model): ArtistDomain
     {
+        $this->favouriteArtistsIds ?? $this->favouriteArtistsIds = $this->getFavoriteArtistsIds();
         return new ArtistDomain(
             id: $model->_id,
             name: $model->name,
@@ -42,7 +40,6 @@ class ArtistDomainMapper
             photoPath: $model->photoPath,
             userId: $model->userId,
             isFavourite: $this->checkArtistIsFavourite($model->_id),
-            albumsIds: $model->albumsIds,
         );
     }
 
@@ -58,6 +55,6 @@ class ArtistDomainMapper
     private function getFavoriteArtistsIds(): array
     {
         $authUserId = AuthFacade::getUserId();
-        return $this->userRepository->getById($authUserId)->favouriteArtistsIds;
+        return $this->userRepository->getById($authUserId)->favouriteArtistsIds ?? [];
     }
 }

@@ -5,7 +5,6 @@ namespace App\DtoLayer\DtoMappers;
 use App\DomainLayer\DomainModels\AlbumDomain;
 use App\DtoLayer\BigDtoModels\AlbumBigDto;
 use App\DtoLayer\LightDtoModels\AlbumLightDto;
-use App\Utils\Enums\Genres;
 
 class AlbumDtoMapper
 {
@@ -16,7 +15,6 @@ class AlbumDtoMapper
             name: $album->name,
             photoPath: $album->photoPath,
             likes: $album->likes,
-            songsIds: $album->songsIds,
             artistId: $album->artistId,
             artistName: $album->artistName,
             genre: $album->genre->value,
