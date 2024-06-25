@@ -13,7 +13,6 @@ class UserDomain
         public array $favouriteArtistsIds,
         public array $favouriteAlbumsIds,
         public array $favouriteSongsIds,
-        public array $playlistsIds,
         public UserRoles $role,
         public ?ArtistDomain $artist,
     ) {}

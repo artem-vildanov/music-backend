@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\DataAccessLayer\Queries\Interfaces\IFavouriteQuery;
+use App\DataAccessLayer\Queries\FavouriteQuery;
 use App\DataAccessLayer\Repository\Interfaces\IAlbumRepository;
 use App\DataAccessLayer\Repository\Interfaces\IArtistRepository;
 use App\DataAccessLayer\Repository\Interfaces\ISongRepository;
@@ -30,7 +30,7 @@ class UserController extends Controller
         private readonly AlbumDomainMapper $albumDomainMapper,
         private readonly UserDomainMapper $userDomainMapper,
         private readonly UserDtoMapper $userDtoMapper,
-        private readonly IFavouriteQuery $favouriteQuery,
+        private readonly FavouriteQuery $favouriteQuery,
         private readonly IUserRepository $userRepository,
         private readonly IAlbumRepository $albumRepository,
         private readonly IArtistRepository $artistRepository,

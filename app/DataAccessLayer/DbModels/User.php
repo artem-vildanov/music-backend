@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string[] favouriteArtistsIds
  * @property string[] favouriteAlbumsIds
  * @property string[] favouriteSongsIds
- * @property string[] playlistsIds
  * @property string role
  */
 class User extends Model
@@ -34,7 +33,6 @@ class User extends Model
         'favouriteArtistsIds',
         'favouriteAlbumsIds',
         'favouriteSongsIds',
-        'playlistsIds',
         'role'
     ];
 

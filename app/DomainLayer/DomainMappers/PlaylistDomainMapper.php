@@ -12,7 +12,7 @@ class PlaylistDomainMapper
     public function mapToDomain(Playlist $model): PlaylistDomain
     {
         return new PlaylistDomain(
-            id: $model->_id,
+            id: $model->id,
             name: $model->name,
             photoPath: $model->photoPath,
             userId: $model->userId,

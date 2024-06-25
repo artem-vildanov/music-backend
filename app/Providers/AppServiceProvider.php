@@ -2,13 +2,10 @@
 
 namespace App\Providers;
 
-use App\DataAccessLayer\Queries\Implementations\FavouriteQuery;
-use App\DataAccessLayer\Queries\Interfaces\IFavouriteQuery;
-use App\DataAccessLayer\Repository\Implementations\FavouritesRepository;
+use App\DataAccessLayer\Queries\FavouriteQuery;
 use App\DataAccessLayer\Repository\Implementations\UserRepository;
 use App\DataAccessLayer\Repository\Interfaces\IAlbumRepository;
 use App\DataAccessLayer\Repository\Interfaces\IArtistRepository;
-use App\DataAccessLayer\Repository\Interfaces\IFavouritesRepository;
 use App\DataAccessLayer\Repository\Interfaces\IPlaylistRepository;
 use App\DataAccessLayer\Repository\Interfaces\ISongRepository;
 use App\DataAccessLayer\Repository\Interfaces\IUserRepository;
@@ -33,20 +30,11 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
 
-        $this->app->bind(IFavouriteQuery::class, FavouriteQuery::class);
         $this->app->bind(IAlbumRepository::class, AlbumRepositoryProxy::class);
         $this->app->bind(IArtistRepository::class, ArtistRepositoryProxy::class);
         $this->app->bind(ISongRepository::class, SongRepositoryProxy::class);
         $this->app->bind(IPlaylistRepository::class, PlaylistRepositoryProxy::class);
-
-        // $this->app->bind(IAlbumRepository::class, AlbumRepository::class);
-        // $this->app->bind(IArtistRepository::class, ArtistRepository::class);
-        // $this->app->bind(ISongRepository::class, SongRepository::class);
-        // $this->app->bind(IGenreRepository::class, GenreRepository::class);
-        // $this->app->bind(IPlaylistRepository::class, PlaylistRepository::class);
-
         $this->app->bind(IUserRepository::class, UserRepository::class);
-        $this->app->bind(IFavouritesRepository::class, FavouritesRepository::class);
     }
 
     /**

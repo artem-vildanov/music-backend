@@ -15,7 +15,7 @@ use App\Http\Middleware\CheckAlbumStatus;
 use App\Http\Middleware\CheckArtistExists;
 use App\Http\Middleware\CheckArtistIsFavourite;
 use App\Http\Middleware\CheckSongExists;
-use App\Http\Middleware\CheckSongInPlaylist;
+use App\Http\Middleware\CheckSongInAlbum;
 use App\Http\Middleware\CheckSongIsFavourite;
 use App\Http\Middleware\ForArtistPermitted;
 use App\Http\Middleware\ForBaseUserPermitted;
@@ -34,51 +34,6 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
-Route::get('test', function () {
-
-    $documentId = new \MongoDB\BSON\ObjectId('66729f1a79b79dccb80b7f32');
-
-    $mongoResponse = \Illuminate\Support\Facades\DB::connection('mongodb')
-        ->collection('tests')
-        ->raw(function($collection) use ($documentId) {
-            return $collection->aggregate([
-                [
-                    '$match' => [ '_id' => $documentId ]
-                ],
-                [
-                    '$lookup' => [
-                        'from' => 'posts',
-                        'localField' => 'postsIds',
-                        'foreignField' => '_id',
-                        'as' => 'result',
-                    ]
-                ],
-                [
-                    '$project' => [
-                        'result' => 1,
-                        '_id' => 0
-                    ]
-                ]
-            ]);
-        });
-
-
-
-    $bsonDocumentsArray = $mongoResponse
-        ->toArray()
-        [0]['result']
-        ->getArrayCopy();
-
-    $associatedArray = array_map(
-        fn ($bsonDocument) => $bsonDocument->getArrayCopy(),
-        $bsonDocumentsArray
-    );
-
-    var_dump($associatedArray);
-
-//    return response()->json($result);
-});
 
 Route::group(['prefix' => 'artists', 'middleware' => Authenticate::class], function () {
     Route::post('/create-artist', [ArtistController::class, 'create'])
@@ -113,8 +68,8 @@ Route::group(['prefix' => 'albums', 'middleware' => Authenticate::class], functi
         Route::group(['prefix' => 'songs'], function () {
             Route::post('create-song', [SongController::class, 'create'])->middleware([AlbumOwnership::class]);
             Route::get('album-songs', [AlbumController::class, 'showSongsInAlbum']);
-            Route::group(['prefix' => '{songId}', 'middleware' => CheckSongExists::class], function () {
-                Route::get('', [SongController::class, 'show'])->withoutMiddleware(CheckSongExists::class);
+            Route::group(['prefix' => '{songId}', 'middleware' => CheckSongInAlbum::class], function () {
+                Route::get('', [SongController::class, 'show'])->withoutMiddleware(CheckSongInAlbum::class);
 
                 Route::group(['middleware' => [AlbumOwnership::class]], function() {
                     Route::post('/update-song-name', [SongController::class, 'updateName']);
@@ -163,7 +118,7 @@ Route::group(['prefix' => 'playlists', 'middleware' => Authenticate::class], fun
 
         // TODO добавить проверку на публичность трека, запрос по albumId и проверить album status
         Route::put('add-song/{songId}', [PlaylistController::class, 'addSongToPlaylist'])
-            ->middleware(CheckSongInPlaylist::class);// этот мидлвейр и так проверяет существование трека, нет смысла в CheckSongExists
+            ->middleware(CheckSongExists::class);
         Route::put('delete-song/{songId}', [PlaylistController::class, 'deleteSongsFromPlaylist']);
     });
 });

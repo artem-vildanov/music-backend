@@ -23,7 +23,7 @@ class QueryMapper
     /**
      * @return Album[]
      */
-    public function mapFavouriteAlbums(Cursor $mongoResponse): array {
+    public function mapMultipleAlbums(Cursor $mongoResponse): array {
         /** формируем массив моделей */
         $unformattedFavourites = array_map(
             fn ($associatedAlbum) => new Album($associatedAlbum),
@@ -37,7 +37,7 @@ class QueryMapper
     /**
      * @return Artist[]
      */
-    public function mapFavouriteArtists(Cursor $mongoResponse): array {
+    public function mapMultipleArtists(Cursor $mongoResponse): array {
         /** формируем массив моделей */
         $unformattedFavourites = array_map(
             fn ($associatedArtist) => new Artist($associatedArtist),
@@ -51,7 +51,7 @@ class QueryMapper
     /**
      * @return Song[]
      */
-    public function mapFavouriteSongs(Cursor $mongoResponse): array {
+    public function mapMultipleSongs(Cursor $mongoResponse): array {
         /** формируем массив моделей */
         $unformattedFavourites = array_map(
             fn ($associatedSong) => new Song($associatedSong),

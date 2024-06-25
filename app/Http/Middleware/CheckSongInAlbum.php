@@ -8,9 +8,11 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class CheckSongExists
+class CheckSongInAlbum
 {
-    public function __construct(private readonly ISongRepository $songRepository) {}
+    public function __construct(
+        private readonly ISongRepository $songRepository
+    ) {}
 
     /**
      * @throws DataAccessException
@@ -18,7 +20,13 @@ class CheckSongExists
     public function handle(Request $request, Closure $next): Response
     {
         $songId = $request->route('songId');
-        $this->songRepository->getById($songId);
+        $albumId = $request->route('albumId');
+
+        $song = $this->songRepository->getById($songId);
+
+        if ($song->albumId !== $albumId) {
+            return response()->json(status: 404);
+        }
 
         return $next($request);
     }

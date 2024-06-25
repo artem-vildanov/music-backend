@@ -26,13 +26,12 @@ class UserDomainMapper
     public function mapToDomain(User $model): UserDomain
     {
         return new UserDomain(
-            id: $model->_id,
+            id: $model->id,
             name: $model->name,
             email: $model->email,
-            favouriteArtistsIds: $model->favouriteArtistsIds ?? [],
-            favouriteAlbumsIds: $model->favouriteAlbumsIds ?? [],
-            favouriteSongsIds: $model->favouriteSongsIds ?? [],
-            playlistsIds: $model->playlistsIds ?? [],
+            favouriteArtistsIds: $model->favouriteArtistsIds,
+            favouriteAlbumsIds: $model->favouriteAlbumsIds,
+            favouriteSongsIds: $model->favouriteSongsIds,
             role: UserRoles::from($model->role),
             artist: $this->getUserArtist($model)
         );
@@ -56,7 +55,7 @@ class UserDomainMapper
             return null;
         }
 
-        $artistDb = $this->artistRepository->getByUserId($user->_id);
+        $artistDb = $this->artistRepository->getByUserId($user->id);
         return $this->artistDomainMapper->mapToDomain($artistDb);
     }
 }

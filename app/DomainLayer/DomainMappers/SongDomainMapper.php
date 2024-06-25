@@ -39,12 +39,12 @@ class SongDomainMapper
     {
         $this->favouriteSongsIds ?? $this->favouriteSongsIds = $this->getFavouriteSongsIds();
         return new SongDomain(
-            id: $model->_id,
+            id: $model->id,
             name: $model->name,
             likes: $model->likes,
             photoPath: $model->photoPath,
             musicPath: $model->musicPath,
-            isFavourite: $this->checkSongIsFavourite($model->_id),
+            isFavourite: $this->checkSongIsFavourite($model->id),
             albumId: $model->albumId,
             albumName: $this->albumRepository->getById($model->albumId)->name,
             artistId: $model->artistId,
@@ -64,6 +64,6 @@ class SongDomainMapper
     private function getFavouriteSongsIds(): array
     {
         $authUserId = AuthFacade::getUserId();
-        return $this->userRepository->getById($authUserId)->favouriteSongsIds ?? [];
+        return $this->userRepository->getById($authUserId)->favouriteSongsIds;
     }
 }

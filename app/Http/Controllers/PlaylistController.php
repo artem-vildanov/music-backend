@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\DataAccessLayer\Queries\PlaylistSongsQuery;
 use App\DataAccessLayer\Repository\Interfaces\IPlaylistRepository;
-use App\DataAccessLayer\Repository\Interfaces\IPlaylistSongsRepository;
-use App\DataAccessLayer\Repository\Interfaces\ISongRepository;
 use App\DomainLayer\DomainMappers\PlaylistDomainMapper;
 use App\DomainLayer\DomainMappers\SongDomainMapper;
 use App\DtoLayer\DtoMappers\PlaylistDtoMapper;
 use App\DtoLayer\DtoMappers\SongDtoMapper;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\MinioException;
-use App\Exceptions\PlaylistSongsException;
 use App\Facades\AuthFacade;
 use App\Http\Requests\Playlist\CreatePlaylistRequest;
 use App\Http\Requests\Playlist\UpdatePlaylistNameRequest;
@@ -22,8 +20,8 @@ use Illuminate\Http\JsonResponse;
 class PlaylistController extends Controller
 {
     public function __construct(
+        private readonly PlaylistSongsQuery $playlistSongsQuery,
         private readonly IPlaylistRepository  $playlistRepository,
-        private readonly ISongRepository      $songRepository,
         private readonly PlaylistDtoMapper    $playlistDtoMapper,
         private readonly SongDtoMapper        $songDtoMapper,
         private readonly PlaylistDomainMapper $playlistDomainMapper,
@@ -45,12 +43,11 @@ class PlaylistController extends Controller
 
     public function showSongsInPlaylist(string $playlistId): JsonResponse
     {
-//        $songsIdsGroup = $this->playlistRepository->getSongsInPlaylist($playlistId);
-//        $songsDbGroup = $this->songRepository->getMultipleByIds($songsIdsGroup);
-//        $songsDomainGroup = $this->songDomainMapper->mapMultipleToDomain($songsDbGroup);
-//        $songsDtoGroup = $this->songDtoMapper->mapMultipleToLightDto($songsDomainGroup);
-//
-//        return response()->json($songsDtoGroup);
+        $songsDbGroup = $this->playlistSongsQuery->getPlaylistSongs($playlistId);
+        $songsDomainGroup = $this->songDomainMapper->mapMultipleToDomain($songsDbGroup);
+        $songsDtoGroup = $this->songDtoMapper->mapMultipleToLightDto($songsDomainGroup);
+
+        return response()->json($songsDtoGroup);
     }
 
     public function showUserPlaylists(): JsonResponse

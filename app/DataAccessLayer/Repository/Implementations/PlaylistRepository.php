@@ -16,7 +16,7 @@ class PlaylistRepository implements IPlaylistRepository
 
     public function getById(string $playlistId): Playlist
     {
-        $playlist = Playlist::where('_id', $playlistId)->first()
+        $playlist = Playlist::where('_id', new ObjectId($playlistId))->first()
             ?? throw PlaylistException::notFound($playlistId);
         return $this->playlistDbMapper->mapDbPlaylist($playlist);
     }
@@ -61,7 +61,7 @@ class PlaylistRepository implements IPlaylistRepository
      */
     public function updateName(string $playlistId, string $name): void
     {
-        $result = Playlist::where('_id', $playlistId)->update(['name' => $name]);
+        $result = Playlist::where('_id', new ObjectId($playlistId))->update(['name' => $name]);
         if ($result === 0) {
             throw PlaylistException::failedToUpdate($playlistId);
         }
@@ -69,7 +69,7 @@ class PlaylistRepository implements IPlaylistRepository
 
     public function updatePhoto(string $playlistId, string $photoPath): void
     {
-        $result = Playlist::where('_id', $playlistId)->update(['photoPath' => $photoPath]);
+        $result = Playlist::where('_id', new ObjectId($playlistId))->update(['photoPath' => $photoPath]);
         if ($result === 0) {
             throw PlaylistException::failedToUpdate($playlistId);
         }
@@ -78,19 +78,19 @@ class PlaylistRepository implements IPlaylistRepository
 
     public function addSongToPlaylist(string $playlistId, string $songId): void
     {
-        Playlist::where('_id', $playlistId)->push('songsIds', $songId);
+        Playlist::where('_id', new ObjectId($playlistId))->push('songsIds', new ObjectId($songId));
     }
 
     public function removeSongFromPlaylist(string $playlistId, string $songId): void
     {
-        Playlist::where('_id', $playlistId)->pull('songsIds', $songId);
+        Playlist::where('_id', new ObjectId($playlistId))->pull('songsIds', new ObjectId($songId));
     }
 
     public function removeSongFromAllPlaylists(string $songId): void
     {
-        Playlist::where('songsIds', $songId)
+        Playlist::where('songsIds', new ObjectId($songId))
             ->update([
-                '$pull' => ['songsIds' => $songId]
+                '$pull' => ['songsIds' => new ObjectId($songId)]
             ]);
     }
 

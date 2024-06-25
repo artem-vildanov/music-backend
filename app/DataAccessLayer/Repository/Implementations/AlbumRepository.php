@@ -20,11 +20,6 @@ class AlbumRepository implements IAlbumRepository
         return $this->albumDbMapper->mapDbAlbum($album);
     }
 
-//    public function getMultipleByIds(array $albumsIds): array
-//    {
-//        return Album::where('_id', $albumsIds)->get();
-//    }
-
     public function getAllByArtist(string $artistId): array
     {
         $albums = Album::where('artistId', new ObjectId($artistId))

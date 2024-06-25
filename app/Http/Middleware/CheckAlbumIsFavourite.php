@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\DataAccessLayer\Repository\Interfaces\IFavouritesRepository;
 use App\DataAccessLayer\Repository\Interfaces\IUserRepository;
 use App\Exceptions\FavouritesExceptions\FavouriteAlbumsException;
 use App\Facades\AuthFacade;
