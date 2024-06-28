@@ -42,8 +42,8 @@ class SongDomainMapper
             id: $model->id,
             name: $model->name,
             likes: $model->likes,
-            photoPath: $model->photoPath,
-            musicPath: $model->musicPath,
+            photoPath: $this->mapPhotoPath($model->photoPath),
+            musicPath: $this->mapMusicPath($model->musicPath),
             isFavourite: $this->checkSongIsFavourite($model->id),
             albumId: $model->albumId,
             albumName: $this->albumRepository->getById($model->albumId)->name,
@@ -65,5 +65,15 @@ class SongDomainMapper
     {
         $authUserId = AuthFacade::getUserId();
         return $this->userRepository->getById($authUserId)->favouriteSongsIds;
+    }
+
+    private function mapPhotoPath(string $photoPath): string
+    {
+        return config('minio.photoUrl') . $photoPath;
+    }
+
+    private function mapMusicPath(string $musicPath): string
+    {
+        return config('minio.audioUrl') . $musicPath;
     }
 }

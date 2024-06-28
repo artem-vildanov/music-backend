@@ -50,8 +50,11 @@ class SongController extends Controller
     /**
      * @throws DataAccessException
      */
-    public function updateName(string $albumId, string $songId, UpdateSongNameRequest $request): JsonResponse
-    {
+    public function updateName(
+        string $albumId,
+        string $songId,
+        UpdateSongNameRequest $request
+    ): JsonResponse {
         $newName = $request->body();
         $this->songRepository->updateName($songId, $newName);
         return response()->json();
@@ -61,8 +64,11 @@ class SongController extends Controller
      * @throws DataAccessException
      * @throws MinioException
      */
-    public function updateAudio(string $albumId, string $songId, UpdateSongAudioRequest $request): JsonResponse
-    {
+    public function updateAudio(
+        string $albumId,
+        string $songId,
+        UpdateSongAudioRequest $request
+    ): JsonResponse {
         $newPhoto = $request->body();
         $this->songService->updateSongAudio($songId, $newPhoto);
         return response()->json();

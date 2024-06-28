@@ -10,6 +10,15 @@ use App\DtoLayer\LightDtoModels\SongLightDto;
 
 class SongDtoMapper
 {
+    /**
+     * @param SongDomain[] $songs
+     * @return SongLightDto[]
+     */
+    public function mapMultipleToLightDto(array $songs): array
+    {
+        return array_map(fn (SongDomain $song) => $this->mapToLightDto($song), $songs);
+    }
+
     public function mapToBigDto(SongDomain $song): SongBigDto
     {
         return new SongBigDto(
@@ -35,14 +44,5 @@ class SongDtoMapper
             musicPath: $song->musicPath,
             isFavourite: $song->isFavourite,
         );
-    }
-
-    /**
-     * @param SongDomain[] $songs
-     * @return SongLightDto[]
-     */
-    public function mapMultipleToLightDto(array $songs): array
-    {
-        return array_map(fn (SongDomain $song) => $this->mapToLightDto($song), $songs);
     }
 }

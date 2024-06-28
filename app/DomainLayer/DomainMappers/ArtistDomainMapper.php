@@ -37,10 +37,15 @@ class ArtistDomainMapper
             id: $model->_id,
             name: $model->name,
             likes: $model->likes,
-            photoPath: $model->photoPath,
+            photoPath: $this->mapPhotoPath($model->photoPath),
             userId: $model->userId,
             isFavourite: $this->checkArtistIsFavourite($model->_id),
         );
+    }
+
+    private function mapPhotoPath(string $photoPath): string
+    {
+        return config('minio.photoUrl') . $photoPath;
     }
 
     private function checkArtistIsFavourite(string $artistId): bool

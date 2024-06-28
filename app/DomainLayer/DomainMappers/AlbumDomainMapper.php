@@ -19,13 +19,22 @@ class AlbumDomainMapper
         private readonly IUserRepository $userRepository,
     ) {}
 
+    /**
+     * @param Album[] $models
+     * @return AlbumDomain[]
+     */
+    public function mapMultipleToDomain(array $models): array
+    {
+        return array_map(fn (Album $album) => $this->mapToDomain($album), $models);
+    }
+
     public function mapToDomain(Album $model): AlbumDomain
     {
         $favouriteAlbumsIds ?? $this->favouriteAlbumsIds = $this->getFavouriteAlbumsIds();
         return new AlbumDomain(
             id: $model->id,
             name: $model->name,
-            photoPath: $model->photoPath,
+            photoPath: $this->mapPhotoPath($model->photoPath),
             likes: $model->likes,
             isFavourite: $this->checkAlbumIsFavourite($model->id),
             publishTime: $model->publishTime,
@@ -35,13 +44,9 @@ class AlbumDomainMapper
         );
     }
 
-    /**
-     * @param Album[] $models
-     * @return AlbumDomain[]
-     */
-    public function mapMultipleToDomain(array $models): array
+    private function mapPhotoPath(string $photoPath): string
     {
-        return array_map(fn (Album $album) => $this->mapToDomain($album), $models);
+        return config('minio.photoUrl') . $photoPath;
     }
 
     private function checkAlbumIsFavourite(string $albumId): bool {

@@ -126,7 +126,7 @@ Route::group(['prefix' => 'playlists', 'middleware' => Authenticate::class], fun
 Route::group(['prefix' => 'auth'], function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('signup', [AuthController::class, 'signup']);
-    Route::post('logout', [AuthController::class, 'logout'])->middleware(Authenticate::class);
-    Route::post('refresh', [AuthController::class, 'refresh']);
+    Route::get('logout', [AuthController::class, 'logout'])->middleware(Authenticate::class);
+    Route::get('refresh', [AuthController::class, 'refresh']);
     Route::get('me', [UserController::class, 'showUserInfo'])->middleware(Authenticate::class);
 });
