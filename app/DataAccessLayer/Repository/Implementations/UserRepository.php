@@ -3,6 +3,7 @@
 
 namespace App\DataAccessLayer\Repository\Implementations;
 
+use App\DataAccessLayer\DbMappers\UserDbMapper;
 use App\DataAccessLayer\DbModels\User;
 use App\DataAccessLayer\Repository\Interfaces\IUserRepository;
 use App\DomainLayer\Enums\UserRoles;
@@ -12,10 +13,13 @@ use MongoDB\BSON\ObjectId;
 
 class UserRepository implements IUserRepository
 {
+    public function __construct(private readonly UserDbMapper $userDbMapper) {}
+
     public function getById(string $userId): User
     {
-        return User::where('_id', new ObjectId($userId))->first()
+        $user = User::where('_id', new ObjectId($userId))->first()
             ?? throw UserException::notFound($userId);
+        return $this->userDbMapper->mapDbUser($user);
     }
 
     public function create(string $name, string $password, string $email, UserRoles $role): User

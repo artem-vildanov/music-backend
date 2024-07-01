@@ -34,12 +34,12 @@ class ArtistDomainMapper
     {
         $this->favouriteArtistsIds ?? $this->favouriteArtistsIds = $this->getFavoriteArtistsIds();
         return new ArtistDomain(
-            id: $model->_id,
+            id: $model->id,
             name: $model->name,
             likes: $model->likes,
             photoPath: $this->mapPhotoPath($model->photoPath),
             userId: $model->userId,
-            isFavourite: $this->checkArtistIsFavourite($model->_id),
+            isFavourite: $this->checkArtistIsFavourite($model->id),
         );
     }
 
