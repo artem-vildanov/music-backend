@@ -34,10 +34,10 @@ class TokenStorageService
     {
         $userId = $this->redisStorageService->find($token);
 
-        if (!$token) {
+        if (!$userId) {
             throw RedisException::failedToFindToken();
         }
 
-        return (string)$userId;
+        return $userId;
     }
 }

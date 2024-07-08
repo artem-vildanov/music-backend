@@ -83,7 +83,7 @@ class ArtistController extends Controller
 
         return response()->json([
             'artistId' => $artistId,
-            'access_token' => $newToken
+            'token' => $newToken
         ]);
     }
 
@@ -118,7 +118,7 @@ class ArtistController extends Controller
         $newToken = $this->tokenService->refreshToken($token);
 
         return response()->json([
-            'access_token' => $newToken
+            'token' => $newToken
         ]);
     }
 }

@@ -22,6 +22,8 @@ class ArtistOwnership
         $requestArtistId = $request->route('artistId');
         $authUser = AuthFacade::getAuthInfo();
 
+//        var_dump([$requestArtistId, $authUser->artistId]);
+
         if ($requestArtistId !== $authUser->artistId) {
             return response()->json([
                 'error' => 'You are not permitted to access this resource.',
