@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Song;
+namespace App\Http\Requests\File;
 
 use App\Http\Requests\BaseFormRequest;
 use Illuminate\Http\UploadedFile;
 
-class UpdateSongAudioRequest extends BaseFormRequest
+class UploadAudioRequest extends BaseFormRequest
 {
     public function rules(): array
     {
@@ -14,6 +14,9 @@ class UpdateSongAudioRequest extends BaseFormRequest
         ];
     }
 
+    /**
+     * @return mixed
+     */
     public function body(): UploadedFile
     {
         return $this->file('audio');

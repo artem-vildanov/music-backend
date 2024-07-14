@@ -4,6 +4,7 @@ namespace App\Services\DomainServices;
 
 use App\DataAccessLayer\Repository\Interfaces\IAlbumRepository;
 use App\DataAccessLayer\Repository\Interfaces\IArtistRepository;
+use App\DataAccessLayer\Repository\Interfaces\IFileRepository;
 use App\DataAccessLayer\Repository\Interfaces\IPlaylistRepository;
 use App\DataAccessLayer\Repository\Interfaces\ISongRepository;
 use App\DataAccessLayer\Repository\Interfaces\IUserRepository;
@@ -22,6 +23,7 @@ class SongService
         private readonly IArtistRepository $artistRepository,
         private readonly IPlaylistRepository $playlistRepository,
         private readonly IUserRepository     $userRepository,
+        private readonly IFileRepository $fileRepository,
     ) {
     }
 
@@ -36,15 +38,19 @@ class SongService
         $userId = AuthFacade::getUserId();
         $artistId = $this->artistRepository->getByUserId($userId)->id;
 
-        $musicPath = $this->audioStorageService->saveAudio($album->cdnFolderId, $musicFile);
+        $filePath = $this->audioStorageService->saveAudio($album->cdnFolderId, $musicFile);
+        $audioId = $this->fileRepository->createFile($filePath);
 
-        return $this->songRepository->create(
+        $songId = $this->songRepository->create(
             $name,
             $album->photoPath,
-            $musicPath,
+            $audioId,
             $albumId,
             $artistId
         );
+
+        $this->fileRepository->setInuseStatus($audioId);
+        return $songId;
     }
 
     /**
@@ -76,7 +82,9 @@ class SongService
 
         $this->playlistRepository->removeSongFromAllPlaylists($songId);
         $this->userRepository->removeSongFromAllUsers($songId);
-        $this->audioStorageService->deleteAudio($song->musicPath);
+        $filePath = $this->fileRepository->getFile($song->audioId);
+        $this->fileRepository->deleteFile($song->audioId);
+        $this->audioStorageService->deleteAudio($filePath);
         $this->songRepository->delete($songId);
     }
 }

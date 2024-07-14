@@ -37,7 +37,7 @@ class SongRepository implements ISongRepository
     public function create(
         string $name,
         string $photoPath,
-        string $musicPath,
+        string $audioId,
         string $albumId,
         string $artistId
     ): string {
@@ -45,7 +45,7 @@ class SongRepository implements ISongRepository
         $song->name = $name;
         $song->likes = 0;
         $song->photoPath = $photoPath;
-        $song->musicPath = $musicPath;
+        $song->audioId = new ObjectId($audioId);
         $song->albumId = new ObjectId($albumId);
         $song->artistId = new ObjectId($artistId);
         $song->save();
@@ -101,5 +101,15 @@ class SongRepository implements ISongRepository
             ->update([
                 '$inc' => ['likes' => -1]
             ]);
+    }
+
+    public function update(string $songId, string $name, string $audioId): void
+    {
+        $result = Song::where('_id', new ObjectId($songId))
+            ->update([
+                'name' => $name,
+                'audioId' => new ObjectId($audioId)
+            ]);
+        if ($result === 0) throw SongException::failedToUpdate($songId);
     }
 }

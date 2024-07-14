@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\AlbumController;
 use App\Http\Controllers\ArtistController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\PlaylistController;
 use App\Http\Controllers\SongController;
 use App\Http\Controllers\UserController;
@@ -74,6 +75,7 @@ Route::group(['prefix' => 'albums', 'middleware' => Authenticate::class], functi
                 Route::group(['middleware' => [AlbumOwnership::class]], function() {
                     Route::post('/update-song-name', [SongController::class, 'updateName']);
                     Route::post('/update-song-audio', [SongController::class, 'updateAudio']);
+                    Route::post('/load-audio', [FileController::class, 'loadSongAudio']);
                     Route::delete('/delete-song', [SongController::class, 'delete']);
                 })->withoutMiddleware(CheckAlbumStatus::class);;
             });

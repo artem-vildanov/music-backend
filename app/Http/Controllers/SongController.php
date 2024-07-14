@@ -7,12 +7,11 @@ use App\DomainLayer\DomainMappers\SongDomainMapper;
 use App\DtoLayer\DtoMappers\SongDtoMapper;
 use App\Exceptions\DataAccessExceptions\DataAccessException;
 use App\Exceptions\MinioException;
+use App\Http\RequestModels\Song\UpdateSongModel;
 use App\Http\Requests\Song\CreateSongRequest;
-use App\Http\Requests\Song\UpdateSongAudioRequest;
-use App\Http\Requests\Song\UpdateSongNameRequest;
+use App\Http\Requests\Song\UpdateSongRequest;
 use App\Services\DomainServices\SongService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
 
 class SongController extends Controller
 {
@@ -50,27 +49,14 @@ class SongController extends Controller
     /**
      * @throws DataAccessException
      */
-    public function updateName(
+    public function update(
         string $albumId,
         string $songId,
-        UpdateSongNameRequest $request
+        UpdateSongRequest $request
     ): JsonResponse {
-        $newName = $request->body();
-        $this->songRepository->updateName($songId, $newName);
-        return response()->json();
-    }
-
-    /**
-     * @throws DataAccessException
-     * @throws MinioException
-     */
-    public function updateAudio(
-        string $albumId,
-        string $songId,
-        UpdateSongAudioRequest $request
-    ): JsonResponse {
-        $newPhoto = $request->body();
-        $this->songService->updateSongAudio($songId, $newPhoto);
+        /** @var UpdateSongModel */
+        $updateSongModel = $request->body();
+        $this->songRepository->update($updateSongModel->name, $updateSongModel->audioId);
         return response()->json();
     }
 

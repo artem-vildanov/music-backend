@@ -7,6 +7,7 @@ use App\DataAccessLayer\DbModels\Playlist;
 use App\DataAccessLayer\DbModels\Song;
 use App\DataAccessLayer\Repository\Interfaces\IAlbumRepository;
 use App\DataAccessLayer\Repository\Interfaces\IArtistRepository;
+use App\DataAccessLayer\Repository\Interfaces\IFileRepository;
 use App\DataAccessLayer\Repository\Interfaces\IUserRepository;
 use App\DomainLayer\DomainModels\DomainModel;
 use App\DomainLayer\DomainModels\SongDomain;
@@ -21,6 +22,7 @@ class SongDomainMapper
         private readonly IArtistRepository $artistRepository,
         private readonly IAlbumRepository $albumRepository,
         private readonly IUserRepository $userRepository,
+        private readonly IFileRepository $filesRepository,
     ) {}
 
     /**
@@ -43,7 +45,7 @@ class SongDomainMapper
             name: $model->name,
             likes: $model->likes,
             photoPath: $this->mapPhotoPath($model->photoPath),
-            musicPath: $this->mapMusicPath($model->musicPath),
+            musicPath: $this->mapMusicPath($model->audioId),
             isFavourite: $this->checkSongIsFavourite($model->id),
             albumId: $model->albumId,
             albumName: $this->albumRepository->getById($model->albumId)->name,
@@ -72,8 +74,9 @@ class SongDomainMapper
         return config('minio.photoUrl') . $photoPath;
     }
 
-    private function mapMusicPath(string $musicPath): string
+    private function mapMusicPath(string $fileId): string
     {
-        return config('minio.audioUrl') . $musicPath;
+        $filePath = $this->filesRepository->getFile($fileId)->filePath;
+        return config('minio.audioUrl') . $filePath;
     }
 }

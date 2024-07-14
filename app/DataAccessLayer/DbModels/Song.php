@@ -10,7 +10,7 @@ use MongoDB\Laravel\Eloquent\Model;
  * @property string name
  * @property int likes
  * @property string photoPath
- * @property string musicPath
+ * @property string audioId
  * @property string albumId
  * @property string artistId
  */
@@ -24,7 +24,7 @@ class Song extends Model
         'name',
         'likes',
         'photoPath',
-        'musicPath',
+        'audioId',
         'albumId',
         'artistId'
     ];

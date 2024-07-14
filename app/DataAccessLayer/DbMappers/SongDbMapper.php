@@ -32,5 +32,6 @@ class SongDbMapper
     {
         $song->artistId = (string)$song->artistId;
         $song->albumId = (string)$song->albumId;
+        $song->audioId = (string)$song->audioId;
     }
 }

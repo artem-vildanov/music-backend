@@ -3,9 +3,11 @@
 namespace App\Providers;
 
 use App\DataAccessLayer\Queries\FavouriteQuery;
+use App\DataAccessLayer\Repository\Implementations\FileRepository;
 use App\DataAccessLayer\Repository\Implementations\UserRepository;
 use App\DataAccessLayer\Repository\Interfaces\IAlbumRepository;
 use App\DataAccessLayer\Repository\Interfaces\IArtistRepository;
+use App\DataAccessLayer\Repository\Interfaces\IFileRepository;
 use App\DataAccessLayer\Repository\Interfaces\IPlaylistRepository;
 use App\DataAccessLayer\Repository\Interfaces\ISongRepository;
 use App\DataAccessLayer\Repository\Interfaces\IUserRepository;
@@ -30,6 +32,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
 
+        $this->app->bind(IFileRepository::class, FileRepository::class);
         $this->app->bind(IAlbumRepository::class, AlbumRepositoryProxy::class);
         $this->app->bind(IArtistRepository::class, ArtistRepositoryProxy::class);
         $this->app->bind(ISongRepository::class, SongRepositoryProxy::class);

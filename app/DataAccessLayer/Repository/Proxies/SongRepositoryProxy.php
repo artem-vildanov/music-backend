@@ -42,6 +42,12 @@ class SongRepositoryProxy extends SongRepository implements ISongRepository
         $this->songCacheService->deleteSongFromCache($songId);
     }
 
+    public function update(string $songId, string $name, string $audioId): void
+    {
+        $this->songRepository->update($songId, $name, $audioId);
+        $this->songCacheService->deleteSongFromCache($songId);
+    }
+
     /**
      * @throws DataAccessException
      */

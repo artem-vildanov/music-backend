@@ -36,7 +36,7 @@ interface ISongRepository {
     public function create(
         string $name,
         string $photoPath,
-        string $musicPath,
+        string $audioId,
         string $albumId,
         string $artistId
     ): string;
@@ -47,6 +47,8 @@ interface ISongRepository {
      * @return void
      */
     public function delete(string $songId): void;
+
+    public function update(string $songId, string $name, string $audioId): void;
 
     /**
      * @param string $songId
