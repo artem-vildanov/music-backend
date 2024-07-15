@@ -8,6 +8,7 @@ class SongBigDto
         public string $id,
         public string $name,
         public string $photoPath,
+        public string $audioId,
         public string $musicPath,
         public int $likes,
         public string $albumId,

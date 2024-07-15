@@ -45,6 +45,7 @@ class SongDomainMapper
             name: $model->name,
             likes: $model->likes,
             photoPath: $this->mapPhotoPath($model->photoPath),
+            audioId: $model->audioId,
             musicPath: $this->mapMusicPath($model->audioId),
             isFavourite: $this->checkSongIsFavourite($model->id),
             albumId: $model->albumId,

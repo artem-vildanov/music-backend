@@ -25,6 +25,7 @@ class SongDtoMapper
             id: $song->id,
             name: $song->name,
             photoPath: $song->photoPath,
+            audioId: $song->audioId,
             musicPath: $song->musicPath,
             likes: $song->likes,
             albumId: $song->albumId,

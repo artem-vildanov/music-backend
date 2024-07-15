@@ -22,7 +22,6 @@ use App\Http\Middleware\ForArtistPermitted;
 use App\Http\Middleware\ForBaseUserPermitted;
 use App\Http\Middleware\ArtistOwnership;
 use App\Http\Middleware\PlaylistOwnership;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -69,13 +68,14 @@ Route::group(['prefix' => 'albums', 'middleware' => Authenticate::class], functi
         Route::group(['prefix' => 'songs'], function () {
             Route::post('create-song', [SongController::class, 'create'])->middleware([AlbumOwnership::class]);
             Route::get('album-songs', [AlbumController::class, 'showSongsInAlbum']);
+            Route::post('/upload-audio', [FileController::class, 'uploadSongAudio']);
             Route::group(['prefix' => '{songId}', 'middleware' => CheckSongInAlbum::class], function () {
                 Route::get('', [SongController::class, 'show'])->withoutMiddleware(CheckSongInAlbum::class);
 
                 Route::group(['middleware' => [AlbumOwnership::class]], function() {
+                    Route::post('/update-song', [SongController::class, 'update']);
                     Route::post('/update-song-name', [SongController::class, 'updateName']);
                     Route::post('/update-song-audio', [SongController::class, 'updateAudio']);
-                    Route::post('/load-audio', [FileController::class, 'loadSongAudio']);
                     Route::delete('/delete-song', [SongController::class, 'delete']);
                 })->withoutMiddleware(CheckAlbumStatus::class);;
             });

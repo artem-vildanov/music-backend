@@ -21,7 +21,7 @@ class FileController extends Controller
 
     public function uploadSongAudio(string $albumId, UploadAudioRequest $request): JsonResponse {
         $audio = $request->body();
-        $albumFolderId = $this->albumRepository->getById($audio)->cdnFolderId;
+        $albumFolderId = $this->albumRepository->getById($albumId)->cdnFolderId;
         $filePath = $this->audioStorageService->saveAudio($albumFolderId, $audio);
         $fileId = $this->fileRepository->createFile($filePath);
         return response()->json($fileId);

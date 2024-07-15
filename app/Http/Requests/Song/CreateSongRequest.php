@@ -11,7 +11,7 @@ class CreateSongRequest extends BaseFormRequest
     {
         return [
             'name' => 'required|string',
-            'audio' => 'required|mimes:mp3',
+            'audioId' => 'required|string',
         ];
     }
 
@@ -20,10 +20,9 @@ class CreateSongRequest extends BaseFormRequest
      */
     public function body(): CreateSongModel
     {
-        $model = new CreateSongModel();
-        $model->name = $this->string('name');
-        $model->music = $this->file('audio');
-
-        return $model;
+        return new CreateSongModel(
+            name: $this->string('name'),
+            audioId: $this->string('audioId')
+        );
     }
 }

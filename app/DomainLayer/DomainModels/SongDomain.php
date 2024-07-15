@@ -9,6 +9,7 @@ class SongDomain
         public string $name,
         public int $likes,
         public string $photoPath,
+        public string $audioId,
         public string $musicPath,
         public bool $isFavourite,
         public string $albumId,

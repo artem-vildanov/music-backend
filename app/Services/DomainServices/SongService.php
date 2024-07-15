@@ -31,15 +31,12 @@ class SongService
      * @throws DataAccessException
      * @throws MinioException
      */
-    public function saveSong(string $name, UploadedFile $musicFile, string $albumId): string
+    public function saveSong(string $name, string $audioId, string $albumId): string
     {
         $album = $this->albumRepository->getById($albumId);
 
         $userId = AuthFacade::getUserId();
         $artistId = $this->artistRepository->getByUserId($userId)->id;
-
-        $filePath = $this->audioStorageService->saveAudio($album->cdnFolderId, $musicFile);
-        $audioId = $this->fileRepository->createFile($filePath);
 
         $songId = $this->songRepository->create(
             $name,

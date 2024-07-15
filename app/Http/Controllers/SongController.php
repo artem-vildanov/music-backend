@@ -42,7 +42,12 @@ class SongController extends Controller
     public function create(string $albumId, CreateSongRequest $request): JsonResponse
     {
         $data = $request->body();
-        $songId = $this->songService->saveSong($data->name, $data->music, $albumId);
+        $songId = $this->songService
+            ->saveSong(
+                $data->name,
+                $data->audioId,
+                $albumId
+            );
         return response()->json($songId);
     }
 
@@ -55,8 +60,8 @@ class SongController extends Controller
         UpdateSongRequest $request
     ): JsonResponse {
         /** @var UpdateSongModel */
-        $updateSongModel = $request->body();
-        $this->songRepository->update($updateSongModel->name, $updateSongModel->audioId);
+        $data = $request->body();
+        $this->songRepository->update($data->name, $data->audioId);
         return response()->json();
     }
 
